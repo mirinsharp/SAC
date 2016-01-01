@@ -404,6 +404,18 @@ namespace SAutoCarry.Champions
                     Animation.SetLastAATick(Utils.TickCount);
                 else if (args.SData.Name == "RivenTriCleave")
                     Orbwalker.ResetAATimer();
+                else if (args.SData.Name == "RivenFengShuiEngine")
+                {
+                    if(Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
+                    {
+                        var t = TargetSelector.GetTarget(350, TargetSelector.DamageType.Physical);
+                        if (Spells[W].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < Spells[W].Range + t.BoundingRadius + 75)
+                        {
+                            Spells[W].Cast(true);
+                            return;
+                        }
+                    }
+                }
             }
             else if (Target.Get(1000, true) != null)
             {
@@ -455,7 +467,7 @@ namespace SAutoCarry.Champions
                         if (data.Caster.ServerPosition.CountEnemiesInRange(1000) <= 1 || !data.SpellData.IsDangerous)
                             pos = Orbwalker.GetTarget().Position.To2D();
                         else if (data.SpellData.IsDangerous)
-                            pos = SCommon.Maths.Geometry.Deviation(ObjectManager.Player.ServerPosition.To2D(), data.Caster.ServerPosition.To2D(), 65);
+                            pos = SCommon.Maths.Geometry.Deviation(ObjectManager.Player.ServerPosition.To2D(), data.Caster.ServerPosition.To2D(), 90);
                         else
                             pos = ObjectManager.Player.ServerPosition.Extend(data.Caster.ServerPosition, -400).To2D();
                     }
@@ -464,7 +476,7 @@ namespace SAutoCarry.Champions
                         if (data.SpellData.IsDangerous)
                             pos = ObjectManager.Player.ServerPosition.Extend(data.Caster.ServerPosition, -400).To2D();
                         else
-                            pos = SCommon.Maths.Geometry.Deviation(ObjectManager.Player.ServerPosition.To2D(), data.Caster.ServerPosition.To2D(), 65);
+                            pos = SCommon.Maths.Geometry.Deviation(ObjectManager.Player.ServerPosition.To2D(), data.Caster.ServerPosition.To2D(), 90);
                     }
                     if (pos.IsValid())
                         Spells[E].Cast(pos);

@@ -109,7 +109,7 @@ namespace SAutoCarry.Champions
                     Spells[R].SPredictionCastAoe(ComboUseRMin);
             }
 
-            if(Spells[Q].IsReady() && ComboUseQ && ComboUseQOnlyAA)
+            if(Spells[Q].IsReady() && ComboUseQ && !ComboUseQOnlyAA)
             {
                 var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Magical);
                 if (t != null)

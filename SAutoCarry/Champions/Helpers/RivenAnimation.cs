@@ -112,16 +112,16 @@ namespace SAutoCarry.Champions.Helpers
                     if (t != null && (Program.Champion.Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo || Program.Champion.Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Mixed || Program.Champion.ConfigMenu.Item("CSHYKEY").GetValue<KeyBind>().Active || Program.Champion.ConfigMenu.Item("CFLASHKEY").GetValue<KeyBind>().Active))
                     {
                         Program.Champion.Orbwalker.ForcedTarget = t;
-                        if (QStacks == 2)
-                        {
-                            if (Program.Champion.Spells[1].IsReady() && Program.Champion.Spells[2].IsReady()) //e-q3-w
-                            {
-                                Program.Champion.Spells[2].Cast(t.ServerPosition);
-                                Program.Champion.Spells[0].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 40, true);
-                                Program.Champion.Spells[1].Cast(true);
-                            }
-                        }
-                        else
+                        //if (QStacks == 2)
+                        //{
+                        //    if (Program.Champion.Spells[1].IsReady() && Program.Champion.Spells[2].IsReady()) //e-q3-w
+                        //    {
+                        //        Program.Champion.Spells[2].Cast(t.ServerPosition);
+                        //        Program.Champion.Spells[0].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 40, true);
+                        //        Program.Champion.Spells[1].Cast(true);
+                        //    }
+                        //}
+                        //else
                             Program.Champion.Spells[0].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 40, true);
                         //Program.Champion.Orbwalker.ResetAATimer();
 

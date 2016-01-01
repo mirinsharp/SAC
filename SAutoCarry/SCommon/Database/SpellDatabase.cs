@@ -1228,7 +1228,7 @@ namespace SCommon.Database
                 {
                     ChampionName = "Pantheon",
                     Slot = SpellSlot.Q,
-                    SpellName = "Pantheon_Throw",
+                    SpellName = "PantheonQ",
                     IsTargeted = true
                 });
 

@@ -95,7 +95,7 @@ namespace SCommon.Orbwalking
         public static float GetProjectileSpeed(Obj_AI_Base _unit = null)
         {
             Obj_AI_Base unit = CorrectUnit(_unit);
-            return IsMelee(unit) || unit.CharData.BaseSkinName == "Azir" || unit.CharData.BaseSkinName == "Velkoz" || unit.CharData.BaseSkinName == "Viktor" && unit.HasBuff("ViktorPowerTransferReturn") ? float.MaxValue : unit.BasicAttack.MissileSpeed;
+            return IsMelee(unit) || unit.CharData.BaseSkinName == "Azir" || unit.CharData.BaseSkinName == "Velkoz" || (unit.CharData.BaseSkinName == "Viktor" && unit.HasBuff("ViktorPowerTransferReturn")) ? float.MaxValue : unit.BasicAttack.MissileSpeed;
         }
 
         /// <summary>

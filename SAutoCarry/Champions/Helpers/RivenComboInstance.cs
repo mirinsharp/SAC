@@ -150,12 +150,14 @@ namespace SAutoCarry.Champions.Helpers
 
                     if (Me.Spells[W].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < Me.Spells[W].Range + t.BoundingRadius)
                     {
-                        if (Me.Spells[E].IsReady() && Me.Spells[Q].IsReady())
-                            return;
+                        if (ObjectManager.Player.CountEnemiesInRange(1000) == 1)
+                        {
+                            if (Me.Spells[E].IsReady() && Me.Spells[Q].IsReady())
+                                return;
 
-                        if (!Me.Spells[E].IsReady() && Me.Spells[Q].IsReady() && Utils.TickCount - Animation.LastETick < 1000)
-                            return;
-
+                            if (!Me.Spells[E].IsReady() && Me.Spells[Q].IsReady() && Utils.TickCount - Animation.LastETick < 1000)
+                                return;
+                        }
                         Me.CastCrescent();
                         Me.Spells[W].Cast(true);
                     }
@@ -176,12 +178,22 @@ namespace SAutoCarry.Champions.Helpers
                     t = Target.Get(600, true);
                     if (t != null)
                     {
+                        if(animname == "Spell1c")
+                        {
+                            if (Me.Spells[W].IsReady() && t.IsValidTarget(Me.Spells[W].Range))
+                                Me.Spells[W].Cast(true);
+                        }
                         if (animname == "Spell3") //e w & e q etc
                         {
                             if (Me.CheckR1(t))
                             {
                                 Me.Spells[R].Cast();
                                 return;
+                            }
+
+                            if(Animation.QStacks == 2)
+                            {
+                                Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 40, true);
                             }
 
                             var pos = ObjectManager.Player.ServerPosition.To2D();

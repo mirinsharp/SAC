@@ -478,6 +478,7 @@ namespace SCommon.Orbwalking
 
         private void AfterAttack(AttackableUnit target)
         {
+            Console.WriteLine("after attack");
             m_lastWindUpEndTick = Utils.TickCount;
             m_attackReset = false;
             m_attackInProgress = false;
