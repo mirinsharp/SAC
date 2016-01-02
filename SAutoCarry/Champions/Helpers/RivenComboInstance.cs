@@ -53,7 +53,7 @@ namespace SAutoCarry.Champions.Helpers
                             }
                             else if (comboMode == 1)
                             {
-                                if (!ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !Me.ConfigMenu.Item("CDISABLER").GetValue<bool>() && Me.Spells[R].IsReady())
+                                if (!ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !Me.ConfigMenu.Item("CDISABLER").GetValue<KeyBind>().Active && Me.Spells[R].IsReady())
                                     Me.Spells[R].Cast();
                             }
                             s_lastGapCloseTick = Utils.TickCount;
@@ -71,7 +71,7 @@ namespace SAutoCarry.Champions.Helpers
                             }
                             else if (comboMode == 1)
                             {
-                                if (!ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !Me.ConfigMenu.Item("CDISABLER").GetValue<bool>() && Me.Spells[R].IsReady())
+                                if (!ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !Me.ConfigMenu.Item("CDISABLER").GetValue<KeyBind>().Active && Me.Spells[R].IsReady())
                                     Me.Spells[R].Cast();
                             }
                             s_lastGapCloseTick = Utils.TickCount;
@@ -143,14 +143,23 @@ namespace SAutoCarry.Champions.Helpers
                         if (Me.Spells[E].IsReady())
                             Me.Spells[E].Cast(t.ServerPosition);
                         Me.Spells[R].Cast();
+                        Me.Spells[W].Cast();
                     }
 
                     if (Me.CheckR2(t))
-                        Me.Spells[R].Cast(t.ServerPosition);
-
-                    if (Me.Spells[W].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < Me.Spells[W].Range + t.BoundingRadius)
                     {
-                        if (ObjectManager.Player.CountEnemiesInRange(1000) == 1)
+                        Me.Spells[R].Cast(t.ServerPosition);
+                        if (Me.Spells[Q].IsReady())
+                        {
+                            Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
+                            if(!Me.IsDoingFastQ)
+                                Me.FastQCombo();
+                        }
+                    }
+
+                    if (Me.Spells[W].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < Me.Spells[W].Range + t.BoundingRadius + (Animation.UltActive ? 10 : 0) && ! Me.IsDoingFastQ)
+                    {
+                        if (ObjectManager.Player.CountEnemiesInRange(1000) == 1 && ObjectManager.Player.HealthPercent > 30)
                         {
                             if (Me.Spells[E].IsReady() && Me.Spells[Q].IsReady())
                                 return;
@@ -191,17 +200,12 @@ namespace SAutoCarry.Champions.Helpers
                                 return;
                             }
 
-                            if(Animation.QStacks == 2)
-                            {
-                                Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 40, true);
-                            }
-
                             var pos = ObjectManager.Player.ServerPosition.To2D();
                             if (ObjectManager.Player.IsDashing())
                                 pos = ObjectManager.Player.GetDashInfo().EndPos;
-                            if (Me.Spells[W].IsReady() && t.Distance(pos) < Me.Spells[W].Range + t.BoundingRadius && !Me.IsDoingFastQ)
+                            if (Me.Spells[W].IsReady() && t.Distance(pos) < Me.Spells[W].Range + t.BoundingRadius && !Me.IsDoingFastQ && Me.Spells[Q].IsReady())
                             {
-                                Me.Spells[W].Cast();
+                                Me.Spells[W].Cast(true);
                                 return;
                             }
 
@@ -218,25 +222,28 @@ namespace SAutoCarry.Champions.Helpers
                                 }
                             }
 
-                            if(!Me.Spells[Q].IsReady(1000) && !Me.Spells[W].IsReady(1000))
-                            {
-                                Me.CastCrescent();
-                                return;
-                            }
+                            Me.CastCrescent();
                         }
                         else if (animname == "Spell4a")
                         {
-                            if (Me.Spells[W].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < Me.Spells[W].Range + t.BoundingRadius)
+                            if (Me.Spells[W].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < Me.Spells[W].Range + t.BoundingRadius + 10)
                             {
                                 Me.Spells[W].Cast();
-                                Me.Spells[Q].Cast(t.ServerPosition);
-                                Me.FastQCombo(true);
                                 return;
                             }
                         }
-                        else if(animname == "Spell2")
+                        else if (animname == "Spell4b")
                         {
-                            if(Me.Spells[Q].IsReady() && !Me.IsDoingFastQ)
+                            if (Me.Spells[Q].IsReady())
+                            {
+                                Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
+                                if (!Me.IsDoingFastQ)
+                                    Me.FastQCombo();
+                            }
+                        }
+                        else if (animname == "Spell2")
+                        {
+                            if (Me.Spells[Q].IsReady() && !Me.IsDoingFastQ)
                             {
                                 Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
                                 Me.FastQCombo();
@@ -253,24 +260,15 @@ namespace SAutoCarry.Champions.Helpers
                 t = Target.Get(1000);
                 if (t != null)
                 {
-                    if (ObjectManager.Player.HasBuff("RivenFengShuiEngine"))
-                    {
-                        if ((t.Health - Me.CalculateDamageR2(t) <= 0 || t.HealthPercent <= 50) && !Me.ConfigMenu.Item("CDISABLER").GetValue<bool>())
-                        {
-                            if (Me.Spells[R].IsReady()) //r2
-                                Me.Spells[R].Cast(t.ServerPosition);
-                        }
-                    }
-
                     if (Me.Spells[E].IsReady() && ObjectManager.Player.ServerPosition.Distance(t.ServerPosition) <= Me.Spells[E].Range + 400 + Me.Spells[W].Range / 2f && !ObjectManager.Player.HasBuff("RivenFengShuiEngine"))
                     {
                         Me.Spells[E].Cast(t.ServerPosition);
-                        if (!Me.ConfigMenu.Item("CDISABLER").GetValue<bool>() && Me.Spells[R].IsReady())
+                        if (!Me.ConfigMenu.Item("CDISABLER").GetValue<KeyBind>().Active && Me.Spells[R].IsReady())
                             Me.Spells[R].Cast();
                         return;
                     }
 
-                    if (Me.Spells[W].IsReady() && t.IsValidTarget(Me.Spells[W].Range + t.BoundingRadius))
+                    if (Me.Spells[W].IsReady() && t.IsValidTarget(Me.Spells[W].Range + t.BoundingRadius + 10))
                     {
                         Me.CastCrescent();
                         Me.Spells[W].Cast();
@@ -285,7 +283,7 @@ namespace SAutoCarry.Champions.Helpers
                 {
                     case "Spell3": //e r1
                         {
-                            if (!ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !Me.ConfigMenu.Item("CDISABLER").GetValue<bool>() && Me.Spells[R].IsReady())
+                            if (!ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !Me.ConfigMenu.Item("CDISABLER").GetValue<KeyBind>().Active && Me.Spells[R].IsReady())
                                 Me.Spells[R].Cast();
                         }
                         break;
@@ -294,12 +292,27 @@ namespace SAutoCarry.Champions.Helpers
                             if (t.Distance(ObjectManager.Player.ServerPosition) > 300)
                             {
                                 ObjectManager.Player.Spellbook.CastSpell(Me.SummonerFlash, t.ServerPosition);
+                                Me.CastCrescent();
                             }
                         }
                         break;
                     case "Spell4b":
                         {
-                            Me.CastCrescent();
+                            if (Me.Spells[Q].IsReady())
+                            {
+                                //Me.CastCrescent();
+                                Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
+                                if (!Me.IsDoingFastQ)
+                                    Me.FastQCombo();
+                            }
+                        }
+                        break;
+                    case "Spell2":
+                        {
+                            if (Me.Spells[Q].IsReady())
+                            {
+                                Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
+                            }
                         }
                         break;
                 }
@@ -338,7 +351,7 @@ namespace SAutoCarry.Champions.Helpers
                                     Me.Spells[W].Cast();
                             }
                             else
-                                if (ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !Me.ConfigMenu.Item("CDISABLER").GetValue<bool>() && Me.Spells[R].IsReady())
+                                if (ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !Me.ConfigMenu.Item("CDISABLER").GetValue<KeyBind>().Active && Me.Spells[R].IsReady())
                                     Me.Spells[R].Cast(t.ServerPosition);
                         }
                     }
@@ -360,7 +373,7 @@ namespace SAutoCarry.Champions.Helpers
                     {
                         case "Spell3": //e r1
                             {
-                                if (!ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !Me.ConfigMenu.Item("CDISABLER").GetValue<bool>() && Me.Spells[R].IsReady())
+                                if (!ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !Me.ConfigMenu.Item("CDISABLER").GetValue<KeyBind>().Active && Me.Spells[R].IsReady())
                                     Me.Spells[R].Cast();
                             }
                             break;
@@ -375,7 +388,7 @@ namespace SAutoCarry.Champions.Helpers
                             break;
                         case "Spell2": //w r2
                             {
-                                if (ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !Me.ConfigMenu.Item("CDISABLER").GetValue<bool>() && Me.Spells[R].IsReady())
+                                if (ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !Me.ConfigMenu.Item("CDISABLER").GetValue<KeyBind>().Active && Me.Spells[R].IsReady())
                                     Me.Spells[R].Cast(t.ServerPosition);
                             }
                             break;

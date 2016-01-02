@@ -61,12 +61,12 @@ namespace SAutoCarry.Champions.Helpers
                         LastETick = Utils.TickCount;
                         break;
                     case "Spell4a":
-                        t = 0;
+                        t = 10;
                         CanCastAnimation = false;
                         UltActive = true;
                         break;
                     case "Spell4b":
-                        t = 0;
+                        t = 200;
                         CanCastAnimation = false;
                         UltActive = false;
                         break;
@@ -74,6 +74,7 @@ namespace SAutoCarry.Champions.Helpers
                         t = -1;
                         break;
                 }
+
                 if (t > 0)
                 {
                     if (Program.Champion.ConfigMenu.Item("MAUTOANIMCANCEL").GetValue<bool>() || Program.Champion.Orbwalker.ActiveMode != SCommon.Orbwalking.Orbwalker.Mode.None)
@@ -90,11 +91,34 @@ namespace SAutoCarry.Champions.Helpers
             {
                 s_CheckAA = false;
                 CanCastAnimation = true;
+
+                if (args.Target.IsValidTarget() && Program.Champion.ConfigMenu.Item("CSHYKEY").GetValue<KeyBind>().Active)
+                {
+                    if (ObjectManager.Player.HasBuff("RivenFengShuiEngine"))
+                    {
+                        {
+                            if (Program.Champion.Spells[3].IsReady()) //r2
+                            {
+                                Program.Champion.Spells[3].Cast(args.Target.Position);
+                                //(Program.Champion as Riven).CastCrescent(); 
+                                if (Program.Champion.Spells[0].IsReady())
+                                {
+                                    Program.Champion.Spells[0].Cast(args.Target.Position + (args.Target.Position - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
+                                    (Program.Champion as Riven).FastQCombo(true);
+                                }
+                                return;
+                            }
+                        }
+                    }
+                }
                  
                 if(args.Target.IsValidTarget() && !Program.Champion.Spells[0].IsReady() && Program.Champion.Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Mixed)
                 {
-                    if(Program.Champion.Spells[2].IsReady() && !Program.Champion.Spells[0].IsReady(1000) && Program.Champion.ConfigMenu.Item("HEMODE").GetValue<StringList>().SelectedIndex == 2)
+                    if (Program.Champion.Spells[2].IsReady() && !Program.Champion.Spells[0].IsReady(1000) && Program.Champion.ConfigMenu.Item("HEMODE").GetValue<StringList>().SelectedIndex == 2)
+                    {
                         Program.Champion.Spells[2].Cast(ObjectManager.Player.ServerPosition + (args.Target.Position - ObjectManager.Player.ServerPosition).Normalized() * -Program.Champion.Spells[2].Range);
+                        return;
+                    }
                 }
 
                 var t = Target.Get(Program.Champion.Spells[0].Range + 50, true);
@@ -105,6 +129,7 @@ namespace SAutoCarry.Champions.Helpers
                         Program.Champion.Orbwalker.ForcedTarget = t;
                         Program.Champion.Spells[0].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 40, true);
                         (Program.Champion as Riven).FastQCombo(true);
+                        return;
                     }
                 }
                 if (s_DoAttack && Program.Champion.Spells[0].IsReady())
@@ -123,6 +148,7 @@ namespace SAutoCarry.Champions.Helpers
                         //}
                         //else
                             Program.Champion.Spells[0].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 40, true);
+                            return;
                         //Program.Champion.Orbwalker.ResetAATimer();
 
                     }
@@ -138,19 +164,19 @@ namespace SAutoCarry.Champions.Helpers
                                 Program.Champion.Spells[0].Cast(minion.ServerPosition, true);
                                 //Program.Champion.Orbwalker.ResetAATimer();
                                 Program.Champion.Orbwalker.ForcedTarget = t;
+                                return;
                             }
                         }
                     }
                 }
                 else
                 {
-                    if(!Program.Champion.Spells[0].IsReady() && (Program.Champion.Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo || Program.Champion.Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Mixed || Program.Champion.ConfigMenu.Item("CSHYKEY").GetValue<KeyBind>().Active || Program.Champion.ConfigMenu.Item("CFLASHKEY").GetValue<KeyBind>().Active))
+                    if(!Program.Champion.Spells[0].IsReady() && !Program.Champion.Spells[1].IsReady() && !Program.Champion.Spells[3].IsReady() && (Program.Champion.Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo || Program.Champion.Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Mixed || Program.Champion.ConfigMenu.Item("CSHYKEY").GetValue<KeyBind>().Active || Program.Champion.ConfigMenu.Item("CFLASHKEY").GetValue<KeyBind>().Active))
                     {
                         if((Program.Champion as Riven).IsCrestcentReady)
                             (Program.Champion as Riven).CastCrescent();
                     }
                     SetAttack(false);
-
                 }
             }
 
@@ -172,7 +198,10 @@ namespace SAutoCarry.Champions.Helpers
             if(Program.Champion.Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo || Program.Champion.Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Mixed)
             {
                 if (!(Program.Champion as Riven).IsDoingFastQ && Program.Champion.Spells[1].IsReady() && args.Target.IsValidTarget(Program.Champion.Spells[1].Range))
+                {
+                    (Program.Champion as Riven).CastCrescent();
                     Program.Champion.Spells[1].Cast();
+                }
             }
         }
 
@@ -180,7 +209,8 @@ namespace SAutoCarry.Champions.Helpers
         {
             Program.Champion.Orbwalker.ResetAATimer();
             Game.Say("/d");
-            ObjectManager.Player.IssueOrder(GameObjectOrder.MoveTo, ObjectManager.Player.ServerPosition.Extend(Game.CursorPos, ObjectManager.Player.Distance(Game.CursorPos) + 10));
+            if(animname == "Spell2" || animname == "Spell1c")
+                ObjectManager.Player.IssueOrder(GameObjectOrder.MoveTo, ObjectManager.Player.ServerPosition.Extend(Game.CursorPos, ObjectManager.Player.Distance(Game.CursorPos) + 10));
             if (Program.Champion.Orbwalker.ActiveMode != SCommon.Orbwalking.Orbwalker.Mode.None || Program.Champion.ConfigMenu.Item("CSHYKEY").GetValue<KeyBind>().Active || Program.Champion.ConfigMenu.Item("CFLASHKEY").GetValue<KeyBind>().Active)
                 OnAnimationCastable(animname);
 

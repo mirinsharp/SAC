@@ -50,14 +50,14 @@ namespace SAutoCarry.Champions
         public override void CreateConfigMenu()
         {
             Menu combo = new Menu("Combo", "combo");
-            combo.AddItem(new MenuItem("CDISABLER", "Disable R Usage").SetValue(false))
+            combo.AddItem(new MenuItem("CDISABLER", "Disable R Usage").SetValue(new KeyBind('J', KeyBindType.Toggle)))
                     .ValueChanged += (s, ar) =>
                     {
-                        ConfigMenu.Item("CR1MODE").Show(!ar.GetNewValue<bool>());
-                        ConfigMenu.Item("CR2MODE").Show(!ar.GetNewValue<bool>());
+                        ConfigMenu.Item("CR1MODE").Show(!ar.GetNewValue<KeyBind>().Active);
+                        ConfigMenu.Item("CR2MODE").Show(!ar.GetNewValue<KeyBind>().Active);
                     };
-            combo.AddItem(new MenuItem("CR1MODE", "R1 Mode").SetValue(new StringList(new string[] { "Always", "If Killable With R2", "Smart" }))).Show(!combo.Item("CDISABLER").GetValue<bool>());
-            combo.AddItem(new MenuItem("CR2MODE", "R2 Mode").SetValue(new StringList(new string[] { "Always", "If Killable", "If Out of Range", "When Can Max Damage" }, 1))).Show(!combo.Item("CDISABLER").GetValue<bool>());
+            combo.AddItem(new MenuItem("CR1MODE", "R1 Mode").SetValue(new StringList(new string[] { "Always", "If Killable With R2", "Smart" }))).Show(!combo.Item("CDISABLER").GetValue<KeyBind>().Active);
+            combo.AddItem(new MenuItem("CR2MODE", "R2 Mode").SetValue(new StringList(new string[] { "Always", "If Killable", "If Out of Range", "When Can Max Damage" }, 1))).Show(!combo.Item("CDISABLER").GetValue<KeyBind>().Active);
             combo.AddItem(new MenuItem("CEMODE", "E Mode").SetValue(new StringList(new string[] { "E to enemy", "E Cursor Pos", "E to back off", "Dont Use E" }, 0)));
             combo.AddItem(new MenuItem("CUSEF", "Use Flash In Combo").SetValue(new KeyBind('G', KeyBindType.Toggle))).Permashow();
 
@@ -72,8 +72,8 @@ namespace SAutoCarry.Champions
                             ComboMethodBackup[((MenuItem)s).Name] = ar.GetNewValue<StringList>();
                     };
             }
-            comboType.AddItem(new MenuItem("CSHYKEY", "Set All Shy Burst While Pressing Key").SetValue(new KeyBind('T', KeyBindType.Press))).Permashow();
-            comboType.AddItem(new MenuItem("CFLASHKEY", "Set All Flash Combo While Pressing Key").SetValue(new KeyBind('Z', KeyBindType.Press))).Permashow();
+            comboType.AddItem(new MenuItem("CSHYKEY", "Set All Shy Burst While Pressing Key").SetValue(new KeyBind('T', KeyBindType.Press))).ValueChanged += (s, ar) => Orbwalker.Configuration.Combo = ar.GetNewValue<KeyBind>().Active;
+            comboType.AddItem(new MenuItem("CFLASHKEY", "Set All Flash Combo While Pressing Key").SetValue(new KeyBind('Z', KeyBindType.Press)));
             combo.AddSubMenu(comboType);
 
 
@@ -104,6 +104,7 @@ namespace SAutoCarry.Champions
             misc.AddItem(new MenuItem("MANTIGAPQ", "Try Anti Gap Closer With Ward & Q3").SetValue(false));
             misc.AddItem(new MenuItem("MAUTOANIMCANCEL", "Automatic cancel animation on manuel casts").SetValue(true));
             misc.AddItem(new MenuItem("DDRAWCOMBOMODE", "Draw Combo Mode").SetValue(true));
+            misc.AddItem(new MenuItem("DRAWULTSTATUS", "Draw Always R Status").SetValue(true));
 
             m_targetedEvader = new TargetedSpellEvader(TargetedSpell_Evade, misc);
             DamageIndicator.Initialize((t) => (float)CalculateComboDamage(t) + (float)CalculateDamageR2(t), misc);
@@ -153,7 +154,7 @@ namespace SAutoCarry.Champions
                     }
                 }
                 var target = Target.Get(1000);
-                //Orbwalker.Orbwalk(TargetSelector.SelectedTarget, Game.CursorPos);
+                //Orbwalker.Orbwalk(TargetSelector.SelectedTarget);
                 //Combo();
                 return;
             }
@@ -186,8 +187,6 @@ namespace SAutoCarry.Champions
                 }
             }
 
-            Orbwalker.Configuration.Combo = Orbwalker.Configuration.Combo || ConfigMenu.Item("CSHYKEY").GetValue<KeyBind>().Active || ConfigMenu.Item("CFLASHKEY").GetValue<KeyBind>().Active;
-
             if (ConfigMenu.Item("MKEEPQ").GetValue<bool>() && Animation.QStacks != 0 && Utils.TickCount - Animation.LastQTick >= 3500)
                 Spells[Q].Cast(Game.CursorPos);
         }
@@ -204,6 +203,12 @@ namespace SAutoCarry.Champions
                         Drawing.DrawText((int)text_pos.X - 20, (int)text_pos.Y + 35, System.Drawing.Color.Aqua, ConfigMenu.Item(String.Format("CMETHOD{0}", enemy.ChampionName)).GetValue<StringList>().SelectedValue);
                     }
                 }
+            }
+
+            if(ConfigMenu.Item("DRAWULTSTATUS").GetValue<bool>())
+            {
+                var text_pos = Drawing.WorldToScreen(ObjectManager.Player.Position);
+                Drawing.DrawText((int)text_pos.X - 20, (int)text_pos.Y + 35, System.Drawing.Color.Aqua, "Disable R Usage: " + (ConfigMenu.Item("CDISABLER").GetValue<KeyBind>().Active ? "On" : "Off"));
             }
         }
 
@@ -316,7 +321,7 @@ namespace SAutoCarry.Champions
 
         public bool CheckR1(Obj_AI_Hero t)
         {
-            if (!ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !ConfigMenu.Item("CDISABLER").GetValue<bool>() && Spells[R].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < 500 && Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
+            if (!ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !ConfigMenu.Item("CDISABLER").GetValue<KeyBind>().Active && Spells[R].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < 500 && Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
             {
                 if (ObjectManager.Player.GetSpellDamage(t, SpellSlot.Q) * 2 + ObjectManager.Player.GetSpellDamage(t, SpellSlot.W) + CalculateAADamage(t, 2) >= t.Health)
                     return false;
@@ -338,7 +343,7 @@ namespace SAutoCarry.Champions
 
         public bool CheckR2(Obj_AI_Hero t)
         {
-            if (ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !ConfigMenu.Item("CDISABLER").GetValue<bool>() && Spells[R].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < 900 && Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
+            if (ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !ConfigMenu.Item("CDISABLER").GetValue<KeyBind>().Active && Spells[R].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < 900 && Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
             {
                 switch (ConfigMenu.Item("CR2MODE").GetValue<StringList>().SelectedIndex)
                 {
@@ -404,18 +409,6 @@ namespace SAutoCarry.Champions
                     Animation.SetLastAATick(Utils.TickCount);
                 else if (args.SData.Name == "RivenTriCleave")
                     Orbwalker.ResetAATimer();
-                else if (args.SData.Name == "RivenFengShuiEngine")
-                {
-                    if(Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
-                    {
-                        var t = TargetSelector.GetTarget(350, TargetSelector.DamageType.Physical);
-                        if (Spells[W].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < Spells[W].Range + t.BoundingRadius + 75)
-                        {
-                            Spells[W].Cast(true);
-                            return;
-                        }
-                    }
-                }
             }
             else if (Target.Get(1000, true) != null)
             {

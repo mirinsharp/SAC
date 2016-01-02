@@ -70,7 +70,7 @@ namespace SAutoCarry.Champions.Helpers
         public static bool IsTargetFlashed()
         {
             if (s_Target == null)
-                throw new NullReferenceException("Target is null");
+                return false;
 
             return s_Flashed;
         }
