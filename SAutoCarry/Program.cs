@@ -15,7 +15,7 @@ namespace SAutoCarry
 
         static void Game_OnGameLoad(EventArgs args)
         {
-            switch(ObjectManager.Player.CharData.BaseSkinName)
+            switch(ObjectManager.Player.ChampionName)
             {
                 case "Vayne":
                     Champion = new Vayne();
@@ -75,6 +75,26 @@ namespace SAutoCarry
 
                 case "Blitzcrank":
                     Champion = new Blitzcrank();
+                    break;
+
+                case "Corki":
+                    Champion = new Corki();
+                    break;
+
+                case "DrMundo":
+                    Champion = new DrMundo();
+                    break;
+
+                case "Darius":
+                    Champion = new Darius();
+                    break;
+
+                case "MissFortune":
+                    Champion = new MissFortune();
+                    break;
+
+                case "Cassiopeia":
+                    Champion = new Cassiopeia();
                     break;
             }
         }

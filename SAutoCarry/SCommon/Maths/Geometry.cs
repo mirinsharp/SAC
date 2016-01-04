@@ -339,13 +339,20 @@ namespace SCommon.Maths
         /// <param name="radius">Circle radius</param>
         /// <param name="pointStart">Point start</param>
         /// <param name="pointEnd">Point end</param>
-        /// <returns></returns>
+        /// <returns>Closest point on a circle to the point</returns>
         internal static Vector2 ClosestCirclePoint(Vector2 center, float radius, Vector2 point)
         {
             Vector2 v = (point - center).Normalized();
             return center + v * radius;
         }
 
+        /// <summary>
+        /// Gets deviation of points by given angle
+        /// </summary>
+        /// <param name="point1">The point1.</param>
+        /// <param name="point2">The point2.</param>
+        /// <param name="angle">The angle.</param>
+        /// <returns></returns>
         internal static Vector2 Deviation(Vector2 point1, Vector2 point2, double angle)
         {
             angle *= Math.PI / 180.0;
@@ -357,6 +364,13 @@ namespace SCommon.Maths
             return result;
         }
 
+        /// <summary>
+        /// Checks if the point is between 2 points
+        /// </summary>
+        /// <param name="b">The point to check.</param>
+        /// <param name="a">The other point 1.</param>
+        /// <param name="c">The other point 2.</param>
+        /// <returns><c>true</c> if the point is between given 2 points</returns>
         internal static bool IsBetween(this Vector2 b, Vector2 a, Vector2 c)
         {
             return a.Distance(c) + c.Distance(b) - a.Distance(b) < float.Epsilon;

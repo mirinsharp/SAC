@@ -16,6 +16,9 @@ namespace SCommon.Database
         private static string[] s_SiegeMinionData = new [] { "Red_Minion_MechCannon", "Blue_Minion_MechCannon" };
         private static string[] s_NormalMinionData = new [] { "Red_Minion_Wizard", "Blue_Minion_Wizard", "Red_Minion_Basic", "Blue_Minion_Basic" };
 
+        /// <summary>
+        /// Initializes Data class
+        /// </summary>
         static Data()
         {
             GenerateHitBoxData();

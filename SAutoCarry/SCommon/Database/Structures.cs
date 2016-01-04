@@ -2,6 +2,9 @@
 
 namespace SCommon.Database
 {
+    /// <summary>
+    /// The ward data structure
+    /// </summary>
     public struct WardData
     {
         public string Name;
@@ -12,6 +15,9 @@ namespace SCommon.Database
         public int Duration;
     }
     
+    /// <summary>
+    /// The champion data structure
+    /// </summary>
     public struct ChampionData
     {
         public int ID;

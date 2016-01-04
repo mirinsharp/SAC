@@ -8,9 +8,19 @@ namespace SCommon.Evade
 {
     public static class TargetedSpellDetector
     {
+        /// <summary>
+        /// OnDeceted Event delegate
+        /// </summary>
+        /// <param name="args">The args.</param>
         public delegate void dOnDetected(DetectedTargetedSpellArgs args);
+        /// <summary>
+        /// The event which fired when targeted spell is detected
+        /// </summary>
         public static event dOnDetected OnDetected;
 
+        /// <summary>
+        /// Initializes TargetedSpellDetector class
+        /// </summary>
         static TargetedSpellDetector()
         {
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
@@ -18,6 +28,11 @@ namespace SCommon.Evade
                 SpellDatabase.InitalizeSpellDatabase();
         }
 
+        /// <summary>
+        /// OnProcessSpellCast Event which detects targeted spells to me
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The args.</param>
         private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             if(OnDetected != null && sender.IsChampion() && !sender.IsMe)
@@ -37,6 +52,9 @@ namespace SCommon.Evade
         }
     }
 
+    /// <summary>
+    /// DetectedTargetedSpellArgs class
+    /// </summary>
     public class DetectedTargetedSpellArgs : EventArgs
     {
         public Obj_AI_Base Caster;

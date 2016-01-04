@@ -40,6 +40,12 @@ namespace SCommon.Evade
         public ConcurrentQueue<DetectedSpellData> m_spell_queue = new ConcurrentQueue<DetectedSpellData>();
         public ConcurrentQueue<EvadeData> m_evade_queue = new ConcurrentQueue<EvadeData>();
 
+        /// <summary>
+        /// Evader constructor
+        /// </summary>
+        /// <param name="_evade">The evader menu.</param>
+        /// <param name="method">The evade method.</param>
+        /// <param name="spl">The evade spell.</param>
         public Evader(out Menu _evade, EvadeMethods method = EvadeMethods.None, Spell spl = null)
         {
             SpellDatabase.InitalizeSpellDatabase();
@@ -76,12 +82,21 @@ namespace SCommon.Evade
             Game.PrintChat("<font color='#ff3232'>SCommon: </font><font color='#d4d4d4'>Evader loaded for champion {0} !</font>", ObjectManager.Player.ChampionName);
         }
 
+        /// <summary>
+        /// Sets evade spell
+        /// </summary>
+        /// <param name="spl">The evade spell</param>
         public void SetEvadeSpell(Spell spl)
         {
             EvadeSpell = spl;
             evade.Item("EVADEENABLE").SetValue(true);
         }
 
+        /// <summary>
+        /// OnProcessSpellCast Event which detects skillshots
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The args.</param>
         private void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             if (evade != null && evade.Item("EVADEENABLE").GetValue<bool>() && sender.Type == GameObjectType.obj_AI_Hero)
@@ -114,6 +129,10 @@ namespace SCommon.Evade
             }
         }
 
+        /// <summary>
+        /// The Game.OnUpdate event
+        /// </summary>
+        /// <param name="args">The args.</param>
         private void Game_OnUpdate(EventArgs args)
         {
             if (ObjectManager.Player.IsDead || args == null)
@@ -138,6 +157,11 @@ namespace SCommon.Evade
             }
         }
 
+        /// <summary>
+        /// The callback when called spell hit detected
+        /// </summary>
+        /// <param name="direction">The skillshot direction.</param>
+        /// <param name="target">The target.</param>
         public void OnSpellHitDetected(Vector2 direction, Obj_AI_Base target)
         {
             EvadeData edata;
@@ -175,6 +199,9 @@ namespace SCommon.Evade
             m_evade_queue.Enqueue(edata);
         }
 
+        /// <summary>
+        /// The thread which detects spell hits
+        /// </summary>
         public void EvadeThread()
         {
             //TO DO: evade with targetted spells (jax, irelia, master etc..)
@@ -253,6 +280,12 @@ namespace SCommon.Evade
             }
         }
 
+        /// <summary>
+        /// Sets evade pos to near turret
+        /// </summary>
+        /// <param name="evade_pos">The raw evade pos.</param>
+        /// <param name="direction">The skillshot direction</param>
+        /// <returns></returns>
         private bool CorrectNearTurret(ref Vector2 evade_pos, Vector2 direction)
         {
             var turret = ObjectManager.Get<Obj_AI_Turret>().Where(p => p.IsAlly).MinOrDefault(q => q.ServerPosition.Distance(ObjectManager.Player.ServerPosition));
@@ -268,6 +301,12 @@ namespace SCommon.Evade
             return false;
         }
 
+        /// <summary>
+        /// Sets evade pos to less enemies
+        /// </summary>
+        /// <param name="evade_pos">The raw evade pos.</param>
+        /// <param name="direction">The skillshot direction</param>
+        /// <returns></returns>
         private bool CorrectLessEnemies(ref Vector2 evade_pos, Vector2 direction)
         {
             if (HeroManager.Enemies.Count(p => p.ServerPosition.To2D().Distance(ObjectManager.Player.ServerPosition.To2D() + direction * EvadeSpell.Range) <= ObjectManager.Player.BasicAttack.CastRange) > HeroManager.Enemies.Count(p => p.ServerPosition.To2D().Distance(ObjectManager.Player.ServerPosition.To2D() - direction * EvadeSpell.Range) <= ObjectManager.Player.BasicAttack.CastRange))

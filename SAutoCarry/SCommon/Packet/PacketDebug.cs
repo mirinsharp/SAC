@@ -15,6 +15,12 @@ namespace SCommon.Packet
         private static List<int> s_blockedOpcodes;
         private static int s_debugOnlyOpcode;
 
+        /// <summary>
+        /// Starts Packet Debugging
+        /// </summary>
+        /// <param name="debugSent">if <c>true</c>, debugs sent packets</param>
+        /// <param name="debugReceived">if <c>true</c>, debugs received packets</param>
+        /// <param name="onlyWithMyNetId">if <c>true</c>, debugs packets which has own hero's network id</param>
         public static void Start(bool debugSent, bool debugReceived, bool onlyWithMyNetId = false)
         {
             s_debugSent = debugSent;
@@ -34,6 +40,9 @@ namespace SCommon.Packet
             Game.OnChat += Game_OnChat;
         }
         
+        /// <summary>
+        /// Stops Packet Debugging
+        /// </summary>
         public static void Stop()
         {
             if (s_debugSent)
@@ -41,8 +50,14 @@ namespace SCommon.Packet
 
             if (s_debugReceived)
                 Game.OnProcessPacket -= Game_OnProcessPacket;
+
+            Game.OnChat -= Game_OnChat;
         }
 
+        /// <summary>
+        /// The event when called a packet sent to server
+        /// </summary>
+        /// <param name="args"></param>
         private static void Game_OnSendPacket(GamePacketEventArgs args)
         {
             if (s_blockedOpcodes.Contains(BitConverter.ToInt16(args.PacketData, 0)))
@@ -54,6 +69,10 @@ namespace SCommon.Packet
             HexDump(args.PacketData, 2, args.PacketData.Length - 2);
         }
 
+        /// <summary>
+        /// The event when called a packet received from server
+        /// </summary>
+        /// <param name="args"></param>
         private static void Game_OnProcessPacket(GamePacketEventArgs args)
         {
             if (s_blockedOpcodes.Contains(BitConverter.ToInt16(args.PacketData, 0)))
@@ -69,6 +88,10 @@ namespace SCommon.Packet
             }
         }
 
+        /// <summary>
+        /// Game.OnChat event for the command line
+        /// </summary>
+        /// <param name="args">The args.</param>
         private static void Game_OnChat(GameChatEventArgs args)
         {
             if(args.Sender.IsMe)

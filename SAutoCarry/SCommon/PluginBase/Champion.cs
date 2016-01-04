@@ -27,6 +27,13 @@ namespace SCommon.PluginBase
         public delegate void dVoidDelegate();
         public dVoidDelegate OnUpdate, OnDraw, OnCombo, OnHarass, OnLaneClear, OnLastHit;
 
+        /// <summary>
+        /// Champion constructor
+        /// </summary>
+        /// <param name="szChampName">The champion name.</param>
+        /// <param name="szMenuName">The menu name.</param>
+        /// <param name="enableRangeDrawings">if <c>true</c>, enables the spell range drawings</param>
+        /// <param name="enableEvader">if <c>true</c>, enables the spell evader if the champion is supported</param>
         public Champion(string szChampName, string szMenuName, bool enableRangeDrawings = true, bool enableEvader = true)
         {
             Text = new Font(Drawing.Direct3DDevice,
@@ -112,13 +119,21 @@ namespace SCommon.PluginBase
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Author", "SAutoCarry - Made By Synx"));
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.SupportedTitle", "Supported Champions: "));
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported1", "     ->Azir      "));
+            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported15", "  ->Blitzcrank   "));
+            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported19", "  ->Cassiopeia   "));
+            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported16", "    ->Corki     "));
+            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported17", "    ->Darius     "));
+            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported18", "   ->Dr.Mundo    "));
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported12", "     ->Jax       "));
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported2", "    ->Lucian     "));
+            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported13", "  ->Master Yi    "));
+            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported20", " ->Miss Fortune  "));
+            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported14", "   ->Orianna     "));
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported3", "   ->Pantheon    "));
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported4", "    ->Rengar     "));
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported5", "    ->Riven      "));
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported6", "   ->Shyvana     "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported9", " ->TwistedFate   "));
+            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported9", "  ->TwistedFate   "));
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported11", "    ->Twitch     "));
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported7", "    ->Vayne      "));
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported8", "    ->Veigar     "));
@@ -142,11 +157,17 @@ namespace SCommon.PluginBase
             ConfigMenu.AddSubMenu(credits);
         }
 
+        /// <summary>
+        /// Creates the config menu.
+        /// </summary>
         public virtual void CreateConfigMenu()
         {
             ConfigMenu.AddToMainMenu();
         }
 
+        /// <summary>
+        /// Sets spell values of the hero.
+        /// </summary>
         public virtual void SetSpells()
         {
             Spells[Q] = new Spell(SpellSlot.Q);
@@ -206,36 +227,68 @@ namespace SCommon.PluginBase
             }
         }
 
+        /// <summary>
+        /// The BeforeAttack event which called by orbwalker.
+        /// </summary>
+        /// <param name="args">The args.</param>
         protected virtual void Orbwalking_BeforeAttack(BeforeAttackArgs args)
         {
             //
         }
 
+        /// <summary>
+        /// The AfterAttack event which called by orbwalker.
+        /// </summary>
+        /// <param name="args">The args.</param>
         protected virtual void Orbwalking_AfterAttack(AfterAttackArgs args)
         {
             //
         }
 
+        /// <summary>
+        /// The AntiGapCloser event.
+        /// </summary>
+        /// <param name="gapcloser">The gapcloser.</param>
         protected virtual void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
             //
         }
 
+        /// <summary>
+        /// The OnPossibleToInterrupt event.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The args.</param>
         protected virtual void Interrupter_OnPossibleToInterrupt(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
         {
             //
         }
 
+        /// <summary>
+        /// The OnBuffAdd event
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The args.</param>
         protected virtual void Obj_AI_Base_OnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
         {
             //
         }
 
+        /// <summary>
+        /// The OnProcessSpellCast event
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The args.</param>
         protected virtual void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             //
         }
 
+        /// <summary>
+        /// The OnDash event
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The args.</param>
         protected virtual void Unit_OnDash(Obj_AI_Base sender, Dash.DashItem args)
         {
             //

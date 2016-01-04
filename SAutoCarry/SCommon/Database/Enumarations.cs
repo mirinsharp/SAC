@@ -2,6 +2,9 @@
 
 namespace SCommon.Database
 {
+    /// <summary>
+    /// Object Type Enum
+    /// </summary>
     public enum ObjectType
     {
         Ward,
@@ -9,6 +12,9 @@ namespace SCommon.Database
         Trap
     }
 
+    /// <summary>
+    /// Champion Role Enum
+    /// </summary>
     public enum ChampionRole
     {
         ADC = 1,

@@ -160,11 +160,21 @@ namespace SCommon.Orbwalking
             return 1 / unit.AttackDelay;
         }
 
+        /// <summary>
+        /// Gets the unit's scaling range
+        /// </summary>
+        /// <param name="unit">The unit.</param>
+        /// <returns></returns>
         public static float GetScalingRange(this Obj_AI_Hero unit)
         {
             return Math.Max(0, (unit.BBox.Minimum.Distance(unit.BBox.Maximum) - unit.GetOrginalHitBox())) / 2f;
         }
 
+        /// <summary>
+        /// Checks if the hero is non cancel champ
+        /// </summary>
+        /// <param name="name">The hero's name.</param>
+        /// <returns></returns>
         public static bool IsNonCancelChamp(string name)
         {
             return NoCancelChamps.Contains(name);

@@ -10,7 +10,12 @@ namespace SCommon.Evade
     {
         private Menu m_Menu;
         private Action<DetectedTargetedSpellArgs> m_fnEvade;
-
+        
+        /// <summary>
+        /// Initializes TargetedSpellEvader class
+        /// </summary>
+        /// <param name="fn">The evade function.</param>
+        /// <param name="menuToAttach">The menu to attach.</param>
         public TargetedSpellEvader(Action<DetectedTargetedSpellArgs> fn, Menu menuToAttach)
         {
             TargetedSpellDetector.OnDetected += TargetedSpellDetector_OnDetected;
@@ -28,16 +33,27 @@ namespace SCommon.Evade
             menuToAttach.AddSubMenu(m_Menu);
         }
 
+        /// <summary>
+        /// Registers evade function
+        /// </summary>
+        /// <param name="fn">The function.</param>
         public void RegisterEvadeFunction(Action<DetectedTargetedSpellArgs> fn)
         {
             m_fnEvade = fn;
         }
 
+        /// <summary>
+        /// Unregisters the evade function
+        /// </summary>
         public void UnregisterEvadeFunction()
         {
             m_fnEvade = null;
         }
 
+        /// <summary>
+        /// Event callback which fired when targeted spell is detected
+        /// </summary>
+        /// <param name="args">The args.</param>
         private void TargetedSpellDetector_OnDetected(DetectedTargetedSpellArgs args)
         {
             if (IsEnabled)
@@ -50,16 +66,25 @@ namespace SCommon.Evade
             }
         }
 
+        /// <summary>
+        /// Gets TargetedSpellEvader is enabled
+        /// </summary>
         public bool IsEnabled
         {
             get { return m_Menu.Item("SCommon.TargetedSpellEvader.Enabled").GetValue<bool>(); }
         }
 
+        /// <summary>
+        /// Gets TargetedSpellEvader is disabled while combo mode
+        /// </summary>
         public bool DisableInComboMode
         {
             get { return m_Menu.Item("SCommon.TargetedSpellEvader.DisableInCombo").GetValue<bool>(); }
         }
 
+        /// <summary>
+        /// Gets TargetedSpellEvader is enabled for only dangerous spells
+        /// </summary>
         public bool OnlyDangerous
         {
             get { return m_Menu.Item("SCommon.TargetedSpellEvader.OnlyDangerous").GetValue<bool>(); }

@@ -13,6 +13,9 @@ namespace SCommon.Orbwalking
 {
     public class Orbwalker
     {
+        /// <summary>
+        /// The Orbwalker mode enum.
+        /// </summary>
         public enum Mode
         {
             None,
@@ -53,6 +56,10 @@ namespace SCommon.Orbwalking
         private Func<AttackableUnit, bool> m_fnCanOrbwalkTarget;
         private Func<bool> m_fnShouldWait;
 
+        /// <summary>
+        /// The orbwalker constructor
+        /// </summary>
+        /// <param name="menuToAttach">The menu to attach.</param>
         public Orbwalker(Menu menuToAttach)
         {
             m_rnd = new Random();
@@ -232,6 +239,10 @@ namespace SCommon.Orbwalking
             m_Move = set;
         }
 
+        /// <summary>
+        /// Sets can orbwalk while channeling spell
+        /// </summary>
+        /// <param name="set">The orbwalker will orbwalk if the set is <c>false</c></param>
         public void SetChannelingWait(bool set)
         {
             m_channelingWait = set;
@@ -403,16 +414,28 @@ namespace SCommon.Orbwalking
             }
         }
        
+        /// <summary>
+        /// Gets AA Animation Time
+        /// </summary>
+        /// <returns></returns>
         private float GetAnimationTime()
         {
             return 1f / (ObjectManager.Player.GetAttackSpeed() * m_baseAttackSpeed);
         }
 
+        /// <summary>
+        /// Gets AA Windup Time
+        /// </summary>
+        /// <returns></returns>
         private float GetWindupTime()
         {
             return 1f / (ObjectManager.Player.GetAttackSpeed() * m_baseWindUp) + m_Configuration.ExtraWindup;
         }
 
+        /// <summary>
+        /// Orders move hero to given position
+        /// </summary>
+        /// <param name="pos"></param>
         private void Move(Vector3 pos)
         {
             if (!m_attackInProgress && CanMove() && (!CanAttack(60) || CanAttack()))
@@ -441,7 +464,10 @@ namespace SCommon.Orbwalking
             }
         }
         
-
+        /// <summary>
+        /// Orders attack hero to given target
+        /// </summary>
+        /// <param name="target"></param>
         private void Attack(AttackableUnit target)
         {
             if (m_lastAttackTick < Utils.TickCount && !m_attackInProgress)
@@ -454,6 +480,10 @@ namespace SCommon.Orbwalking
             }
         }
 
+        /// <summary>
+        /// Magnets the hero to given target
+        /// </summary>
+        /// <param name="target">The target.</param>
         private void Magnet(AttackableUnit target)
         {
             if (!m_attackInProgress && !CanOrbwalkTarget(target))
@@ -476,6 +506,10 @@ namespace SCommon.Orbwalking
                 OrbwalkingPoint = Vector3.Zero;
         }
 
+        /// <summary>
+        /// The event which called after an attack
+        /// </summary>
+        /// <param name="target">The target.</param>
         private void AfterAttack(AttackableUnit target)
         {
             m_lastWindUpEndTick = Utils.TickCount;
@@ -485,6 +519,10 @@ namespace SCommon.Orbwalking
             Events.FireAfterAttack(this, target);
         }
 
+        /// <summary>
+        /// Gets laneclear target
+        /// </summary>
+        /// <returns></returns>
         private Obj_AI_Base GetLaneClearTarget()
         {
             foreach (var minion in MinionManager.GetMinions(ObjectManager.Player.AttackRange + 100f).OrderByDescending(p => ObjectManager.Player.GetAutoAttackDamage(p)))
@@ -511,6 +549,10 @@ namespace SCommon.Orbwalking
             return null;
         }
 
+        /// <summary>
+        /// Gets jungleclear target
+        /// </summary>
+        /// <returns></returns>
         private Obj_AI_Base GetJungleClearTarget()
         {
             Obj_AI_Base mob = null;
@@ -543,6 +585,10 @@ namespace SCommon.Orbwalking
             return mob;
         }
 
+        /// <summary>
+        /// Finds the last hit minion
+        /// </summary>
+        /// <returns></returns>
         private Obj_AI_Base FindKillableMinion()
         {
             if (m_Configuration.SupportMode)
@@ -556,6 +602,10 @@ namespace SCommon.Orbwalking
             return null;
         }
 
+        /// <summary>
+        /// Checks if the orbwalker should wait to lasthit
+        /// </summary>
+        /// <returns><c>true</c> if should wait</returns>
         public bool ShouldWait()
         {
             if (m_towerTarget != null && m_towerTarget.IsValidTarget() && CanOrbwalkTarget(m_towerTarget) && !m_towerTarget.IsSiegeMinion())
@@ -586,7 +636,10 @@ namespace SCommon.Orbwalking
 
         }
 
-
+        /// <summary>
+        /// Gets orbwalker target
+        /// </summary>
+        /// <returns></returns>
         public AttackableUnit GetTarget()
         {
             bool wait = false;
@@ -689,46 +742,79 @@ namespace SCommon.Orbwalking
             return null;
         }
 
+
+        /// <summary>
+        /// Registers the CanAttack function
+        /// </summary>
+        /// <param name="fn">The function.</param>
         public void RegisterCanAttack(Func<bool> fn)
         {
             m_fnCanAttack = fn;
         }
 
+        /// <summary>
+        /// Registers the CanMove function
+        /// </summary>
+        /// <param name="fn">The function.</param>
         public void RegisterCanMove(Func<bool> fn)
         {
             m_fnCanMove = fn;
         }
 
+        /// <summary>
+        /// Registers the CanOrbwalkTarget function
+        /// </summary>
+        /// <param name="fn">The function.</param>
         public void RegisterCanOrbwalkTarget(Func<AttackableUnit, bool> fn)
         {
             m_fnCanOrbwalkTarget = fn;
         }
 
+        /// <summary>
+        /// Registers the ShouldWait function
+        /// </summary>
+        /// <param name="fn">The function</param>
         public void RegisterShouldWait(Func<bool> fn)
         {
             m_fnShouldWait = fn;
         }
 
+        /// <summary>
+        /// Unregisters the CanAttack function
+        /// </summary>
         public void UnRegisterCanAttack()
         {
             m_fnCanAttack = null;
         }
 
+        /// <summary>
+        /// Unregisters the CanMove function
+        /// </summary>
         public void UnRegisterCanMove()
         {
             m_fnCanMove = null;
         }
 
+        /// <summary>
+        /// Unregisters the CanOrbwalkTarget function
+        /// </summary>
         public void UnRegisterCanOrbwalkTarget()
         {
             m_fnCanOrbwalkTarget = null;
         }
 
+        /// <summary>
+        /// Unregisters the ShouldWait function
+        /// </summary>
         public void UnRegisterShouldWait()
         {
             m_fnShouldWait = null;
         }
 
+        /// <summary>
+        /// Game.OnUpdate event
+        /// </summary>
+        /// <param name="args">The args.</param>
         private void Game_OnUpdate(EventArgs args)
         {
             if (ActiveMode == Mode.None || (ObjectManager.Player.IsCastingInterruptableSpell(true) && m_channelingWait) || ObjectManager.Player.IsDead)
@@ -749,6 +835,11 @@ namespace SCommon.Orbwalking
             Orbwalk(t);
         }
 
+        /// <summary>
+        /// OnProcessSpellCast event for detect the auto attack and auto attack resets
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The args.</param>
         private void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             if (sender.IsMe)
@@ -798,6 +889,11 @@ namespace SCommon.Orbwalking
             }
         }
 
+        /// <summary>
+        /// OnNewPath event for the detect rengar leap
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void Obj_AI_Base_OnNewPath(Obj_AI_Base sender, GameObjectNewPathEventArgs args)
         {
             if (sender.IsMe && args.IsDash && sender.CharData.BaseSkinName == "Rengar")
@@ -815,6 +911,11 @@ namespace SCommon.Orbwalking
             }
         }
 
+        /// <summary>
+        /// OnDamage event for detect rengar leap's end
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void Obj_AI_Base_OnDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
         {
             if (args.SourceNetworkId == ObjectManager.Player.NetworkId && ObjectManager.Player.CharData.BaseSkinName == "Rengar" && m_rengarAttack)
@@ -824,6 +925,10 @@ namespace SCommon.Orbwalking
             }
         }
 
+        /// <summary>
+        /// AfterAttack event for detect after attack for heroes which has projectile
+        /// </summary>
+        /// <param name="data"></param>
         private void PacketHandler_AfterAttack(byte[] data)
         {
             if (BitConverter.ToInt32(data, 2) == ObjectManager.Player.NetworkId && m_IslastCastedAA)
@@ -833,6 +938,11 @@ namespace SCommon.Orbwalking
             }
         }
 
+        /// <summary>
+        /// OnDoCast event for detect after attack for heroes which hasnt projectile
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void Obj_AI_Base_OnDoCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             if (sender.IsMe)
@@ -842,6 +952,11 @@ namespace SCommon.Orbwalking
             }
         }
 
+        /// <summary>
+        /// OnBuffRemoveEvent for detect orbwalk value changes
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The args.</param>
         private void Obj_AI_Base_OnBuffRemove(Obj_AI_Base sender, Obj_AI_BaseBuffRemoveEventArgs args)
         {
             if (sender.IsMe)
@@ -855,6 +970,11 @@ namespace SCommon.Orbwalking
             }
         }
 
+        /// <summary>
+        /// OnBuffAdd for detect orbwalk value changes
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The args.</param>
         private void Obj_AI_Base_OnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
         {
             if (sender.IsMe)
@@ -865,6 +985,11 @@ namespace SCommon.Orbwalking
             }
         }
 
+        /// <summary>
+        /// OnPlayAnimation Event
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The args.</param>
         private void Obj_AI_Base_OnPlayAnimation(Obj_AI_Base sender, GameObjectPlayAnimationEventArgs args)
         {
             //if (sender.IsMe && m_attackInProgress && (args.Animation == "Run" || args.Animation == "Idle"))
@@ -874,12 +999,22 @@ namespace SCommon.Orbwalking
             //}
         }
 
+        /// <summary>
+        /// OnStopCast Event
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The args.</param>
         private void Spellbook_OnStopCast(Spellbook sender, SpellbookStopCastEventArgs args)
         {
             if (sender.Owner.IsValid && sender.Owner.IsMe && args.DestroyMissile && args.StopAnimation)
                 ResetAATimer();
         }
 
+        /// <summary>
+        /// OnIssueOrder event for detect attack cancels while winding up
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The args.</param>
         private void Obj_AI_Base_OnIssueOrder(Obj_AI_Base sender, GameObjectIssueOrderEventArgs args)
         {
             if (sender.IsMe && m_attackInProgress && args.Order == GameObjectOrder.MoveTo)

@@ -49,7 +49,7 @@ namespace SAutoCarry.Champions
             //
             Menu ult = new Menu("R Settings", "rsetting");
             ult.AddItem(new MenuItem("CUSER", "Use R").SetValue(true));
-            ult.AddItem(new MenuItem("CUSERMETHOD", "R Method").SetValue<StringList>(new StringList(new string[] { "Only If Will Hit >= X Method", "If Will Hit Toggle Selected", "SAC Smart R" }, 2))).ValueChanged += (s, ar) => ult.Item("CUSERHIT").Show(ar.GetNewValue<StringList>().SelectedIndex == 0);
+            ult.AddItem(new MenuItem("CUSERMETHOD", "R Method").SetValue<StringList>(new StringList(new string[] { "Only If Will Hit >= X Method", "If Will Hit Toggle Selected", "Smart R" }, 2))).ValueChanged += (s, ar) => ult.Item("CUSERHIT").Show(ar.GetNewValue<StringList>().SelectedIndex == 0);
             ult.AddItem(new MenuItem("CUSERHIT", "Use When Enemy Count >=").SetValue<Slider>(new Slider(3, 1, 5))).Show(ult.Item("CUSERMETHOD").GetValue<StringList>().SelectedIndex == 0);
             //
             combo.AddSubMenu(ult);

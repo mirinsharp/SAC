@@ -50,9 +50,6 @@ namespace SCommon.Orbwalking
             args.Instance = instance;
             args.Target = target;
 
-            //if (instance.ActiveMode == Orbwalker.Mode.None)
-            //    return args;
-
             if (BeforeAttack != null)
                 BeforeAttack(args);
 
@@ -74,9 +71,6 @@ namespace SCommon.Orbwalking
             args.Instance = instance;
             args.Target = target;
 
-            //if (instance.ActiveMode == Orbwalker.Mode.None)
-            //    return args;
-
             if (AfterAttack != null)
                 AfterAttack(args);
 
@@ -97,9 +91,6 @@ namespace SCommon.Orbwalking
             OnAttackArgs args = new OnAttackArgs();
             args.Instance = instance;
             args.Target = target;
-
-            //if (instance.ActiveMode == Orbwalker.Mode.None)
-            //    return args;
 
             if (OnAttack != null)
                 OnAttack(args);

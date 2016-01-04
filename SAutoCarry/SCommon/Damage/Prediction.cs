@@ -117,6 +117,11 @@ namespace SCommon.Damage
             return dmg;
         }
 
+        /// <summary>
+        /// Gets aggro count to the unit.
+        /// </summary>
+        /// <param name="unit">The unit.</param>
+        /// <returns></returns>
         public static int AggroCount(Obj_AI_Base unit)
         {
             return ActiveAttacks.Values.Count(p => p != null && p.Target != null && p.Target.NetworkId == unit.NetworkId);

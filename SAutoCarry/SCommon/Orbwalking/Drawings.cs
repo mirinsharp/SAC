@@ -6,14 +6,25 @@ namespace SCommon.Orbwalking
 {
     public class Drawings
     {
+        /// <summary>
+        /// The orbwalker instance.
+        /// </summary>
         private Orbwalker m_Instance;
 
+        /// <summary>
+        /// Drawings constructor
+        /// </summary>
+        /// <param name="instance">The orbwalker instance.</param>
         public Drawings(Orbwalker instance)
         {
             m_Instance = instance;
             Drawing.OnDraw += Drawing_OnDraw;
         }
 
+        /// <summary>
+        /// Drawing.OnDraw event.
+        /// </summary>
+        /// <param name="args">The args.</param>
         private void Drawing_OnDraw(EventArgs args)
         {
             if (m_Instance.Configuration.SelfAACircle.Active)

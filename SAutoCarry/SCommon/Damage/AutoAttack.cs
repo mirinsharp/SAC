@@ -12,6 +12,9 @@ namespace SCommon.Damage
         private static List<ItemPassive> ItemPassives;
         private static List<AAEnpower>[] AAEnpowers;
 
+        /// <summary>
+        /// Initializes AutoAttack class
+        /// </summary>
         static AutoAttack()
         {
             #region Item Passives
@@ -560,6 +563,12 @@ namespace SCommon.Damage
             return (float)Math.Floor(dmg) - 1f;
         }
 
+        /// <summary>
+        /// Calculates mastery passives 
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="target">The target.</param>
+        /// <returns></returns>
         private static float PassiveFlatMod(Obj_AI_Hero source, Obj_AI_Base target)
         {
             float value = 0f;
@@ -587,6 +596,13 @@ namespace SCommon.Damage
             return value;
         }
 
+        /// <summary>
+        /// Calculates physical damage
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="target">The target.</param>
+        /// <param name="amount">The amount</param>
+        /// <returns></returns>
         private static float CalcPhysicalDamage(Obj_AI_Hero source, Obj_AI_Base target, float amount)
         {
             int t = Environment.TickCount;
