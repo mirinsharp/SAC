@@ -6,7 +6,6 @@ using SCommon;
 using SCommon.PluginBase;
 using SCommon.Orbwalking;
 using SUtility.Drawings;
-using SAutoCarry.Champions.Helpers;
 using SharpDX;
 
 namespace SAutoCarry.Champions
@@ -18,7 +17,7 @@ namespace SAutoCarry.Champions
         public TwistedFate()
             : base ("TwistedFate", "SAutoCarry - Twisted Fate")
         {
-            CardMgr.Initialize(this);
+            Helpers.CardMgr.Initialize(this);
             OnCombo += Combo;
             OnHarass += Harass;
             OnDraw += BeforeDraw;
@@ -82,7 +81,7 @@ namespace SAutoCarry.Champions
 
                 if(Spells[W].IsReady() && ComboUseW)
                 {
-                    CardMgr.Select(FindCardToSelect(t));
+                    Helpers.CardMgr.Select(FindCardToSelect(t));
                 }
             }
         }
@@ -93,33 +92,33 @@ namespace SAutoCarry.Champions
             if (t != null)
             {
                 if (Spells[W].IsReady() && HarassUseW)
-                    CardMgr.Select(CardMgr.Card.Blue);
+                    Helpers.CardMgr.Select(Helpers.CardMgr.Card.Blue);
 
                 if (Spells[Q].IsReady() && HarassUseQ)
                     Spells[Q].Cast(t);
             }
         }
 
-        private CardMgr.Card FindCardToSelect(Obj_AI_Hero t)
+        private Helpers.CardMgr.Card FindCardToSelect(Obj_AI_Hero t)
         {
             var blueDamage = Spells[W].GetDamage(t);
             var redDamage = Spells[W].GetDamage(t, 1);
             var goldDamage = Spells[W].GetDamage(t, 2) + (Spells[Q].IsReady() && ObjectManager.Player.Mana - Spells[W].ManaCost - Spells[Q].ManaCost >= 0 ? Spells[Q].GetDamage(t) : 0);
 
             if (ObjectManager.Player.Mana - Spells[W].ManaCost < Spells[Q].ManaCost - 5 && ObjectManager.Player.CountAlliesInRange(1000) == 0 && Spells[Q].IsReady(1000))
-                return CardMgr.Card.Blue;
+                return Helpers.CardMgr.Card.Blue;
 
             if (t.HealthPercent - goldDamage > 0 && ObjectManager.Player.Mana - Spells[W].ManaCost - Spells[Q].ManaCost <= 0 && ObjectManager.Player.CountAlliesInRange(1000) == 0)
-                return CardMgr.Card.Blue;
+                return Helpers.CardMgr.Card.Blue;
 
             if (t.Health - blueDamage + 50 < 0)
-                return CardMgr.Card.Blue;
+                return Helpers.CardMgr.Card.Blue;
             /*else if (t.HealthPercent - redDamage + 50 < 0)
                 return CardMgr.Card.Red;*/
             else if (t.HealthPercent - goldDamage + 50 < 0)
-                return CardMgr.Card.Gold;
+                return Helpers.CardMgr.Card.Gold;
 
-            return CardMgr.Card.Gold;
+            return Helpers.CardMgr.Card.Gold;
         }
 
         #region Kortatu's Q Code
@@ -220,13 +219,13 @@ namespace SAutoCarry.Champions
         public void BeforeOrbwalk()
         {
             if (SelectGoldCard)
-                CardMgr.Select(CardMgr.Card.Gold);
+                Helpers.CardMgr.Select(Helpers.CardMgr.Card.Gold);
 
             if (SelectBlueCard)
-                CardMgr.Select(CardMgr.Card.Blue);
+                Helpers.CardMgr.Select(Helpers.CardMgr.Card.Blue);
 
             if (SelectRedCard)
-                CardMgr.Select(CardMgr.Card.Red);
+                Helpers.CardMgr.Select(Helpers.CardMgr.Card.Red);
         }
 
         public void BeforeDraw()
@@ -238,7 +237,7 @@ namespace SAutoCarry.Champions
         protected override void Orbwalking_BeforeAttack(BeforeAttackArgs args)
         {
             if (args.Target.Type == GameObjectType.obj_AI_Hero)
-                args.Process = CardMgr.CanProcessAttack;
+                args.Process = Helpers.CardMgr.CanProcessAttack;
         }
 
         protected override void Orbwalking_AfterAttack(AfterAttackArgs args)
@@ -249,12 +248,12 @@ namespace SAutoCarry.Champions
         protected override void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             if (sender.IsMe && args.SData.Name == "gate" && SelectGoldAfterR)
-                CardMgr.Select(CardMgr.Card.Gold);
+                Helpers.CardMgr.Select(Helpers.CardMgr.Card.Gold);
         }
 
         protected override void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
-            if((CardMgr.CurrentCard == CardMgr.Card.Gold || CardMgr.CurrentCard == CardMgr.Card.Red) && gapcloser.End.Distance(ObjectManager.Player.ServerPosition) < ObjectManager.Player.AttackRange && AntiGapCloser)
+            if ((Helpers.CardMgr.CurrentCard == Helpers.CardMgr.Card.Gold || Helpers.CardMgr.CurrentCard == Helpers.CardMgr.Card.Red) && gapcloser.End.Distance(ObjectManager.Player.ServerPosition) < ObjectManager.Player.AttackRange && AntiGapCloser)
             {
                 Orbwalker.ForcedTarget = gapcloser.Sender;
                 ObjectManager.Player.IssueOrder(GameObjectOrder.AttackUnit, gapcloser.Sender);
@@ -263,7 +262,7 @@ namespace SAutoCarry.Champions
 
         protected override void Interrupter_OnPossibleToInterrupt(Obj_AI_Hero sender, Interrupter2.InterruptableTargetEventArgs args)
         {
-            if (CardMgr.CurrentCard == CardMgr.Card.Gold && sender.Distance(ObjectManager.Player.ServerPosition) < ObjectManager.Player.AttackRange && Interrupter)
+            if (Helpers.CardMgr.CurrentCard == Helpers.CardMgr.Card.Gold && sender.Distance(ObjectManager.Player.ServerPosition) < ObjectManager.Player.AttackRange && Interrupter)
             {
                 Orbwalker.ForcedTarget = sender;
                 ObjectManager.Player.IssueOrder(GameObjectOrder.AttackUnit, sender);

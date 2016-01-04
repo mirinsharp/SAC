@@ -19,11 +19,11 @@ namespace SAutoCarry.Champions.Helpers
             s_Champion = champ;
             Menu tumble = new Menu("Tumble Settings", "SAutoCarry.Helpers.Tumble.Root");
             tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.Mode", "Mode").SetValue(new StringList(new[] { "Auto Pos", "Cursor Pos" })));
-            tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.Wall", "Always Tumble to wall if possible").SetValue(false));
+            tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.Wall", "Always Tumble to wall if possible").SetTooltip("Tumbles to wall when possible (fastest Q->AA burst)").SetValue(false));
             tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.Only2W", "Tumble only when enemy has 2 w stacks").SetValue(false));
             tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.Only2WHarass", "Tumble only when enemy has 2 w stacks in harass mode").SetValue(true));
-            tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.DontQIntoEnemy", "Dont Q Into Enemies").SetValue(false));
-            tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.DontSafeCheck", "Dont check tumble position is safe").SetValue(false));
+            tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.DontQIntoEnemy", "Dont Q Into Enemies").SetTooltip("if this option enabled, assembly wont go in AA range with Tumble").SetValue(false));
+            tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.DontSafeCheck", "Dont check tumble position is safe").SetTooltip("if this option enabled, assembly never checks if the tumble position is safe").SetValue(false));
             tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.WallTumble", "Wall Tumble").SetValue(new KeyBind('Y', KeyBindType.Press)));
             s_Champion.ConfigMenu.AddSubMenu(tumble);
             s_Rnd = new Random();
@@ -89,7 +89,7 @@ namespace SAutoCarry.Champions.Helpers
                     if (vec.CountEnemiesInRange(1000) > 1)
                         return Vector3.Zero;
                     else if (target.ServerPosition.To2D().Distance(vec) <= target.AttackRange / 2f)
-                        return SCommon.Maths.Geometry.Deviation(ObjectManager.Player.ServerPosition.To2D(), target.ServerPosition.To2D(), 65).To3D();
+                        return SCommon.Maths.Geometry.Deviation(ObjectManager.Player.ServerPosition.To2D(), target.ServerPosition.To2D(), 60).To3D();
                 }
 
                 if (((DontQIntoEnemies || target.IsMelee) && HeroManager.Enemies.Any(p => p.ServerPosition.To2D().Distance(vec) <= p.AttackRange + ObjectManager.Player.BoundingRadius + (p.IsMelee ? 100 : 0))) || vec.UnderTurret(true))

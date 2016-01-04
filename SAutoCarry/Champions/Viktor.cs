@@ -9,7 +9,6 @@ using SCommon.PluginBase;
 using SCommon.Orbwalking;
 using SCommon.Prediction;
 using SUtility.Drawings;
-using SAutoCarry.Champions.Helpers;
 using SharpDX;
 
 namespace SAutoCarry.Champions

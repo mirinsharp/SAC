@@ -20,14 +20,14 @@ namespace SAutoCarry.Champions.Helpers
             Menu condemn = new Menu("Condemn Settings", "SAutoCarry.Helpers.Condemn.Root");
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.AntiGapCloser", "Use Condemn to Gapclosers").SetValue(false));
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.Interrupter", "Use Condemn to Interrupt spells").SetValue(false));
-            condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.TumbleCondemn", "Q->E when possible").SetValue(true)).ValueChanged += 
+            condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.TumbleCondemn", "Q->E when possible").SetTooltip("if this option enabled, assembly will try to do tumble and condemn (this option may drop fps while E is up)").SetValue(true)).ValueChanged += 
                 (s, ar) =>
                 {
                     condemn.Item("SAutoCarry.Helpers.Condemn.Root.TumbleCondemnSafe").Show(ar.GetNewValue<bool>());
                 };
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.TumbleCondemnSafe", "Only Q->E when tumble position is safe").SetValue(false)).Show(condemn.Item("SAutoCarry.Helpers.Condemn.Root.TumbleCondemn").GetValue<bool>());
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.FlashCondemn", "Condemn->Flash selected target").SetValue(new KeyBind('T', KeyBindType.Press)));
-            condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.DontCondemnTurret", "Dont Condemn Under Turret").SetValue(true));
+            condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.DontCondemnTurret", "Dont Condemn Under Turret").SetTooltip("if this option enabled, enemy wont condemned under his allied tower").SetValue(true));
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.PushDistance", "Push Distance").SetValue(new Slider(400, 300, 470)));
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.Draw", "Draw").SetValue(true));
             Menu whitelist = new Menu("Whitelist", "SAutoCarry.Helpers.Condemn.WhiteList");

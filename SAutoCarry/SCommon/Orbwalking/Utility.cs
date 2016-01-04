@@ -56,7 +56,7 @@ namespace SCommon.Orbwalking
         {
             Obj_AI_Base unit = CorrectUnit(_unit);
             if (unit.CharData.BaseSkinName == "Azir")
-                return 950f;
+                return 1000f;
             return unit.AttackRange + unit.BoundingRadius;
         }
 

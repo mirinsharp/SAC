@@ -167,6 +167,8 @@ namespace SAutoCarry.Champions.Helpers
                             if (!Me.Spells[E].IsReady() && Me.Spells[Q].IsReady() && Utils.TickCount - Animation.LastETick < 1000)
                                 return;
                         }
+                        if (Me.Spells[E].IsReady() && ObjectManager.Player.Distance(t.ServerPosition) > 125 && Me.ConfigMenu.Item("CALWAYSE").GetValue<bool>())
+                            Me.Spells[E].Cast(t.ServerPosition);
                         Me.CastCrescent();
                         Me.Spells[W].Cast(true);
                     }
@@ -234,12 +236,17 @@ namespace SAutoCarry.Champions.Helpers
                         }
                         else if (animname == "Spell4b")
                         {
-                            if (Me.Spells[Q].IsReady())
+                            Utility.DelayAction.Add(100, () =>
                             {
-                                Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
-                                if (!Me.IsDoingFastQ)
-                                    Me.FastQCombo();
-                            }
+                                if (Me.IsCrestcentReady)
+                                    Me.CastCrescent();
+                                if (Me.Spells[Q].IsReady())
+                                {
+                                    Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
+                                    if (!Me.IsDoingFastQ)
+                                        Me.FastQCombo();
+                                }
+                            });
                         }
                         else if (animname == "Spell2")
                         {
@@ -260,7 +267,7 @@ namespace SAutoCarry.Champions.Helpers
                 t = Target.Get(1000);
                 if (t != null)
                 {
-                    if (Me.Spells[E].IsReady() && ObjectManager.Player.ServerPosition.Distance(t.ServerPosition) <= Me.Spells[E].Range + 400 + Me.Spells[W].Range / 2f && !ObjectManager.Player.HasBuff("RivenFengShuiEngine"))
+                    if (Me.Spells[E].IsReady() && ObjectManager.Player.ServerPosition.Distance(t.ServerPosition) <= 700 && !ObjectManager.Player.HasBuff("RivenFengShuiEngine"))
                     {
                         Me.Spells[E].Cast(t.ServerPosition);
                         if (!Me.ConfigMenu.Item("CDISABLER").GetValue<KeyBind>().Active && Me.Spells[R].IsReady())
@@ -290,7 +297,7 @@ namespace SAutoCarry.Champions.Helpers
                     case "Spell4a": //r flash
                         {
                             if (t.Distance(ObjectManager.Player.ServerPosition) > 300)
-                            {
+                            {   
                                 ObjectManager.Player.Spellbook.CastSpell(Me.SummonerFlash, t.ServerPosition);
                                 Me.CastCrescent();
                             }
@@ -298,20 +305,24 @@ namespace SAutoCarry.Champions.Helpers
                         break;
                     case "Spell4b":
                         {
-                            if (Me.Spells[Q].IsReady())
-                            {
-                                //Me.CastCrescent();
-                                Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
-                                if (!Me.IsDoingFastQ)
-                                    Me.FastQCombo();
-                            }
+                            Utility.DelayAction.Add(100, () =>
+                                {
+                                    if (Me.IsCrestcentReady)
+                                        Me.CastCrescent();
+                                    if (Me.Spells[Q].IsReady())
+                                    {
+                                        Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
+                                        if (!Me.IsDoingFastQ)
+                                            Me.FastQCombo();
+                                    }
+                                });
                         }
                         break;
                     case "Spell2":
                         {
                             if (Me.Spells[Q].IsReady())
                             {
-                                Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
+                                Me.Spells[Q].Cast(t.ServerPosition, true);
                             }
                         }
                         break;

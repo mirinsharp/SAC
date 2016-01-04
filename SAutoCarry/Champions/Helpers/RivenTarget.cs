@@ -74,5 +74,10 @@ namespace SAutoCarry.Champions.Helpers
 
             return s_Flashed;
         }
+
+        public static bool HasTarget()
+        {
+            return s_Target != null;
+        }
     }
 }

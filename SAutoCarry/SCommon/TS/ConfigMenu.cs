@@ -22,7 +22,7 @@ namespace SCommon.TS
 
             s_Config.AddItem(new MenuItem("TargetSelector.Root.iTargettingMode", "Targetting Mode").SetValue(new StringList(new[] { "Auto", "Low HP", "Most AD", "Most AP", "Closest", "Near Mouse", "Less Attack", "Less Cast" }, 0)));
 
-            menuToAttach.AddSubMenu(s_Config);
+            //menuToAttach.AddSubMenu(s_Config);
         }
 
         /// <summary>

@@ -68,6 +68,14 @@ namespace SAutoCarry
                 case "MasterYi":
                     Champion = new MasterYi();
                     break;
+
+                case "Orianna":
+                    Champion = new Orianna();
+                    break;
+
+                case "Blitzcrank":
+                    Champion = new Blitzcrank();
+                    break;
             }
         }
     }

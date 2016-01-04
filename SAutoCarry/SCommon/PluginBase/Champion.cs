@@ -96,6 +96,7 @@ namespace SCommon.PluginBase
                         break;
                     case "zed":
                     case "leblanc":
+                    case "corki":
                         evader = new Evader(out evaderMenu, Database.EvadeMethods.Dash, Spells[W]);
                         break;
                     case "vayne":

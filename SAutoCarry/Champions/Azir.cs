@@ -7,7 +7,6 @@ using SCommon;
 using SCommon.PluginBase;
 using SCommon.Prediction;
 using SCommon.Orbwalking;
-using SAutoCarry.Champions.Helpers;
 using SharpDX;
 //typedefs
 //using TargetSelector = SCommon.TS.TargetSelector;
@@ -22,7 +21,7 @@ namespace SAutoCarry.Champions
         public Azir()
             : base("Azir", "SAutoCarry - Azir")
         {
-            SoldierMgr.Initialize(this);
+            Helpers.SoldierMgr.Initialize(this);
             Orbwalker.RegisterShouldWait(ShouldWait);
             Orbwalker.RegisterCanAttack(CanAttack);
             Orbwalker.RegisterCanOrbwalkTarget(CanOrbwalkTarget);
@@ -125,7 +124,7 @@ namespace SAutoCarry.Champions
 
                 if (ComboUseQ && Spells[Q].IsReady() && ShouldCast(SpellSlot.Q, t))
                 {
-                    foreach (var soldier in SoldierMgr.ActiveSoldiers)
+                    foreach (var soldier in Helpers.SoldierMgr.ActiveSoldiers)
                     {
                         if (ObjectManager.Player.ServerPosition.Distance(t.ServerPosition) < Spells[Q].Range)
                         {
@@ -148,7 +147,7 @@ namespace SAutoCarry.Champions
             {
                 if (ComboUseE && Spells[E].IsReady() && ShouldCast(SpellSlot.E, extendedTarget))
                 {
-                    foreach (var soldier in SoldierMgr.ActiveSoldiers)
+                    foreach (var soldier in Helpers.SoldierMgr.ActiveSoldiers)
                     {
                         if (Spells[E].WillHit(extendedTarget, soldier.Position))
                         {
@@ -174,7 +173,7 @@ namespace SAutoCarry.Champions
 
             if (HarassUseQ && Spells[Q].IsReady() && ShouldCast(SpellSlot.Q, t))
             {
-                foreach (var soldier in SoldierMgr.ActiveSoldiers)
+                foreach (var soldier in Helpers.SoldierMgr.ActiveSoldiers)
                 {
                     if (ObjectManager.Player.ServerPosition.Distance(t.ServerPosition) < Spells[Q].Range)
                     {
@@ -191,14 +190,14 @@ namespace SAutoCarry.Champions
             if (ObjectManager.Player.ManaPercent < LaneClearMinMana || !LaneClearToggle)
                 return;
 
-            if (Utils.TickCount - lastLaneClearTick > 100 && !Orbwalker.ShouldWait())
+            if (Utils.TickCount - lastLaneClearTick > 250 && !Orbwalker.ShouldWait())
             {
                 if (LaneClearUseW && Spells[W].IsReady() && Spells[W].Instance.Ammo != 0)
                 {
-                    var minions = MinionManager.GetMinions(Spells[W].Range + SoldierMgr.SoldierAttackRange / 2f);
+                    var minions = MinionManager.GetMinions(Spells[W].Range + Helpers.SoldierMgr.SoldierAttackRange / 2f);
                     if (minions.Count > 1)
                     {
-                        var loc = MinionManager.GetBestCircularFarmLocation(minions.Select(p => p.ServerPosition.To2D()).ToList(), SoldierMgr.SoldierAttackRange, Spells[W].Range);
+                        var loc = MinionManager.GetBestCircularFarmLocation(minions.Select(p => p.ServerPosition.To2D()).ToList(), Helpers.SoldierMgr.SoldierAttackRange, Spells[W].Range);
                         if (loc.MinionsHit > 2)
                             Spells[W].Cast(loc.Position);
                     }
@@ -206,7 +205,7 @@ namespace SAutoCarry.Champions
 
                 if (LaneClearUseQ && Spells[Q].IsReady())
                 {
-                    MinionManager.FarmLocation bestfarm = MinionManager.GetBestCircularFarmLocation(MinionManager.GetMinions(Spells[Q].Range + 100).Select(p => p.ServerPosition.To2D()).ToList(), SoldierMgr.SoldierAttackRange, Spells[Q].Range + 100);
+                    MinionManager.FarmLocation bestfarm = MinionManager.GetBestCircularFarmLocation(MinionManager.GetMinions(Spells[Q].Range + 100).Select(p => p.ServerPosition.To2D()).ToList(), Helpers.SoldierMgr.SoldierAttackRange, Spells[Q].Range + 100);
                     if (bestfarm.MinionsHit >= LaneClearQMinMinion)
                         Spells[Q].Cast(bestfarm.Position);
                 }
@@ -243,14 +242,14 @@ namespace SAutoCarry.Champions
 
         public void KillSteal()
         {
-            if (!Spells[Q].IsReady() || (SoldierMgr.ActiveSoldiers.Count == 0 && !Spells[W].IsReady()))
+            if (!Spells[Q].IsReady() || (Helpers.SoldierMgr.ActiveSoldiers.Count == 0 && !Spells[W].IsReady()))
                 return;
 
             foreach (Obj_AI_Hero target in HeroManager.Enemies.Where(x => x.IsValidTarget(Spells[Q].Range + 100) && !x.HasBuffOfType(BuffType.Invulnerability)))
             {
                 if ((ObjectManager.Player.GetSpellDamage(target, SpellSlot.Q)) > target.Health + 20)
                 {
-                    if (SoldierMgr.ActiveSoldiers.Count == 0)
+                    if (Helpers.SoldierMgr.ActiveSoldiers.Count == 0)
                         Spells[W].Cast(ObjectManager.Player.Position.To2D().Extend(target.Position.To2D(), 450));
                     else
                         Spells[Q].SPredictionCast(target, HitChance.High);
@@ -267,7 +266,7 @@ namespace SAutoCarry.Champions
                 if (!JumpTo.IsValid())
                     JumpTo = pos.To2D();
 
-                if (Spells[W].IsReady() && SoldierMgr.ActiveSoldiers.Count == 0)
+                if (Spells[W].IsReady() && Helpers.SoldierMgr.ActiveSoldiers.Count == 0)
                 {
                     if (juke)
                     {
@@ -288,9 +287,9 @@ namespace SAutoCarry.Champions
                     Spells[W].Cast(extended);
                 }
 
-                if (SoldierMgr.ActiveSoldiers.Count > 0 && Spells[Q].IsReady())
+                if (Helpers.SoldierMgr.ActiveSoldiers.Count > 0 && Spells[Q].IsReady())
                 {
-                    var closestSoldier = SoldierMgr.ActiveSoldiers.MinOrDefault(s => s.Position.To2D().Distance(extended, true));
+                    var closestSoldier = Helpers.SoldierMgr.ActiveSoldiers.MinOrDefault(s => s.Position.To2D().Distance(extended, true));
                     CastELocation = closestSoldier.Position.To2D();
                     CastQLocation = closestSoldier.Position.To2D().Extend(JumpTo, 800f);
 
@@ -362,10 +361,10 @@ namespace SAutoCarry.Champions
             {
                 case SpellSlot.Q:
                     {
-                        if (ComboUseQOnlyOutOfRange && SoldierMgr.InAARange(target))
+                        if (ComboUseQOnlyOutOfRange && Helpers.SoldierMgr.InAARange(target))
                             return false;
 
-                        if (SoldierMgr.ActiveSoldiers.Count == 0)
+                        if (Helpers.SoldierMgr.ActiveSoldiers.Count == 0)
                             return false;
 
                         if (ComboUseQWhenNoWAmmo && Spells[W].Instance.Ammo != 0)
@@ -379,7 +378,7 @@ namespace SAutoCarry.Champions
                         if (Spells[W].Instance.Ammo == 0)
                             return false;
 
-                        if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Mixed && SoldierMgr.ActiveSoldiers.Count >= HarassMaxSoldierCount)
+                        if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Mixed && Helpers.SoldierMgr.ActiveSoldiers.Count >= HarassMaxSoldierCount)
                             return false;
 
                         return true;
@@ -434,13 +433,12 @@ namespace SAutoCarry.Champions
                     .Any(
                         minion =>
                             (minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
-                            ObjectManager.Get<Obj_AI_Turret>().Any(p => p.IsValidTarget(1000, false, minion.ServerPosition) && p.IsAlly) &&
-                            (SoldierMgr.InAARange(minion) || SCommon.Orbwalking.Utility.InAARange(minion)) && MinionManager.IsMinion(minion, false) &&
-                            (minion.Health - SCommon.Damage.Prediction.GetPrediction(minion, ObjectManager.Player.AttackDelay * 1000f * 2f, true) <= SCommon.Damage.AutoAttack.GetDamage(minion, true) * (int)(Math.Ceiling(SCommon.Damage.Prediction.AggroCount(minion) / 2f)))));
+                            (Helpers.SoldierMgr.InAARange(minion) || SCommon.Orbwalking.Utility.InAARange(minion)) && MinionManager.IsMinion(minion, false) &&
+                            (minion.Health - SCommon.Damage.Prediction.GetPrediction(minion, ObjectManager.Player.AttackDelay * 1000f * 2f + ObjectManager.Player.AttackCastDelay * 1000f, true) <= SCommon.Damage.AutoAttack.GetDamage(minion, true) * (int)(Math.Ceiling(SCommon.Damage.Prediction.AggroCount(minion) / 2f)))));
         }
         private bool CanAttack()
         {
-            if (SoldierMgr.SoldierAttacking)
+            if (Helpers.SoldierMgr.SoldierAttacking)
                 return false;
 
             return Utils.TickCount + Game.Ping / 2 - Orbwalker.LastAATick >= 1000 / (ObjectManager.Player.GetAttackSpeed() * Orbwalker.BaseAttackSpeed);
@@ -452,9 +450,9 @@ namespace SAutoCarry.Champions
             {
                 if (target is Obj_AI_Base)
                 {
-                    foreach (var soldier in SoldierMgr.ActiveSoldiers)
+                    foreach (var soldier in Helpers.SoldierMgr.ActiveSoldiers)
                     {
-                        if (ObjectManager.Player.Distance(soldier.Position) < 950 && target.Position.Distance(soldier.Position) < SoldierMgr.SoldierAttackRange)
+                        if (ObjectManager.Player.Distance(soldier.Position) < 950 && target.Position.Distance(soldier.Position) < Helpers.SoldierMgr.SoldierAttackRange)
                             return true;
                     }
                 }
@@ -512,7 +510,7 @@ namespace SAutoCarry.Champions
 
         public override double CalculateDamageW(Obj_AI_Hero target)
         {
-            return SoldierMgr.GetAADamage(target);
+            return Helpers.SoldierMgr.GetAADamage(target);
         }
 
 

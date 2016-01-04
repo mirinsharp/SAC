@@ -96,7 +96,7 @@ namespace SAutoCarry.Champions.Helpers
             {
                 foreach(var soldier in s_Soldiers)
                 {
-                    if (ObjectManager.Player.ServerPosition.Distance(soldier.Position) < 950)
+                    if (ObjectManager.Player.ServerPosition.Distance(soldier.Position) < 1000f)
                         Render.Circle.DrawCircle(soldier.Position, SoldierAttackRange, it.Color);
                 }
             }

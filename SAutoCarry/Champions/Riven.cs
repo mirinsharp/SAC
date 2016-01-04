@@ -41,7 +41,7 @@ namespace SAutoCarry.Champions
             Obj_AI_Hero.OnPlayAnimation += Animation.OnPlay;
             Animation.OnAnimationCastable += Animation_OnAnimationCastable;
             Game.OnWndProc += Game_OnWndProc;
-            SCommon.Prediction.Prediction.predMenu.Item("SPREDDRAWINGS").SetValue(false);
+            //SCommon.Prediction.Prediction.predMenu.Item("SPREDDRAWINGS").SetValue(false);
 
             IsDoingFastQ = false;
             //Orbwalker.Configuration.DontMoveInRange = true;
@@ -59,6 +59,7 @@ namespace SAutoCarry.Champions
             combo.AddItem(new MenuItem("CR1MODE", "R1 Mode").SetValue(new StringList(new string[] { "Always", "If Killable With R2", "Smart" }))).Show(!combo.Item("CDISABLER").GetValue<KeyBind>().Active);
             combo.AddItem(new MenuItem("CR2MODE", "R2 Mode").SetValue(new StringList(new string[] { "Always", "If Killable", "If Out of Range", "When Can Max Damage" }, 1))).Show(!combo.Item("CDISABLER").GetValue<KeyBind>().Active);
             combo.AddItem(new MenuItem("CEMODE", "E Mode").SetValue(new StringList(new string[] { "E to enemy", "E Cursor Pos", "E to back off", "Dont Use E" }, 0)));
+            combo.AddItem(new MenuItem("CALWAYSE", "Always Start Combo With E").SetTooltip("for better combo executing").SetValue(false));
             combo.AddItem(new MenuItem("CUSEF", "Use Flash In Combo").SetValue(new KeyBind('G', KeyBindType.Toggle))).Permashow();
 
             Menu comboType = new Menu("Combo Methods", "combomethod");
@@ -122,7 +123,7 @@ namespace SAutoCarry.Champions
         public override void SetSpells()
         {
             Spells[Q] = new Spell(SpellSlot.Q, 260f);
-            Spells[W] = new Spell(SpellSlot.W, 240f);
+            Spells[W] = new Spell(SpellSlot.W, 230f);
             Spells[E] = new Spell(SpellSlot.E, 270f);
             Spells[R] = new Spell(SpellSlot.R, 900f);
             Spells[R].SetSkillshot(0.25f, 225f, 1600f, false, SkillshotType.SkillshotCone);
@@ -312,6 +313,8 @@ namespace SAutoCarry.Champions
                     {
                         if (!Spells[W].IsReady(1000))
                             CastCrescent();
+                        if (Spells[E].IsReady() && ObjectManager.Player.Distance(t.ServerPosition) > 125 && ConfigMenu.Item("CALWAYSE").GetValue<bool>())
+                            Spells[E].Cast(t.ServerPosition);
                         Spells[Q].Cast(t.ServerPosition);
                     }
                     IsDoingFastQ = true;
@@ -409,6 +412,21 @@ namespace SAutoCarry.Champions
                     Animation.SetLastAATick(Utils.TickCount);
                 else if (args.SData.Name == "RivenTriCleave")
                     Orbwalker.ResetAATimer();
+                else if (args.SData.Name == "rivenizunablade")
+                {
+                    //if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo || ConfigMenu.Item("CSHYKEY").GetValue<KeyBind>().Active)
+                    //{
+                    //    if (Spells[W].IsReady() && Target.Get(Spells[W].Range) != null)
+                    //        Spells[W].Cast();
+                    //    else if (Spells[Q].IsReady() && Target.Get(800) != null)
+                    //    {
+                    //        Spells[Q].Cast(Target.Get(800).ServerPosition);
+                    //        if (!IsDoingFastQ)
+                    //            FastQCombo(true);
+                    //    }
+                    //    Orbwalker.ResetAATimer();
+                    //}
+                }
             }
             else if (Target.Get(1000, true) != null)
             {

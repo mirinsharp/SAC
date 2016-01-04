@@ -356,5 +356,10 @@ namespace SCommon.Maths
             result = Vector2.Add(result, point1);
             return result;
         }
+
+        internal static bool IsBetween(this Vector2 b, Vector2 a, Vector2 c)
+        {
+            return a.Distance(c) + c.Distance(b) - a.Distance(b) < float.Epsilon;
+        }
     }
 }

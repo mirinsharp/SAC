@@ -497,7 +497,7 @@ namespace SCommon.Orbwalking
                     if (HealthPrediction.GetHealthPrediction(minion, t, 30) > 2 * Damage.AutoAttack.GetDamage(minion, true) || Damage.Prediction.IsLastHitable(minion))
                     {
                         //check if minion is about to be attacked
-                        if (Damage.Prediction.AggroCount(minion) == 0 && ObjectManager.Get<Obj_AI_Minion>().Any(p => p.IsEnemy && MinionManager.IsMinion(p) && p.ServerPosition.Distance(minion.ServerPosition) < p.AttackRange - p.MoveSpeed * (ObjectManager.Player.AttackDelay * 2f) && p.Path.Length > 0))
+                        if (Damage.Prediction.AggroCount(minion) == 0 && ObjectManager.Get<Obj_AI_Minion>().Any(p => p.IsEnemy && !p.IsMelee && MinionManager.IsMinion(p) && p.ServerPosition.Distance(minion.ServerPosition) - p.AttackRange < p.MoveSpeed * (ObjectManager.Player.AttackDelay * 2f) && p.Path.Length > 0))
                             continue;
 
                         return minion;
@@ -670,7 +670,7 @@ namespace SCommon.Orbwalking
                     float range = -1;
                     range = (ObjectManager.Player.IsMelee && m_Configuration.MagnetMelee && m_Configuration.StickRange > ObjectManager.Player.AttackRange) ? m_Configuration.StickRange : -1;
                     if (ObjectManager.Player.CharData.BaseSkinName == "Azir")
-                        range = 950f;
+                        range = 1000f;
                     var target = TargetSelector.GetTarget(range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                     if (target.IsValidTarget() && (Utility.InAARange(target) || (ActiveMode != Mode.LaneClear && ObjectManager.Player.IsMelee && m_Configuration.MagnetMelee && target.IsValidTarget(m_Configuration.StickRange))))
                         return target;

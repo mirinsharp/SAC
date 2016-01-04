@@ -8,6 +8,7 @@ using SCommon.Database;
 using SCommon.PluginBase;
 using SCommon.Prediction;
 using SCommon.Orbwalking;
+using SCommon.Maths;
 using SUtility.Drawings;
 using SharpDX;
 
@@ -133,7 +134,28 @@ namespace SAutoCarry.Champions
 
         public void WardJump()
         {
+            ObjectManager.Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
 
+            if (Spells[Q].IsReady())
+            {
+                var poly = ClipperWrapper.DefineCircle(ObjectManager.Player.ServerPosition.Extend(Game.CursorPos, Spells[Q].Range - 300).To2D(), 300);
+                var unit = ObjectManager.Get<Obj_AI_Base>()
+                    .Where(p => p.IsAlly && !p.IsMe && !p.Name.Contains("turret") 
+                        && p.ServerPosition.Distance(ObjectManager.Player.ServerPosition) < Spells[Q].Range 
+                        && !poly.IsOutside(p.ServerPosition.To2D()))
+                    .OrderByDescending(q => q.Distance(ObjectManager.Player.ServerPosition))
+                    .FirstOrDefault();
+
+                if (unit != null)
+                {
+                    Spells[Q].CastOnUnit(unit);
+                    return;
+                }
+
+                var slot = Items.GetWardSlot().SpellSlot;
+                if (slot != SpellSlot.Unknown)
+                    ObjectManager.Player.Spellbook.CastSpell(slot, ObjectManager.Player.ServerPosition.Extend(Game.CursorPos, 600));
+            }
         }
 
         protected override void Orbwalking_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)

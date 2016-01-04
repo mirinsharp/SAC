@@ -92,7 +92,7 @@ namespace SAutoCarry.Champions.Helpers
                 s_CheckAA = false;
                 CanCastAnimation = true;
 
-                if (args.Target.IsValidTarget() && Program.Champion.ConfigMenu.Item("CSHYKEY").GetValue<KeyBind>().Active)
+                if (args.Target.IsValidTarget() && args.Target.Type == GameObjectType.obj_AI_Hero && (Program.Champion.ConfigMenu.Item("CSHYKEY").GetValue<KeyBind>().Active || (Program.Champion.Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo && Program.Champion.ConfigMenu.Item(String.Format("CMETHOD{0}", (args.Target as Obj_AI_Hero).ChampionName)).GetValue<StringList>().SelectedIndex == 1)))
                 {
                     if (ObjectManager.Player.HasBuff("RivenFengShuiEngine"))
                     {
@@ -100,12 +100,6 @@ namespace SAutoCarry.Champions.Helpers
                             if (Program.Champion.Spells[3].IsReady()) //r2
                             {
                                 Program.Champion.Spells[3].Cast(args.Target.Position);
-                                //(Program.Champion as Riven).CastCrescent(); 
-                                if (Program.Champion.Spells[0].IsReady())
-                                {
-                                    Program.Champion.Spells[0].Cast(args.Target.Position + (args.Target.Position - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
-                                    (Program.Champion as Riven).FastQCombo(true);
-                                }
                                 return;
                             }
                         }

@@ -5,7 +5,6 @@ using LeagueSharp.Common;
 using SCommon;
 using SCommon.PluginBase;
 using SCommon.Prediction;
-using SAutoCarry.Champions.Helpers;
 using SharpDX;
 //typedefs
 //using TargetSelector = SCommon.TS.TargetSelector;
@@ -48,8 +47,8 @@ namespace SAutoCarry.Champions
 
             ConfigMenu.AddToMainMenu();
 
-            Tumble.Initialize(this);
-            Condemn.Initialize(this);
+            Helpers.Tumble.Initialize(this);
+            Helpers.Condemn.Initialize(this);
         }
 
         public override void SetSpells()
@@ -65,8 +64,8 @@ namespace SAutoCarry.Champions
         {
             if (ComboUseE)
             {
-                var t = TargetSelector.GetTarget(Spells[E].Range + 300f, LeagueSharp.Common.TargetSelector.DamageType.Physical);
-                if (t != null && Spells[E].IsReady() && Condemn.IsValidTarget(t))
+                var t = TargetSelector.GetTarget(Spells[E].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
+                if (t != null && Spells[E].IsReady() && Helpers.Condemn.IsValidTarget(t))
                     Spells[E].CastOnUnit(t);
             }
         }
@@ -81,7 +80,7 @@ namespace SAutoCarry.Champions
                     if (HarassUseE3RdW && t.IsValidTarget(Spells[E].Range) && t.GetBuffCount("vaynesilvereddebuff") == 2)
                         Spells[E].CastOnUnit(t);
 
-                    if (Condemn.IsValidTarget(t))
+                    if (Helpers.Condemn.IsValidTarget(t))
                         Spells[E].CastOnUnit(t);
                 }
             }
@@ -141,7 +140,7 @@ namespace SAutoCarry.Champions
             {
                 if (Spells[Q].IsReady() && ((Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo && ComboUseQ) || (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Mixed && HarassUseQ)))
                 {
-                    Vector3 pos = Tumble.FindTumblePosition(args.Target as Obj_AI_Hero);
+                    Vector3 pos = Helpers.Tumble.FindTumblePosition(args.Target as Obj_AI_Hero);
 
                     if (pos.IsValid())
                         Spells[Q].Cast(pos);
@@ -158,11 +157,11 @@ namespace SAutoCarry.Champions
                     {
                         if (LaneClearQ && args.Target.Health - SCommon.Damage.AutoAttack.GetDamage(args.Target as Obj_AI_Base, true) <= 0)
                         {
-                            var minion = MinionManager.GetMinions(ObjectManager.Player.AttackRange + 100).Where(p => p.Health <= SCommon.Damage.AutoAttack.GetDamage(p) + ObjectManager.Player.GetSpellDamage(p, SpellSlot.Q)).FirstOrDefault();
+                            var minion = MinionManager.GetMinions(ObjectManager.Player.AttackRange).Where(p => p.NetworkId != args.Target.NetworkId && p.Health < SCommon.Damage.AutoAttack.GetDamage(p) + ObjectManager.Player.GetSpellDamage(p, SpellSlot.Q)).FirstOrDefault();
                             if(minion != null)
                             {
                                 Orbwalker.ForcedTarget = minion;
-                                Spells[Q].Cast(Game.CursorPos);
+                                Spells[Q].Cast(SCommon.Maths.Geometry.Deviation(ObjectManager.Player.ServerPosition.To2D(), minion.ServerPosition.To2D(), 50).To3D2());
                             }
                         }
                     }

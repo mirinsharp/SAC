@@ -77,7 +77,7 @@ namespace SCommon.Prediction
         public static Prediction.Result GetPrediction(Obj_AI_Base target, float radius, float ringRadius, float delay, float missileSpeed, float range, bool collisionable, List<Vector2> path, float avgt, float movt, float avgp, Vector2 from, Vector2 rangeCheckFrom)
         {
             //if you are copying it negro; dont forget sprediction credits, ty.
-            Prediction.Result result = CirclePrediction.GetPrediction(target, ringRadius, delay, missileSpeed, range + radius, collisionable, path, avgt, movt, avgp, from, rangeCheckFrom);
+            Prediction.Result result = CirclePrediction.GetPrediction(target, ringRadius, delay, missileSpeed, range + radius, collisionable, path, avgt, movt, avgp, 360, from, rangeCheckFrom);
             if (result.HitChance > HitChance.Low)
             {
                 Vector2 direction = (result.CastPosition - from + target.Direction.To2D()).Normalized();

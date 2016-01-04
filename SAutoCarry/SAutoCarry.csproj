@@ -58,19 +58,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="clipper_library">
-      <HintPath>..\LeagueSharp222\System\clipper_library.dll</HintPath>
+      <HintPath>C:\Users\User\Desktop\LeagueSharp222\System\clipper_library.dll</HintPath>
     </Reference>
     <Reference Include="LeagueSharp">
-      <HintPath>..\LeagueSharp222\System\LeagueSharp.dll</HintPath>
+      <HintPath>C:\Users\User\Desktop\LeagueSharp222\System\LeagueSharp.dll</HintPath>
     </Reference>
     <Reference Include="LeagueSharp.Common">
-      <HintPath>..\LeagueSharp222\System\LeagueSharp.Common.dll</HintPath>
+      <HintPath>C:\Users\User\Desktop\LeagueSharp222\System\LeagueSharp.Common.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>..\LeagueSharp222\System\SharpDX.dll</HintPath>
+      <HintPath>C:\Users\User\Desktop\LeagueSharp222\System\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
-      <HintPath>..\LeagueSharp222\System\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>C:\Users\User\Desktop\LeagueSharp222\System\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -83,6 +83,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Champions\Azir.cs" />
+    <Compile Include="Champions\Blitzcrank.cs" />
+    <Compile Include="Champions\Helpers\BallMgr.cs" />
     <Compile Include="Champions\Helpers\CardMgr.cs" />
     <Compile Include="Champions\Helpers\RivenAnimation.cs" />
     <Compile Include="Champions\Helpers\RivenComboInstance.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="Champions\Jax.cs" />
     <Compile Include="Champions\Lucian.cs" />
     <Compile Include="Champions\MasterYi.cs" />
+    <Compile Include="Champions\Orianna.cs" />
     <Compile Include="Champions\Pantheon.cs" />
     <Compile Include="Champions\Rengar.cs" />
     <Compile Include="Champions\Riven.cs" />

@@ -76,5 +76,17 @@ namespace SCommon.Prediction
             Prediction.AssertInitializationMode();
             return PathTracker.EnemyInfo[t.NetworkId].AvgPathLenght;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="t">target</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float LastAngleDiff(this Obj_AI_Hero t)
+        {
+            Prediction.AssertInitializationMode();
+            return PathTracker.EnemyInfo[t.NetworkId].LastAngleDiff;
+        }
     }
 }
