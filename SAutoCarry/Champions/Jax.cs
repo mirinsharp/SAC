@@ -11,7 +11,8 @@ using SCommon.Orbwalking;
 using SCommon.Maths;
 using SUtility.Drawings;
 using SharpDX;
-
+//typedefs
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {
@@ -72,7 +73,7 @@ namespace SAutoCarry.Champions
         {
             if (Spells[E].IsReady() && ComboUseE)
             {
-                var t = TargetSelector.GetTarget(Spells[E].Range, TargetSelector.DamageType.Physical);
+                var t = TargetSelector.GetTarget(Spells[E].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 if (t != null)
                 {
                     if(!ObjectManager.Player.HasBuff("jaxleapstrike") || ComboEStun)
@@ -82,7 +83,7 @@ namespace SAutoCarry.Champions
 
             if (Spells[Q].IsReady() && ComboUseQ)
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Physical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 if (t != null)
                 {
                     if (ComboEBeforeQ)
@@ -100,14 +101,14 @@ namespace SAutoCarry.Champions
         {
             if (Spells[Q].IsReady() && HarassUseQ)
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Physical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 if (t != null)
                     Spells[Q].CastOnUnit(t);
             }
 
             if (Spells[E].IsReady() && HarassUseE)
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Physical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 if (t != null && !ObjectManager.Player.HasBuff("jaxleapstrike"))
                     Spells[E].Cast();
             }
@@ -181,9 +182,10 @@ namespace SAutoCarry.Champions
                 {
                     if (Items.HasItem(3077) && Items.CanUseItem(3077))
                         Items.UseItem(3077);
-
-                    if (Items.HasItem(3074) && Items.CanUseItem(3074))
+                    else if (Items.HasItem(3074) && Items.CanUseItem(3074))
                         Items.UseItem(3074);
+                    else if (Items.HasItem(3748) && Items.CanUseItem(3748)) //titanic
+                        Items.UseItem(3748);
 
                     return;
                 }

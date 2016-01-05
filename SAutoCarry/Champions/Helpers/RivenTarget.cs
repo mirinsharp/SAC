@@ -13,7 +13,7 @@ namespace SAutoCarry.Champions.Helpers
         private static Obj_AI_Hero s_Target;
         private static bool s_Flashed;
 
-        public static Obj_AI_Hero Get(float inRange, bool locked = false, TargetSelector.DamageType dtype = TargetSelector.DamageType.Physical)
+        public static Obj_AI_Hero Get(float inRange, bool locked = false, LeagueSharp.Common.TargetSelector.DamageType dtype = LeagueSharp.Common.TargetSelector.DamageType.Physical)
         {
             if (Program.Champion.ConfigMenu.Item("CSHYKEY").GetValue<KeyBind>().Active || Program.Champion.ConfigMenu.Item("CFLASHKEY").GetValue<KeyBind>().Active)
                 return TargetSelector.SelectedTarget;

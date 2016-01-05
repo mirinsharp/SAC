@@ -9,7 +9,7 @@ using SCommon.Prediction;
 using SCommon.Orbwalking;
 using SharpDX;
 //typedefs
-//using TargetSelector = SCommon.TS.TargetSelector;
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {

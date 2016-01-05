@@ -20,7 +20,7 @@ namespace SAutoCarry.Champions
         public bool IsDoingFastQ { get; set; }
         public bool IsCrestcentReady
         {
-            get { return (Items.HasItem(3077) && Items.CanUseItem(3077)) || (Items.HasItem(3074) && Items.CanUseItem(3074)); }
+            get { return (Items.HasItem(3077) && Items.CanUseItem(3077)) || (Items.HasItem(3074) && Items.CanUseItem(3074)) || (Items.HasItem(3748) && Items.CanUseItem(3748)); }
         }
 
         public TargetedSpellEvader m_targetedEvader;
@@ -57,7 +57,7 @@ namespace SAutoCarry.Champions
                         ConfigMenu.Item("CR2MODE").Show(!ar.GetNewValue<KeyBind>().Active);
                     };
             combo.AddItem(new MenuItem("CR1MODE", "R1 Mode").SetValue(new StringList(new string[] { "Always", "If Killable With R2", "Smart" }))).Show(!combo.Item("CDISABLER").GetValue<KeyBind>().Active);
-            combo.AddItem(new MenuItem("CR2MODE", "R2 Mode").SetValue(new StringList(new string[] { "Always", "If Killable", "If Out of Range", "When Can Max Damage" }, 1))).Show(!combo.Item("CDISABLER").GetValue<KeyBind>().Active);
+            combo.AddItem(new MenuItem("CR2MODE", "R2 Mode").SetValue(new StringList(new string[] { "Always", "If Killable", "If Out of Range", "When Can Max Damage" }, 3))).Show(!combo.Item("CDISABLER").GetValue<KeyBind>().Active);
             combo.AddItem(new MenuItem("CEMODE", "E Mode").SetValue(new StringList(new string[] { "E to enemy", "E Cursor Pos", "E to back off", "Dont Use E" }, 0)));
             combo.AddItem(new MenuItem("CALWAYSE", "Always Start Combo With E").SetTooltip("for better combo executing").SetValue(false));
             combo.AddItem(new MenuItem("CUSEF", "Use Flash In Combo").SetValue(new KeyBind('G', KeyBindType.Toggle))).Permashow();
@@ -170,7 +170,7 @@ namespace SAutoCarry.Champions
                         ConfigMenu.Item(String.Format("CMETHOD{0}", enemy.ChampionName)).SetValue(typeVal);
                     }
                 }
-                var target = LeagueSharp.Common.TargetSelector.GetTarget(-1, TargetSelector.DamageType.Physical);
+                var target = LeagueSharp.Common.TargetSelector.GetTarget(-1, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 Orbwalker.Orbwalk(target, Game.CursorPos);
                 Combo();
                 return;
@@ -370,6 +370,8 @@ namespace SAutoCarry.Champions
                     Items.UseItem(3077);
                 else if (Items.HasItem(3074) && Items.CanUseItem(3074)) //hydra
                     Items.UseItem(3074);
+                else if (Items.HasItem(3748) && Items.CanUseItem(3748)) //titanic
+                    Items.UseItem(3748);
 
                 Animation.CanCastAnimation = true;
             }
@@ -410,23 +412,8 @@ namespace SAutoCarry.Champions
             {
                 if (args.SData.IsAutoAttack())
                     Animation.SetLastAATick(Utils.TickCount);
-                else if (args.SData.Name == "RivenTriCleave")
+                else if (args.SData.Name == "RivenTriCleave" || args.SData.Name == "rivenizunablade")
                     Orbwalker.ResetAATimer();
-                else if (args.SData.Name == "rivenizunablade")
-                {
-                    //if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo || ConfigMenu.Item("CSHYKEY").GetValue<KeyBind>().Active)
-                    //{
-                    //    if (Spells[W].IsReady() && Target.Get(Spells[W].Range) != null)
-                    //        Spells[W].Cast();
-                    //    else if (Spells[Q].IsReady() && Target.Get(800) != null)
-                    //    {
-                    //        Spells[Q].Cast(Target.Get(800).ServerPosition);
-                    //        if (!IsDoingFastQ)
-                    //            FastQCombo(true);
-                    //    }
-                    //    Orbwalker.ResetAATimer();
-                    //}
-                }
             }
             else if (Target.Get(1000, true) != null)
             {

@@ -9,6 +9,8 @@ using SCommon.Orbwalking;
 using SCommon.Evade;
 using SUtility.Drawings;
 using SharpDX;
+//typedefs
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {
@@ -55,7 +57,7 @@ namespace SAutoCarry.Champions
         {
             if(Spells[Q].IsReady() && ComboUseQ)
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Physical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 if (t != null)
                     Spells[Q].CastOnUnit(t);
             }
@@ -125,10 +127,14 @@ namespace SAutoCarry.Champions
                             Items.UseItem(3077);
                             return;
                         }
-
-                        if (Items.HasItem(3074) && Items.CanUseItem(3074))
+                        else if (Items.HasItem(3074) && Items.CanUseItem(3074))
                         {
                             Items.UseItem(3074);
+                            return;
+                        }
+                        else if (Items.HasItem(3748) && Items.CanUseItem(3748)) //titanic
+                        {
+                            Items.UseItem(3748);
                             return;
                         }
                     }

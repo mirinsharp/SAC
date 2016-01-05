@@ -5,8 +5,11 @@ using LeagueSharp.Common;
 using SCommon;
 using SCommon.PluginBase;
 using SCommon.Orbwalking;
+using SCommon.Database;
 using SUtility.Drawings;
 using SharpDX;
+//typedefs
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {
@@ -69,14 +72,13 @@ namespace SAutoCarry.Champions
 
         public void Combo()
         {
-            var t = TargetSelector.GetTarget(Spells[Q].Range * 2f, TargetSelector.DamageType.Magical);
+            var t = TargetSelector.GetTarget(Spells[Q].Range * 2f, LeagueSharp.Common.TargetSelector.DamageType.Magical);
             if(t != null)
             {
                 if(Spells[Q].IsReady() && (ComboUseQDashing || ComboUseQImmobile))
                 {
-                    var pred = Spells[Q].GetPrediction(t);
-                    if ((pred.Hitchance == HitChance.Immobile && ComboUseQImmobile) || (pred.Hitchance == HitChance.Dashing && ComboUseQDashing))
-                        CastQ(t, pred.UnitPosition.To2D());
+                    if ((t.IsImmobilized() && ComboUseQImmobile) || (t.IsDashing() && ComboUseQDashing))
+                        CastQ(t, t.ServerPosition.To2D());
                 }
 
                 if(Spells[W].IsReady() && ComboUseW)
@@ -88,7 +90,7 @@ namespace SAutoCarry.Champions
 
         public void Harass()
         {
-            var t = TargetSelector.GetTarget(ObjectManager.Player.AttackRange + 250, TargetSelector.DamageType.Magical);
+            var t = TargetSelector.GetTarget(ObjectManager.Player.AttackRange + 250, LeagueSharp.Common.TargetSelector.DamageType.Magical);
             if (t != null)
             {
                 if (Spells[W].IsReady() && HarassUseW)

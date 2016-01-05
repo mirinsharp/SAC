@@ -10,7 +10,7 @@ using SCommon.Orbwalking;
 using SUtility.Drawings;
 using SharpDX;
 //typedefs
-//using TargetSelector = SCommon.TS.TargetSelector;
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {
@@ -199,9 +199,10 @@ namespace SAutoCarry.Champions
                 {
                     if (Items.HasItem(3077) && Items.CanUseItem(3077))
                         Items.UseItem(3077);
-
-                    if (Items.HasItem(3074) && Items.CanUseItem(3074))
+                    else if (Items.HasItem(3074) && Items.CanUseItem(3074))
                         Items.UseItem(3074);
+                    else if (Items.HasItem(3748) && Items.CanUseItem(3748)) //titanic
+                        Items.UseItem(3748);
                 }
 
                 if (Spells[Q].IsReady() && ComboUseQ)
@@ -215,9 +216,10 @@ namespace SAutoCarry.Champions
                     {
                         if (Items.HasItem(3077) && Items.CanUseItem(3077))
                             Items.UseItem(3077);
-
-                        if (Items.HasItem(3074) && Items.CanUseItem(3074))
+                        else if (Items.HasItem(3074) && Items.CanUseItem(3074))
                             Items.UseItem(3074);
+                        else if (Items.HasItem(3748) && Items.CanUseItem(3748)) //titanic
+                            Items.UseItem(3748);
                     }
 
                     if (Spells[Q].IsReady() && HarassUseQ)

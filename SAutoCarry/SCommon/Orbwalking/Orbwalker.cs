@@ -7,7 +7,7 @@ using SCommon;
 using SCommon.Database;
 using SCommon.Packet;
 //typedefs
-//using TargetSelector = SCommon.TS.TargetSelector;
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SCommon.Orbwalking
 {

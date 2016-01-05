@@ -10,7 +10,7 @@ using SCommon.Prediction;
 using SUtility.Drawings;
 using SharpDX;
 //typedefs
-//using TargetSelector = SCommon.TS.TargetSelector;
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {

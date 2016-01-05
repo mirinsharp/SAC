@@ -10,11 +10,8 @@ using SCommon.Prediction;
 using SCommon.Orbwalking;
 using SUtility.Drawings;
 using SharpDX;
-
-// R + E KS
-// E MINION MANA REFUND
-// LANECLEAR IMPROVE
-// R AOE COMBO MODE
+//typedefs
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {
@@ -88,21 +85,21 @@ namespace SAutoCarry.Champions
         {
             if (Spells[Q].IsReady() && ComboUseQ)
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                     Spells[Q].SPredictionCast(t, HitChance.High);
             }
 
             if (!Spells[Q].IsReady() && Spells[W].IsReady() && ComboUseW)
             {
-                var t = TargetSelector.GetTarget(Spells[W].Range, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[W].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                     Spells[W].SPredictionCast(t, HitChance.High);
             }
 
             if (Spells[E].IsReady() && ComboUseE)
             {
-                var t = TargetSelector.GetTarget(Spells[E].Range, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[E].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null && t.HasBuffOfType(BuffType.Poison))
                     Spells[E].CastOnUnit(t);
             }
@@ -112,7 +109,7 @@ namespace SAutoCarry.Champions
             {
                 if (ComboUseRMin == 1)
                 {
-                    var t = TargetSelector.GetTarget(Spells[R].Range, TargetSelector.DamageType.Magical);
+                    var t = TargetSelector.GetTarget(Spells[R].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                     if (t != null)
                     {
                         var pred = Spells[R].GetSPrediction(t);
@@ -153,21 +150,21 @@ namespace SAutoCarry.Champions
 
             if (Spells[Q].IsReady() && HarassUseQ)
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                     Spells[Q].SPredictionCast(t, HitChance.High);
             }
 
             if (!Spells[Q].IsReady() && Spells[W].IsReady() && HarassUseW)
             {
-                var t = TargetSelector.GetTarget(Spells[W].Range, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[W].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                     Spells[W].SPredictionCast(t, HitChance.High);
             }
 
             if (Spells[E].IsReady() && HarassUseE)
             {
-                var t = TargetSelector.GetTarget(Spells[E].Range, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[E].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null && t.HasBuffOfType(BuffType.Poison))
                     Spells[E].Cast();
             }

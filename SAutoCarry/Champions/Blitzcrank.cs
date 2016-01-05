@@ -10,7 +10,8 @@ using SCommon.Prediction;
 using SCommon.Orbwalking;
 using SUtility.Drawings;
 using SharpDX;
-
+//typedefs
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {
@@ -97,7 +98,7 @@ namespace SAutoCarry.Champions
         {
             if (Spells[Q].IsReady() && AutoGrabEnabled && AutoGrabMinHealth <= ObjectManager.Player.HealthPercent && !ObjectManager.Player.UnderTurret(true))
             {
-                var t = TargetSelector.GetTarget(AutoGrabRange, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(AutoGrabRange, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null && !IsBlacklistedAutoGrab(t))
                     Spells[Q].SPredictionCast(t, HitChance.High);
             }
@@ -107,21 +108,21 @@ namespace SAutoCarry.Champions
         {
             if (Spells[W].IsReady() && ComboUseW)
             {
-                var t = TargetSelector.GetTarget(1000, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(1000, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                     Spells[W].Cast();
             }
 
             if (Spells[Q].IsReady() && ComboUseQ)
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null && !IsBlacklistedComboGrab(t))
                     Spells[Q].SPredictionCast(t, HitChance.High);
             }
 
             if (Spells[R].IsReady() && ComboUseR)
             {
-                var t = TargetSelector.GetTarget(Spells[R].Range - 10, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[R].Range - 10, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                     Spells[R].Cast();
             }
@@ -131,7 +132,7 @@ namespace SAutoCarry.Champions
         {
             if (Spells[Q].IsReady() && HarassUseQ)
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Physical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 if (t != null)
                     Spells[Q].SPredictionCast(t, HitChance.High);
             }

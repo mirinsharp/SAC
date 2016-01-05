@@ -7,7 +7,7 @@ using SCommon.PluginBase;
 using SCommon.Prediction;
 using SharpDX;
 //typedefs
-//using TargetSelector = SCommon.TS.TargetSelector;
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {
@@ -21,7 +21,7 @@ namespace SAutoCarry.Champions
             OnCombo += Combo;
             OnHarass += Harass;
 
-            //TargetSelector.RegisterCustomMultipler((hero) => hero.GetBuffCount("vaynesilvereddebuff"));
+            TargetSelector.RegisterCustomMultipler((hero) => hero.GetBuffCount("vaynesilvereddebuff"));
         }
 
         public override void CreateConfigMenu()

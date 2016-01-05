@@ -10,7 +10,8 @@ using SCommon.Prediction;
 using SCommon.Orbwalking;
 using SUtility.Drawings;
 using SharpDX;
-
+//typedefs
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {
@@ -85,7 +86,7 @@ namespace SAutoCarry.Champions
 
             if (Spells[Q].IsReady() && ComboUseQ)
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                 {
                     Spells[Q].SPredictionCast(t, HitChance.High);
@@ -94,7 +95,7 @@ namespace SAutoCarry.Champions
 
             if (Spells[R].IsReady() && ComboUseR && Spells[R].Instance.Ammo > 0)
             {
-                var t = TargetSelector.GetTarget(Spells[R].Range, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[R].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                 {
                     Spells[R].SPredictionCast(t, HitChance.High);
@@ -103,7 +104,7 @@ namespace SAutoCarry.Champions
 
             if (Spells[E].IsReady() && ComboUseE)
             {
-                if(TargetSelector.GetTarget(Spells[E].Range, TargetSelector.DamageType.Physical) != null)
+                if(TargetSelector.GetTarget(Spells[E].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical) != null)
                     Spells[E].Cast();
             }
         }
@@ -115,21 +116,21 @@ namespace SAutoCarry.Champions
 
             if (Spells[Q].IsReady() && HarassUseQ)
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                     Spells[Q].SPredictionCast(t, HitChance.High);
             }
 
             if (Spells[E].IsReady() && HarassUseE)
             {
-                var t = TargetSelector.GetTarget(Spells[E].Range, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[E].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                     Spells[E].Cast();
             }
 
             if (Spells[R].IsReady() && HarassUseR && Spells[R].Instance.Ammo > HarassRStack)
             {
-                var t = TargetSelector.GetTarget(Spells[R].Range, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[R].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                     Spells[R].SPredictionCast(t, HitChance.High);
             }

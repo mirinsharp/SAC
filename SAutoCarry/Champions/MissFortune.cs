@@ -8,6 +8,8 @@ using SCommon.PluginBase;
 using SCommon.Prediction;
 using SCommon.Maths;
 using SharpDX;
+//typedefs
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {
@@ -66,7 +68,7 @@ namespace SAutoCarry.Champions
         {
             if (Spells[E].IsReady() && ComboUseE)
             {
-                var t = TargetSelector.GetTarget(Spells[E].Range, TargetSelector.DamageType.Physical);
+                var t = TargetSelector.GetTarget(Spells[E].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 if (t != null)
                     Spells[E].SPredictionCast(t, HitChance.High);
             }
@@ -75,35 +77,35 @@ namespace SAutoCarry.Champions
         public void Harass()
         {
             if (Spells[Q].IsReady() && HarassUseQ)
-                ExtendedQ();
+                BounceQ();
         }
 
-        private void ExtendedQ()
+        private void BounceQ()
         {
-            var minions = MinionManager.GetMinions(Spells[Q].Range, MinionTypes.All, MinionTeam.NotAlly);
+            var minions = MinionManager.GetMinions(Spells[Q].Range, MinionTypes.All, MinionTeam.NotAlly).Where(p => !p.IsMoving);
             List<Obj_AI_Base> nonKillableMinions = new List<Obj_AI_Base>();
             foreach (var minion in minions)
             {
                 if (Spells[Q].IsKillable(minion)) //prio killable minions to deal more dmg
                 {
-                    var hitbox1 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 40, 500f);
-                    var hitbox2 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 20, 500f);
-                    //var hitbox3 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 110, 500f);
+                    var hitbox1 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 40, 300f);
+                    var hitbox2 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 20, 300f);
+                    //var hitbox3 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 110, 300f);
                     //var hitbox4 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 160, 150f);
 
-                    if (HeroManager.Enemies.Any(p => p.IsValidTarget(1000f) && p.NetworkId == m_lastTarget.NetworkId && !hitbox1.IsOutside(SCommon.Maths.Geometry.PositionAfter(p.GetWaypoints(), 300, (int)p.MoveSpeed))))
+                    if (HeroManager.Enemies.Any(p => minion.Distance(ObjectManager.Player.ServerPosition.To2D()) < 300 && p.NetworkId == m_lastTarget.NetworkId && !hitbox1.IsOutside(LeagueSharp.Common.Prediction.GetPrediction(p, 0.3f).UnitPosition.To2D())))
                     {
                         Spells[Q].CastOnUnit(minion);
                         return;
                     }
                     else if (!ObjectManager.Get<Obj_AI_Base>().Any(p => p.IsValidTarget(1000f) && p.IsEnemy && !p.IsChampion() && !hitbox2.IsOutside(p.ServerPosition.To2D()))
-                        && HeroManager.Enemies.Any(p => p.IsValidTarget(1000f) && (TargetSelector.SelectedTarget == null || TargetSelector.SelectedTarget.NetworkId == p.NetworkId) && !hitbox2.IsOutside(SCommon.Maths.Geometry.PositionAfter(p.GetWaypoints(), 300, (int)p.MoveSpeed))))
+                        && HeroManager.Enemies.Any(p => minion.Distance(ObjectManager.Player.ServerPosition.To2D()) < 300 && (TargetSelector.SelectedTarget == null || TargetSelector.SelectedTarget.NetworkId == p.NetworkId) && !hitbox2.IsOutside(LeagueSharp.Common.Prediction.GetPrediction(p, 0.3f).UnitPosition.To2D())))
                     {
                         Spells[Q].CastOnUnit(minion);
                         return;
                     }
                     else if (!ObjectManager.Get<Obj_AI_Base>().Any(p => p.IsValidTarget(1000f) && p.IsEnemy && !p.IsChampion() && !hitbox1.IsOutside(p.ServerPosition.To2D()))
-                        && HeroManager.Enemies.Any(p => p.IsValidTarget(1000f) && (TargetSelector.SelectedTarget == null || TargetSelector.SelectedTarget.NetworkId == p.NetworkId) && !hitbox1.IsOutside(SCommon.Maths.Geometry.PositionAfter(p.GetWaypoints(), 300, (int)p.MoveSpeed))))
+                        && HeroManager.Enemies.Any(p => minion.Distance(ObjectManager.Player.ServerPosition.To2D()) < 300 && (TargetSelector.SelectedTarget == null || TargetSelector.SelectedTarget.NetworkId == p.NetworkId) && !hitbox1.IsOutside(LeagueSharp.Common.Prediction.GetPrediction(p, 0.3f).UnitPosition.To2D())))
                     {
                         Spells[Q].CastOnUnit(minion);
                         return;
@@ -115,24 +117,24 @@ namespace SAutoCarry.Champions
 
             foreach (var minion in nonKillableMinions)
             {
-                var hitbox1 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 40, 500f);
-                var hitbox2 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 20, 500f);
-                //var hitbox3 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 110, 500f);
+                var hitbox1 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 40, 300f);
+                var hitbox2 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 20, 300f);
+                //var hitbox3 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 110, 300f);
                 //var hitbox4 = ClipperWrapper.DefineSector(minion.ServerPosition.To2D(), (minion.ServerPosition.To2D() - ObjectManager.Player.ServerPosition.To2D()).Normalized(), 160, 150f);
 
-                if (HeroManager.Enemies.Any(p => p.IsValidTarget(1000f) && p.NetworkId == m_lastTarget.NetworkId && !hitbox1.IsOutside(SCommon.Maths.Geometry.PositionAfter(p.GetWaypoints(), 300, (int)p.MoveSpeed))))
+                if (HeroManager.Enemies.Any(p => minion.Distance(ObjectManager.Player.ServerPosition.To2D()) < 300 && p.NetworkId == m_lastTarget.NetworkId && !hitbox1.IsOutside(LeagueSharp.Common.Prediction.GetPrediction(p, 0.3f).UnitPosition.To2D())))
                 {
                     Spells[Q].CastOnUnit(minion);
                     return;
                 }
                 else if (!ObjectManager.Get<Obj_AI_Base>().Any(p => p.IsValidTarget(1000f) && p.IsEnemy && !p.IsChampion() && !hitbox2.IsOutside(p.ServerPosition.To2D()))
-                    && HeroManager.Enemies.Any(p => p.IsValidTarget(1000f) && (TargetSelector.SelectedTarget == null || TargetSelector.SelectedTarget.NetworkId == p.NetworkId) && !hitbox2.IsOutside(SCommon.Maths.Geometry.PositionAfter(p.GetWaypoints(), 300, (int)p.MoveSpeed))))
+                    && HeroManager.Enemies.Any(p => minion.Distance(ObjectManager.Player.ServerPosition.To2D()) < 300 && (TargetSelector.SelectedTarget == null || TargetSelector.SelectedTarget.NetworkId == p.NetworkId) && !hitbox2.IsOutside(LeagueSharp.Common.Prediction.GetPrediction(p, 0.3f).UnitPosition.To2D())))
                 {
                     Spells[Q].CastOnUnit(minion);
                     return;
                 }
                 else if (!ObjectManager.Get<Obj_AI_Base>().Any(p => p.IsValidTarget(1000f) && p.IsEnemy && !p.IsChampion() && !hitbox1.IsOutside(p.ServerPosition.To2D()))
-                    && HeroManager.Enemies.Any(p => p.IsValidTarget(1000f) && (TargetSelector.SelectedTarget == null || TargetSelector.SelectedTarget.NetworkId == p.NetworkId) && !hitbox1.IsOutside(SCommon.Maths.Geometry.PositionAfter(p.GetWaypoints(), 300, (int)p.MoveSpeed))))
+                    && HeroManager.Enemies.Any(p => minion.Distance(ObjectManager.Player.ServerPosition.To2D()) < 300 && (TargetSelector.SelectedTarget == null || TargetSelector.SelectedTarget.NetworkId == p.NetworkId) && !hitbox1.IsOutside(LeagueSharp.Common.Prediction.GetPrediction(p, 0.3f).UnitPosition.To2D())))
                 {
                     Spells[Q].CastOnUnit(minion);
                     return;

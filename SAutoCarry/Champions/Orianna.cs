@@ -232,7 +232,7 @@ namespace SAutoCarry.Champions
                         return;
                     }
 
-                    var t = TargetSelector.GetTarget(Spells[R].Range, TargetSelector.DamageType.Magical, true, null, Helpers.BallMgr.Position);
+                    var t = TargetSelector.GetTarget(Spells[R].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical, true, null, Helpers.BallMgr.Position);
                     if (t != null && ObjectManager.Player.CountEnemiesInRange(2000) <= 2)
                     {
                         Helpers.BallMgr.Post(Helpers.BallMgr.Command.Shockwave, t);
@@ -317,7 +317,7 @@ namespace SAutoCarry.Champions
 
             if (Spells[Q].IsReady() && ConfigMenu.Item("CUSEQ").GetValue<bool>())
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range / 2f, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range / 2f, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                     Helpers.BallMgr.Post(Helpers.BallMgr.Command.Attack, t);
             }
@@ -342,7 +342,7 @@ namespace SAutoCarry.Champions
 
             if (Spells[Q].IsReady() && ConfigMenu.Item("HUSEQ").GetValue<bool>())
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range / 2f, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range / 2f, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                     Helpers.BallMgr.Post(Helpers.BallMgr.Command.Attack, t);
             }

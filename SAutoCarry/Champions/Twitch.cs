@@ -9,7 +9,8 @@ using SCommon.Prediction;
 using SCommon.Orbwalking;
 using SUtility.Drawings;
 using SharpDX;
-
+//typedefs
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {
@@ -67,7 +68,7 @@ namespace SAutoCarry.Champions
         {
             if (Spells[W].IsReady() && ComboUseW)
             {
-                var t = TargetSelector.GetTarget(Spells[W].Range, TargetSelector.DamageType.Physical);
+                var t = TargetSelector.GetTarget(Spells[W].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 if (t != null)
                     Spells[W].SPredictionCast(t, HitChance.High);
             }
@@ -84,7 +85,7 @@ namespace SAutoCarry.Champions
         {
             if (Spells[W].IsReady() && HarassUseW)
             {
-                var t = TargetSelector.GetTarget(Spells[W].Range, TargetSelector.DamageType.Physical);
+                var t = TargetSelector.GetTarget(Spells[W].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 if (t != null)
                     Spells[W].SPredictionCast(t, HitChance.High);
             }

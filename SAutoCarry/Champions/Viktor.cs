@@ -10,6 +10,8 @@ using SCommon.Orbwalking;
 using SCommon.Prediction;
 using SUtility.Drawings;
 using SharpDX;
+//typedefs
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {
@@ -82,7 +84,7 @@ namespace SAutoCarry.Champions
         {
             if (Spells[E].IsReady() && ComboUseE)
             {
-                var t = TargetSelector.GetTarget(Spells[E].Range + m_laserLenght, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[E].Range + m_laserLenght, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                 {
                     if (SCommon.Orbwalking.Utility.InAARange(t) && ObjectManager.Player.HasBuff("viktorpowertransferreturn") && Orbwalker.CanAttack(250))
@@ -96,7 +98,7 @@ namespace SAutoCarry.Champions
             {
                 if (ComboUseRMin == 1)
                 {
-                    var t = TargetSelector.GetTarget(Spells[R].Range, TargetSelector.DamageType.Magical);
+                    var t = TargetSelector.GetTarget(Spells[R].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                     if (t != null && t.Health - CalculateComboDamage(t) - (Spells[Q].IsReady(1000) ? CalculateViktorPassiveAADamage(t) : 0) < 200)
                     {
                         if (SCommon.Orbwalking.Utility.InAARange(t) && ObjectManager.Player.HasBuff("viktorpowertransferreturn") && Orbwalker.CanAttack(250))
@@ -110,7 +112,7 @@ namespace SAutoCarry.Champions
 
             if(Spells[Q].IsReady() && ComboUseQ && !ComboUseQOnlyAA)
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Magical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                     Spells[Q].CastOnUnit(t);
             }
@@ -205,7 +207,7 @@ namespace SAutoCarry.Champions
 
         private void FollowR()
         {
-            var t = TargetSelector.GetTarget(1100f, TargetSelector.DamageType.Magical);
+            var t = TargetSelector.GetTarget(1100f, LeagueSharp.Common.TargetSelector.DamageType.Magical);
             if(t != null)
             {
                 if(Spells[R].Instance.Name != "ViktorChaosStorm" && Utils.TickCount - m_lastFollowTick > 500)

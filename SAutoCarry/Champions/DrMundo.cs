@@ -10,6 +10,8 @@ using SCommon.Prediction;
 using SCommon.Orbwalking;
 using SUtility.Drawings;
 using SharpDX;
+//typedefs
+using TargetSelector = SCommon.TS.TargetSelector;
 
 namespace SAutoCarry.Champions
 {
@@ -87,14 +89,14 @@ namespace SAutoCarry.Champions
         {
             if (Spells[Q].IsReady() && ComboUseQ && ObjectManager.Player.HealthPercent > ComboUseQHP)
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Physical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 if (t != null)
                     Spells[Q].SPredictionCast(t, HitChance.Low);
             }
 
             if (Spells[W].IsReady() && ComboUseW && !ObjectManager.Player.HasBuff("BurningAgony"))
             {
-                var t = TargetSelector.GetTarget(Spells[W].Range, TargetSelector.DamageType.Physical);
+                var t = TargetSelector.GetTarget(Spells[W].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 if (t != null)
                     Spells[W].Cast();
             }
@@ -112,7 +114,7 @@ namespace SAutoCarry.Champions
 
             if (Spells[Q].IsReady() && HarassUseQ)
             {
-                var t = TargetSelector.GetTarget(Spells[Q].Range, TargetSelector.DamageType.Physical);
+                var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 if (t != null)
                     Spells[Q].SPredictionCast(t, HitChance.High);
             }
