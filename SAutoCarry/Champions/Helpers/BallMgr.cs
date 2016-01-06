@@ -28,6 +28,8 @@ namespace SAutoCarry.Champions.Helpers
         private static ConcurrentQueue<Tuple<Command, Obj_AI_Hero>> s_WorkQueue;
         private static Vector3 s_Position;
 
+        public static bool IsBallReady { get; set; }
+
         public static Vector3 Position
         {
             get { return s_Position; }
@@ -40,7 +42,6 @@ namespace SAutoCarry.Champions.Helpers
                 }
             }
         }
-        public static bool IsBallReady { get; set; }
 
         public delegate void dOnProcessCommand(Command cmd, Obj_AI_Hero target);
         public static event dOnProcessCommand OnProcessCommand;
