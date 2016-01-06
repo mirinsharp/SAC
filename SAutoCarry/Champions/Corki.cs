@@ -72,13 +72,13 @@ namespace SAutoCarry.Champions
 
         public void BeforeOrbwalk()
         {
-            if (ObjectManager.Player.HasBuff("corkimissilebarragecounterbig"))
-                Spells[R].Width = 150f;
-            else
-                Spells[R].Range = 75f;
+            //if (ObjectManager.Player.HasBuff("corkimissilebarragecounterbig"))
+            //    Spells[R].Width = 150f;
+            //else
+            //    Spells[R].Range = 75f;
 
-            if (KillStealR)
-                KillSteal();
+            //if (KillStealR)
+            //    KillSteal();
         }
 
         public void Combo()
