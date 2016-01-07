@@ -118,11 +118,14 @@ namespace SAutoCarry.Champions.Helpers
 
         private static void BallMgr_OnPositionChanged(Vector3 oldVal, Vector3 newVal)
         {
-            IsBallReady = newVal != Vector3.Zero;
-            for (int i = 0; i < 4; i++)
+            if (Program.Champion != null)
             {
-                if (Program.Champion.Spells[i] != null)
-                    Program.Champion.Spells[i].From = newVal;
+                IsBallReady = newVal != Vector3.Zero;
+                for (int i = 0; i < 4; i++)
+                {
+                    if (Program.Champion.Spells[i] != null)
+                        Program.Champion.Spells[i].From = newVal;
+                }
             }
         }
     }
