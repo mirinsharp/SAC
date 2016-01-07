@@ -284,9 +284,12 @@ namespace SAutoCarry.Champions
                         List<Vector2> poses = new List<Vector2>();
                         foreach (var enemy in HeroManager.Enemies)
                         {
-                            var pos = LeagueSharp.Common.Prediction.GetPrediction(enemy, 0.75f).UnitPosition.To2D();
-                            if (pos.Distance(ObjectManager.Player.ServerPosition.To2D()) <= 800)
-                                poses.Add(LeagueSharp.Common.Prediction.GetPrediction(enemy, 0.75f).UnitPosition.To2D());
+                            if (enemy.IsValidTarget(Spells[Q].Range))
+                            {
+                                var pos = LeagueSharp.Common.Prediction.GetPrediction(enemy, 0.75f).UnitPosition.To2D();
+                                if (pos.Distance(ObjectManager.Player.ServerPosition.To2D()) <= 800)
+                                    poses.Add(LeagueSharp.Common.Prediction.GetPrediction(enemy, 0.75f).UnitPosition.To2D());
+                            }
                         }
 
                         foreach (var list in GetCombinations(poses))
