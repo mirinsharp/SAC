@@ -41,8 +41,8 @@ namespace SAutoCarry.Champions
             OnHarass += Harass;
             OnLaneClear += LaneClear;
 
-            m_ultThread = new Thread(new ThreadStart(UltThread));
-            m_ultThread.Start();
+            //m_ultThread = new Thread(new ThreadStart(UltThread));
+            //m_ultThread.Start();
         }
 
         public override void CreateConfigMenu()
@@ -465,55 +465,62 @@ namespace SAutoCarry.Champions
             //auto ult
             while (true)
             {
-                if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.None)
+                try
                 {
-                    if (Spells[R].IsReady() && Helpers.BallMgr.IsBallReady && ConfigMenu.Item("MAUTOR").GetValue<bool>())
+                    if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.None)
                     {
-                        var pred = Spells[R].GetAoeSPrediction();
-                        if (CountEnemiesInRangePredicted(Spells[R].Range, 100, 0.75f) >= ConfigMenu.Item("MAUTORHIT").GetValue<Slider>().Value)
-                            Helpers.BallMgr.Post(Helpers.BallMgr.Command.Shockwave, null);
-                        else
+                        if (Spells[R].IsReady() && Helpers.BallMgr.IsBallReady && ConfigMenu.Item("MAUTOR").GetValue<bool>())
                         {
-                            if (Spells[Q].IsReady())
+                            var pred = Spells[R].GetAoeSPrediction();
+                            if (CountEnemiesInRangePredicted(Spells[R].Range, 100, 0.75f) >= ConfigMenu.Item("MAUTORHIT").GetValue<Slider>().Value)
+                                Helpers.BallMgr.Post(Helpers.BallMgr.Command.Shockwave, null);
+                            else
                             {
-                                List<Vector2> poses = new List<Vector2>();
-                                foreach (var enemy in HeroManager.Enemies)
+                                if (Spells[Q].IsReady())
                                 {
-                                    if (enemy.IsValidTarget(Spells[Q].Range))
+                                    List<Vector2> poses = new List<Vector2>();
+                                    foreach (var enemy in HeroManager.Enemies)
                                     {
-                                        var pos = LeagueSharp.Common.Prediction.GetPrediction(enemy, 0.75f).UnitPosition.To2D();
-                                        if (pos.Distance(ObjectManager.Player.ServerPosition.To2D()) <= 800)
-                                            poses.Add(LeagueSharp.Common.Prediction.GetPrediction(enemy, 0.75f).UnitPosition.To2D());
-                                    }
-                                }
-
-                                foreach (var list in GetCombinations(poses))
-                                {
-                                    if (list.Count >= ConfigMenu.Item("MAUTORHIT").GetValue<Slider>().Value)
-                                    {
-                                        Vector2 center;
-                                        float radius;
-                                        MEC.FindMinimalBoundingCircle(poses, out center, out radius);
-                                        if (radius < Spells[R].Width && center.Distance(ObjectManager.Player.ServerPosition) < 825f)
+                                        if (enemy.IsValidTarget(Spells[Q].Range))
                                         {
-                                            Helpers.BallMgr.Post(Helpers.BallMgr.Command.Attack, null, center);
-                                            Helpers.BallMgr.Post(Helpers.BallMgr.Command.Shockwave, null);
-                                            return;
+                                            var pos = LeagueSharp.Common.Prediction.GetPrediction(enemy, 0.75f).UnitPosition.To2D();
+                                            if (pos.Distance(ObjectManager.Player.ServerPosition.To2D()) <= 800)
+                                                poses.Add(LeagueSharp.Common.Prediction.GetPrediction(enemy, 0.75f).UnitPosition.To2D());
+                                        }
+                                    }
+
+                                    foreach (var list in GetCombinations(poses))
+                                    {
+                                        if (list.Count >= ConfigMenu.Item("MAUTORHIT").GetValue<Slider>().Value)
+                                        {
+                                            Vector2 center;
+                                            float radius;
+                                            MEC.FindMinimalBoundingCircle(poses, out center, out radius);
+                                            if (radius < Spells[R].Width && center.Distance(ObjectManager.Player.ServerPosition) < 825f)
+                                            {
+                                                Helpers.BallMgr.Post(Helpers.BallMgr.Command.Attack, null, center);
+                                                Helpers.BallMgr.Post(Helpers.BallMgr.Command.Shockwave, null);
+                                                return;
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     }
+                    else if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
+                    {
+                        //R
+                        if (ConfigMenu.Item("CUSER").GetValue<bool>())
+                            UltMethods[ConfigMenu.Item("CUSERMETHOD").GetValue<StringList>().SelectedIndex]();
+                    }
                 }
-                else if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
+                catch
                 {
-                    //R
-                    if (ConfigMenu.Item("CUSER").GetValue<bool>())
-                        UltMethods[ConfigMenu.Item("CUSERMETHOD").GetValue<StringList>().SelectedIndex]();
+                    //ignored
                 }
+                Thread.Sleep(1);
             }
-            Thread.Sleep(1);
         }
     }
 }

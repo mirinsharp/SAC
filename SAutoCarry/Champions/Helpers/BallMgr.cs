@@ -73,7 +73,8 @@ namespace SAutoCarry.Champions.Helpers
 
         public static void ClearWorkQueue()
         {
-            s_WorkQueue = new ConcurrentQueue<Tuple<Command, Tuple<Obj_AI_Hero, Vector2>>>();
+            if(s_WorkQueue != null && s_WorkQueue.Count > 0)
+                s_WorkQueue = new ConcurrentQueue<Tuple<Command, Tuple<Obj_AI_Hero, Vector2>>>();
         }
 
         public static bool CheckHeroCollision(Vector3 to)
