@@ -21,6 +21,7 @@ namespace SAutoCarry.Champions
         public Jax()
             : base("Jax", "SAutoCarry - Jax")
         {
+            OnUpdate += BeforeOrbwalk;
             OnCombo += Combo;
             OnHarass += Harass;
             OnLaneClear += LaneClear;
@@ -67,6 +68,12 @@ namespace SAutoCarry.Champions
             Spells[E] = new Spell(SpellSlot.E, ObjectManager.Player.BoundingRadius * 2 + 187.5f);
 
             Spells[R] = new Spell(SpellSlot.R);
+        }
+
+        public void BeforeOrbwalk()
+        {
+            if (WardJumpActive)
+                WardJump();
         }
 
         public void Combo()
@@ -141,7 +148,7 @@ namespace SAutoCarry.Champions
             {
                 var poly = ClipperWrapper.DefineCircle(ObjectManager.Player.ServerPosition.Extend(Game.CursorPos, Spells[Q].Range - 300).To2D(), 300);
                 var unit = ObjectManager.Get<Obj_AI_Base>()
-                    .Where(p => p.IsAlly && !p.IsMe && !p.Name.Contains("turret") 
+                    .Where(p => p.IsAlly && !p.IsMe && !p.Name.Contains("turret")
                         && p.ServerPosition.Distance(ObjectManager.Player.ServerPosition) < Spells[Q].Range 
                         && !poly.IsOutside(p.ServerPosition.To2D()))
                     .OrderByDescending(q => q.Distance(ObjectManager.Player.ServerPosition))
@@ -245,6 +252,11 @@ namespace SAutoCarry.Champions
         public bool ComboUseTiamat
         {
             get { return ConfigMenu.Item("SAutoCarry.Jax.Combo.UseTiamat").GetValue<bool>(); }
+        }
+
+        public bool WardJumpActive
+        {
+            get { return ConfigMenu.Item("SAutoCarry.Jax.Misc.WJump").GetValue<KeyBind>().Active; }
         }
     }
 }

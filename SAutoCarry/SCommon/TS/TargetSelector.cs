@@ -89,11 +89,11 @@ namespace SCommon.TS
                 {
                     if (s_SelectedTarget.IsValidTarget(range))
                         return s_SelectedTarget;
-                    else
+                    else if (s_SelectedTarget.IsValidTarget())  
                         return null;
                 }
             }
-
+           
             if(ConfigMenu.FocusSelected)
             {
                 if(s_SelectedTarget != null)

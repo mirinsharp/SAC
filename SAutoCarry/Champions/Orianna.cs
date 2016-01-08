@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SCommon;
@@ -27,7 +28,7 @@ namespace SAutoCarry.Champions
         };
 
         private int m_lastLaneClearTick = 0;
-
+        private Thread m_ultThread;
         public Orianna()
             : base("Orianna", "SAutoCarry - Orianna")
         {
@@ -36,8 +37,12 @@ namespace SAutoCarry.Champions
 
             OnDraw += BeforeDraw;
             OnUpdate += BeforeOrbwalk;
-            OnCombo += Harass;
+            OnCombo += Combo;
+            OnHarass += Harass;
             OnLaneClear += LaneClear;
+
+            m_ultThread = new Thread(new ThreadStart(UltThread));
+            m_ultThread.Start();
         }
 
         public override void CreateConfigMenu()
@@ -135,7 +140,7 @@ namespace SAutoCarry.Champions
                     {
                         if (Helpers.BallMgr.IsBallReady && Spells[Q].IsReady())
                         {
-                            Spells[Q].Cast(bestQPos);
+                            Helpers.BallMgr.Post(Helpers.BallMgr.Command.Attack, null, bestQPos.To2D());
                             Helpers.BallMgr.Post(Helpers.BallMgr.Command.Shockwave, null);
                         }
                     }
@@ -210,7 +215,7 @@ namespace SAutoCarry.Champions
                     {
                         if (Helpers.BallMgr.IsBallReady && Spells[Q].IsReady())
                         {
-                            Spells[Q].Cast(bestQPos);
+                            Helpers.BallMgr.Post(Helpers.BallMgr.Command.Attack, null, bestQPos.To2D());
                             Helpers.BallMgr.Post(Helpers.BallMgr.Command.Shockwave, null);
                         }
                     }
@@ -272,51 +277,11 @@ namespace SAutoCarry.Champions
                     Harass();
             }
 
-            if (Spells[R].IsReady() && Helpers.BallMgr.IsBallReady && ConfigMenu.Item("MAUTOR").GetValue<bool>())
-            {
-                var pred = Spells[R].GetAoeSPrediction();
-                if (CountEnemiesInRangePredicted(Spells[R].Range, 100, 0.75f) >= ConfigMenu.Item("MAUTORHIT").GetValue<Slider>().Value)
-                    Spells[R].Cast();
-                else
-                {
-                    if (Spells[Q].IsReady())
-                    {
-                        List<Vector2> poses = new List<Vector2>();
-                        foreach (var enemy in HeroManager.Enemies)
-                        {
-                            if (enemy.IsValidTarget(Spells[Q].Range))
-                            {
-                                var pos = LeagueSharp.Common.Prediction.GetPrediction(enemy, 0.75f).UnitPosition.To2D();
-                                if (pos.Distance(ObjectManager.Player.ServerPosition.To2D()) <= 800)
-                                    poses.Add(LeagueSharp.Common.Prediction.GetPrediction(enemy, 0.75f).UnitPosition.To2D());
-                            }
-                        }
-
-                        foreach (var list in GetCombinations(poses))
-                        {
-                            if (list.Count >= ConfigMenu.Item("MAUTORHIT").GetValue<Slider>().Value)
-                            {
-                                Vector2 center;
-                                float radius;
-                                MEC.FindMinimalBoundingCircle(poses, out center, out radius);
-                                if (radius < Spells[R].Width && center.Distance(ObjectManager.Player.ServerPosition) < 825f)
-                                {
-                                    Spells[Q].Cast(center);
-                                    Helpers.BallMgr.Post(Helpers.BallMgr.Command.Shockwave, null);
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         public void Combo()
         {
-            //R
-            if (ConfigMenu.Item("CUSER").GetValue<bool>())
-                UltMethods[ConfigMenu.Item("CUSERMETHOD").GetValue<StringList>().SelectedIndex]();
+            //R moved to UltThread
 
             if (Spells[Q].IsReady() && ConfigMenu.Item("CUSEQ").GetValue<bool>())
             {
@@ -327,7 +292,7 @@ namespace SAutoCarry.Champions
 
             if (Spells[W].IsReady() && ConfigMenu.Item("CUSEW").GetValue<bool>())
             {
-                if (CountEnemiesInRangePredicted(Spells[W].Range - 50, 50, 0.25f) > 0)
+                if (CountEnemiesInRangePredicted(Spells[W].Range, 50, 0.25f) > 0)
                     Helpers.BallMgr.Post(Helpers.BallMgr.Command.Dissonance, null);
             }
 
@@ -380,11 +345,11 @@ namespace SAutoCarry.Champions
             if (Spells[W].IsReady() && ConfigMenu.Item("LUSEW").GetValue<bool>())
             {
                 if (ObjectManager.Get<Obj_AI_Minion>().Count(p => (p.IsEnemy || p.IsJungleMinion()) && p.ServerPosition.Distance(Helpers.BallMgr.Position) <= Spells[W].Range) >= ConfigMenu.Item("LMINW").GetValue<Slider>().Value)
-                    Spells[W].Cast(true);
+                    Spells[W].Cast(ObjectManager.Player.ServerPosition, true);
             }
         }
 
-        private void BallMgr_OnProcessCommand(Helpers.BallMgr.Command cmd, Obj_AI_Hero target)
+        private void BallMgr_OnProcessCommand(Helpers.BallMgr.Command cmd, Obj_AI_Hero target, Vector2 pos)
         {
             if (!Spells[(int)cmd].IsReady() || (Orbwalker.ActiveMode != SCommon.Orbwalking.Orbwalker.Mode.Mixed && Orbwalker.ActiveMode != SCommon.Orbwalking.Orbwalker.Mode.Combo))
                 return;
@@ -393,13 +358,16 @@ namespace SAutoCarry.Champions
             {
                 case Helpers.BallMgr.Command.Attack:
                     {
-                        Spells[Q].SPredictionCast(target, HitChance.High, 0, 1, Helpers.BallMgr.Position);
+                        if (target != null)
+                            Spells[Q].SPredictionCast(target, HitChance.High, 0, 1, Helpers.BallMgr.Position);
+                        else
+                            Spells[Q].Cast(pos);
                     }
                     break;
 
                 case Helpers.BallMgr.Command.Dissonance:
                     {
-                        Spells[W].Cast();
+                        Spells[W].Cast(ObjectManager.Player.ServerPosition, true);
                     }
                     break;
 
@@ -411,34 +379,25 @@ namespace SAutoCarry.Champions
 
                 case Helpers.BallMgr.Command.Shockwave:
                     {
-                        if (CountEnemiesInRangePredicted(Spells[R].Range, 100, 0.75f, target) > 0)
-                            Spells[R].Cast();
+                        if (CountEnemiesInRangePredicted(Spells[R].Range, 100, 0.75f) > 0)
+                            Spells[R].Cast(ObjectManager.Player.ServerPosition, true);
                     }
                     break;
             }
         }
 
-        private int CountEnemiesInRangePredicted(float range, float width, float time, Obj_AI_Hero t = null)
+        private int CountEnemiesInRangePredicted(float range, float width, float time)
         {
             int cnt = 0;
-            bool hasTarget = false;
             foreach (var enemy in HeroManager.Enemies)
             {
-                var prediction = SCommon.Prediction.Prediction.GetPrediction(enemy, width, time, 0, range, false, SkillshotType.SkillshotCircle, enemy.GetWaypoints(), enemy.AvgMovChangeTime(), enemy.LastMovChangeTime(), enemy.AvgPathLenght(), enemy.LastAngleDiff(), Helpers.BallMgr.Position.To2D(), Helpers.BallMgr.Position.To2D());
+                var prediction = SCommon.Prediction.Prediction.GetPrediction(enemy, width, time, 0, range, false, SkillshotType.SkillshotCircle, enemy.GetWaypoints(), enemy.AvgMovChangeTime(), enemy.LastMovChangeTime(), enemy.AvgPathLenght(), 360, Helpers.BallMgr.Position.To2D(), Helpers.BallMgr.Position.To2D());
                 if (prediction.HitChance > HitChance.Low)
                 {
                     if (prediction.UnitPosition.Distance(Helpers.BallMgr.Position.To2D()) < range)
-                    {
                         cnt++;
-                        if (t != null && enemy.NetworkId == t.NetworkId)
-                            hasTarget = true;
-                    }
                 }
             }
-
-            if (t != null && cnt == 1 && !hasTarget)
-                return 0;
-
             return cnt;
         }
 
@@ -447,7 +406,7 @@ namespace SAutoCarry.Champions
             if (Spells[E].IsReady() && gapcloser.Sender.IsEnemy)
             {
                 Spells[E].CastOnUnit(ObjectManager.Player);
-                Spells[W].Cast();
+                Spells[W].Cast(ObjectManager.Player.ServerPosition, true);
                 if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo) //combo anti gap closer self r
                     Helpers.BallMgr.Post(Helpers.BallMgr.Command.Shockwave, null);
             }
@@ -458,11 +417,11 @@ namespace SAutoCarry.Champions
             if (sender.IsChannelingImportantSpell())
             {
                 if (Spells[R].IsReady() && Helpers.BallMgr.Position.Distance(sender.ServerPosition) < Spells[R].Range)
-                    Spells[R].Cast(true);
+                    Spells[R].Cast(ObjectManager.Player.ServerPosition, true);
                 else if (Spells[Q].IsReady() && Spells[R].IsReady() && ObjectManager.Player.ServerPosition.Distance(sender.ServerPosition) < Spells[Q].Range / 2f)
                 {
                     Spells[Q].Cast(sender, true);
-                    Spells[W].Cast(true);
+                    Spells[W].Cast(ObjectManager.Player.ServerPosition, true);
                 }
             }
         }
@@ -499,6 +458,62 @@ namespace SAutoCarry.Champions
                 collection.Add(combination);
             }
             return collection;
+        }
+
+        private void UltThread()
+        {
+            //auto ult
+            while (true)
+            {
+                if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.None)
+                {
+                    if (Spells[R].IsReady() && Helpers.BallMgr.IsBallReady && ConfigMenu.Item("MAUTOR").GetValue<bool>())
+                    {
+                        var pred = Spells[R].GetAoeSPrediction();
+                        if (CountEnemiesInRangePredicted(Spells[R].Range, 100, 0.75f) >= ConfigMenu.Item("MAUTORHIT").GetValue<Slider>().Value)
+                            Helpers.BallMgr.Post(Helpers.BallMgr.Command.Shockwave, null);
+                        else
+                        {
+                            if (Spells[Q].IsReady())
+                            {
+                                List<Vector2> poses = new List<Vector2>();
+                                foreach (var enemy in HeroManager.Enemies)
+                                {
+                                    if (enemy.IsValidTarget(Spells[Q].Range))
+                                    {
+                                        var pos = LeagueSharp.Common.Prediction.GetPrediction(enemy, 0.75f).UnitPosition.To2D();
+                                        if (pos.Distance(ObjectManager.Player.ServerPosition.To2D()) <= 800)
+                                            poses.Add(LeagueSharp.Common.Prediction.GetPrediction(enemy, 0.75f).UnitPosition.To2D());
+                                    }
+                                }
+
+                                foreach (var list in GetCombinations(poses))
+                                {
+                                    if (list.Count >= ConfigMenu.Item("MAUTORHIT").GetValue<Slider>().Value)
+                                    {
+                                        Vector2 center;
+                                        float radius;
+                                        MEC.FindMinimalBoundingCircle(poses, out center, out radius);
+                                        if (radius < Spells[R].Width && center.Distance(ObjectManager.Player.ServerPosition) < 825f)
+                                        {
+                                            Helpers.BallMgr.Post(Helpers.BallMgr.Command.Attack, null, center);
+                                            Helpers.BallMgr.Post(Helpers.BallMgr.Command.Shockwave, null);
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
+                {
+                    //R
+                    if (ConfigMenu.Item("CUSER").GetValue<bool>())
+                        UltMethods[ConfigMenu.Item("CUSERMETHOD").GetValue<StringList>().SelectedIndex]();
+                }
+            }
+            Thread.Sleep(1);
         }
     }
 }

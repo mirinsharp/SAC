@@ -25,15 +25,15 @@ namespace SAutoCarry.Champions.Helpers
         }
 
         private static Champion s_Champion;
-        private static ConcurrentQueue<Tuple<Command, Obj_AI_Hero>> s_WorkQueue;
+        private static ConcurrentQueue<Tuple<Command, Tuple<Obj_AI_Hero, Vector2>>> s_WorkQueue;
         private static Vector3 s_Position;
 
-        public static bool IsBallReady { get; set; }
+        public static bool IsBallReady { get; private set; }
 
         public static Vector3 Position
         {
             get { return s_Position; }
-            set
+            private set
             {
                 if (s_Position != value)
                 {
@@ -43,37 +43,37 @@ namespace SAutoCarry.Champions.Helpers
             }
         }
 
-        public delegate void dOnProcessCommand(Command cmd, Obj_AI_Hero target);
+        public delegate void dOnProcessCommand(Command cmd, Obj_AI_Hero target, Vector2 pos);
         public static event dOnProcessCommand OnProcessCommand;
 
         public static void Initialize(Champion champ)
         {
             s_Champion = champ;
-            s_WorkQueue = new ConcurrentQueue<Tuple<Command, Obj_AI_Hero>>();
+            s_WorkQueue = new ConcurrentQueue<Tuple<Command, Tuple<Obj_AI_Hero, Vector2>>>();
             Position = ObjectManager.Player.ServerPosition;
             Game.OnUpdate += Game_OnUpdate;
             Obj_AI_Hero.OnCreate += Obj_AI_Hero_OnCreate;
             Obj_AI_Hero.OnProcessSpellCast += Obj_AI_Hero_OnProcessSpellCast;
         }
 
-        public static void Post(Command cmd, Obj_AI_Hero t)
+        public static void Post(Command cmd, Obj_AI_Hero t, Vector2 pos = default(Vector2))
         {
-            s_WorkQueue.Enqueue(new Tuple<Command, Obj_AI_Hero>(cmd, t));
+            s_WorkQueue.Enqueue(new Tuple<Command, Tuple<Obj_AI_Hero, Vector2>>(cmd, new Tuple<Obj_AI_Hero, Vector2>(t, pos)));
         }
 
         public static void Process(int count = 1)
         {
-            Tuple<Command, Obj_AI_Hero> cmd;
+            Tuple<Command, Tuple<Obj_AI_Hero, Vector2>> cmd;
             for (int i = 0; i < count; i++)
             {
                 if (s_WorkQueue.TryDequeue(out cmd))
-                    OnProcessCommand(cmd.Item1, cmd.Item2);
+                    OnProcessCommand(cmd.Item1, cmd.Item2.Item1, cmd.Item2.Item2);
             }
         }
 
         public static void ClearWorkQueue()
         {
-            s_WorkQueue = new ConcurrentQueue<Tuple<Command, Obj_AI_Hero>>();
+            s_WorkQueue = new ConcurrentQueue<Tuple<Command, Tuple<Obj_AI_Hero, Vector2>>>();
         }
 
         public static bool CheckHeroCollision(Vector3 to)
