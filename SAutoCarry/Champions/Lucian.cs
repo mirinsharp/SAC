@@ -133,7 +133,7 @@ namespace SAutoCarry.Champions
             var t = TargetSelector.GetTarget(1200f, LeagueSharp.Common.TargetSelector.DamageType.Physical);
             if (t != null)
             {
-                var enemyHitBox = ClipperWrapper.DefineCircle(LeagueSharp.Common.Geometry.PositionAfter(t.GetWaypoints(), 300, (int)t.MoveSpeed), t.BoundingRadius);
+                var enemyHitBox = ClipperWrapper.DefineCircle(SCommon.Prediction.Prediction.GetFastUnitPosition(t, 0.3f), t.BoundingRadius);
                 var minions = MinionManager.GetMinions(Spells[Q].Range, MinionTypes.All, MinionTeam.NotAlly);
                 foreach (var minion in minions)
                 {
@@ -200,7 +200,7 @@ namespace SAutoCarry.Champions
             }
         }
 
-        protected override void Orbwalking_BeforeAttack(SCommon.Orbwalking.BeforeAttackArgs args)
+        protected override void OrbwalkingEvents_BeforeAttack(SCommon.Orbwalking.BeforeAttackArgs args)
         {
             if (!HasPassive && args.Target != null && args.Target is Obj_AI_Hero && Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
             {
@@ -212,7 +212,7 @@ namespace SAutoCarry.Champions
             }
         }
 
-        protected override void Orbwalking_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
+        protected override void OrbwalkingEvents_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
         {
             HasPassive = false;
             if (args.Target != null && args.Target is Obj_AI_Hero && Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)

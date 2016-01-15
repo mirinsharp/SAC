@@ -30,8 +30,13 @@ namespace SAutoCarry.Champions
             Menu combo = new Menu("Combo", "SAutoCarry.Twitch.Combo");
             combo.AddItem(new MenuItem("SAutoCarry.Twitch.Combo.UseQ", "Use Q").SetValue(true));
             combo.AddItem(new MenuItem("SAutoCarry.Twitch.Combo.UseW", "Use W").SetValue(true));
-            combo.AddItem(new MenuItem("SAutoCarry.Twitch.Combo.UseE", "Use E").SetValue(true));
-
+            combo.AddItem(new MenuItem("SAutoCarry.Twitch.Combo.UseE", "Use E").SetTooltip("Uses when killable with E or passive stacks = 6").SetValue(true));
+            ///
+            Menu whitelist = new Menu("E WhiteList", "SAutoCarry.Twitch.Combo.EWhiteList");
+            foreach (var enemy in HeroManager.Enemies)
+                whitelist.AddItem(new MenuItem("SAutoCarry.Twitch.Combo.EWhiteList." + enemy.ChampionName, "Use E For " + enemy.ChampionName).SetValue(true));
+            combo.AddSubMenu(whitelist);
+            //
             Menu harass = new Menu("Harass", "SAutoCarry.Twitch.Harass");
             harass.AddItem(new MenuItem("SAutoCarry.Twitch.Harass.UseW", "Use W").SetValue(true));
 
@@ -75,7 +80,7 @@ namespace SAutoCarry.Champions
 
             if (Spells[E].IsReady() && ComboUseE)
             {
-                if (HeroManager.Enemies.Any(x => x.IsValidTarget(Spells[E].Range) && ((x.GetBuffCount("twitchdeadlyvenom") >= 6) || Spells[E].IsKillable(x))))
+                if (HeroManager.Enemies.Any(x => x.IsValidTarget(Spells[E].Range) && !x.IsInvulnerable && (x.GetBuffCount("twitchdeadlyvenom") >= 6 || Spells[E].IsKillable(x)) && IsWhitelisted(x)))
                     Spells[E].Cast();
             }
         }
@@ -122,7 +127,12 @@ namespace SAutoCarry.Champions
                 RecallStealthQ();
         }
 
-        protected override void Orbwalking_BeforeAttack(BeforeAttackArgs args)
+        public bool IsWhitelisted(Obj_AI_Hero enemy)
+        {
+            return ConfigMenu.Item("SAutoCarry.Twitch.Combo.EWhiteList." + enemy.ChampionName).GetValue<bool>();
+        }
+
+        protected override void OrbwalkingEvents_BeforeAttack(BeforeAttackArgs args)
         {
             if (Spells[Q].IsReady() && ComboUseQ && args.Target.Type == GameObjectType.obj_AI_Hero && Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
             {

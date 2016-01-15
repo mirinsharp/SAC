@@ -113,7 +113,7 @@ namespace SAutoCarry.Champions
             }
         }
 
-        protected override void Orbwalking_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
+        protected override void OrbwalkingEvents_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
         {
             if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
             {

@@ -236,13 +236,13 @@ namespace SAutoCarry.Champions
                 Render.Circle.DrawCircle(ObjectManager.Player.Position, 5500, System.Drawing.Color.FromArgb(100, 255, 255, 255));
         }
 
-        protected override void Orbwalking_BeforeAttack(BeforeAttackArgs args)
+        protected override void OrbwalkingEvents_BeforeAttack(BeforeAttackArgs args)
         {
             if (args.Target.Type == GameObjectType.obj_AI_Hero)
                 args.Process = Helpers.CardMgr.CanProcessAttack;
         }
 
-        protected override void Orbwalking_AfterAttack(AfterAttackArgs args)
+        protected override void OrbwalkingEvents_AfterAttack(AfterAttackArgs args)
         {
             Orbwalker.ForcedTarget = null;
         }

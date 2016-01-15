@@ -105,7 +105,7 @@ namespace SAutoCarry.Champions
             return base.CalculateAADamage(target, aacount) + (Spells[E].IsReady() ? Spells[E].GetDamage(target) * aacount : 0);
         }
 
-        protected override void Orbwalking_BeforeAttack(BeforeAttackArgs args)
+        protected override void OrbwalkingEvents_BeforeAttack(BeforeAttackArgs args)
         {
             if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo && args.Target.Type == GameObjectType.obj_AI_Hero)
             {
@@ -114,7 +114,7 @@ namespace SAutoCarry.Champions
             }
         }
 
-        protected override void Orbwalking_AfterAttack(AfterAttackArgs args)
+        protected override void OrbwalkingEvents_AfterAttack(AfterAttackArgs args)
         {
             if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo && args.Target.Type == GameObjectType.obj_AI_Hero)
             {

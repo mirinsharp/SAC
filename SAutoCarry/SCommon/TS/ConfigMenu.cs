@@ -10,7 +10,8 @@ namespace SCommon.TS
         public static void Create(Menu menuToAttach)
         {
             s_Config = new Menu("Target Selector", "TargetSelector.Root");
-            s_Config.AddItem(new MenuItem("TargetSelector.Root.blFocusSelected", "Focus Selected Target").SetValue(true));
+            s_Config.AddItem(new MenuItem("TargetSelector.Root.blFocusSelected", "Focus Selected Target").SetValue(true)).ValueChanged += (s, ar) => s_Config.Item("TargetSelector.Root.iFocusSelectedExtraRange").Show(ar.GetNewValue<bool>());
+            s_Config.AddItem(new MenuItem("TargetSelector.Root.iFocusSelectedExtraRange", "Extra Focus Selected Range").SetValue(new Slider(0, 0, 250))).Show(s_Config.Item("TargetSelector.Root.blFocusSelected").GetValue<bool>()).SetTooltip("Assembly will still try to focus selected target if out of range but if in range + value away");
             s_Config.AddItem(new MenuItem("TargetSelector.Root.blOnlyAttackSelected", "Only Attack Selected Target").SetValue(false));
             s_Config.AddItem(new MenuItem("TargetSelector.Root.SelectedTargetColor", "Selected Target Color").SetValue(new Circle(true, System.Drawing.Color.Red)));
 
@@ -32,6 +33,14 @@ namespace SCommon.TS
         {
             get { return s_Config.Item("TargetSelector.Root.blFocusSelected").GetValue<bool>(); }
             set { s_Config.Item("TargetSelector.Root.blFocusSelected").SetValue(value); }
+        }
+
+        /// <summary>
+        /// Gets extra focus range
+        /// </summary>
+        public static int FocusExtraRange
+        {
+            get { return s_Config.Item("TargetSelector.Root.iFocusSelectedExtraRange").GetValue<Slider>().Value; }
         }
 
         /// <summary>

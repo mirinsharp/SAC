@@ -159,7 +159,7 @@ namespace SAutoCarry.Champions.Helpers
 
                     if (Me.Spells[W].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < Me.Spells[W].Range + t.BoundingRadius + (Animation.UltActive ? 10 : 0) && ! Me.IsDoingFastQ)
                     {
-                        if (ObjectManager.Player.CountEnemiesInRange(1000) == 1 && ObjectManager.Player.HealthPercent > 30)
+                        if (ObjectManager.Player.CountEnemiesInRange(1000) == 1 && ObjectManager.Player.HealthPercent > 50)
                         {
                             if (Me.Spells[E].IsReady() && Me.Spells[Q].IsReady())
                                 return;

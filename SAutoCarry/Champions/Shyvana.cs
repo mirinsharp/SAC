@@ -87,7 +87,7 @@ namespace SAutoCarry.Champions
             if(t != null)
             {
                 if (Spells[E].IsReady() && ComboUseE)
-                    Spells[E].Cast(Spells[E].GetSPrediction(t).CastPosition);
+                    Spells[E].SPredictionCast(t, HitChance.Low);
 
                 if(Spells[R].IsReady() && ComboUseR)
                 {
@@ -166,7 +166,7 @@ namespace SAutoCarry.Champions
             return false;
         }
 
-        protected override void Orbwalking_BeforeAttack(SCommon.Orbwalking.BeforeAttackArgs args)
+        protected override void OrbwalkingEvents_BeforeAttack(SCommon.Orbwalking.BeforeAttackArgs args)
         {
             if (args.Target is Obj_AI_Hero)
             {
@@ -191,7 +191,7 @@ namespace SAutoCarry.Champions
             }
         }
         
-        protected override void Orbwalking_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
+        protected override void OrbwalkingEvents_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
         {
             if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
             {

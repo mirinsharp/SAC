@@ -89,8 +89,7 @@ namespace SCommon.Orbwalking
             Obj_AI_Base.OnPlayAnimation += Obj_AI_Base_OnPlayAnimation;
             Spellbook.OnStopCast += Spellbook_OnStopCast;
             Obj_AI_Base.OnDamage += Obj_AI_Base_OnDamage;
-            Obj_AI_Base.OnIssueOrder += Obj_AI_Base_OnIssueOrder;
-            PacketHandler.Register(0xF5, PacketHandler_AfterAttack);
+            PacketHandler.Register(0xA3, PacketHandler_AfterAttack);
             new Drawings(this);
         }
 
@@ -535,7 +534,7 @@ namespace SCommon.Orbwalking
                     if (HealthPrediction.GetHealthPrediction(minion, t, 30) > 2 * Damage.AutoAttack.GetDamage(minion, true) || Damage.Prediction.IsLastHitable(minion))
                     {
                         //check if minion is about to be attacked
-                        if (Damage.Prediction.AggroCount(minion) == 0 && ObjectManager.Get<Obj_AI_Minion>().Any(p => p.IsEnemy && !p.IsMelee && MinionManager.IsMinion(p) && p.ServerPosition.Distance(minion.ServerPosition) - p.AttackRange < p.MoveSpeed * (ObjectManager.Player.AttackDelay * 2f) && p.Path.Length > 0))
+                        if (Damage.Prediction.AggroCount(minion) == 0 && ObjectManager.Get<Obj_AI_Minion>().Any(p => p.IsEnemy && !p.IsMelee && MinionManager.IsMinion(p) && p.IsValidTarget(1500) && p.ServerPosition.Distance(minion.ServerPosition) - p.AttackRange < p.MoveSpeed * ObjectManager.Player.AttackDelay && p.Path.Length > 0))
                             continue;
 
                         return minion;
@@ -1007,17 +1006,6 @@ namespace SCommon.Orbwalking
         private void Spellbook_OnStopCast(Spellbook sender, SpellbookStopCastEventArgs args)
         {
             if (sender.Owner.IsValid && sender.Owner.IsMe && args.DestroyMissile && args.StopAnimation)
-                ResetAATimer();
-        }
-
-        /// <summary>
-        /// OnIssueOrder event for detect attack cancels while winding up
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="args">The args.</param>
-        private void Obj_AI_Base_OnIssueOrder(Obj_AI_Base sender, GameObjectIssueOrderEventArgs args)
-        {
-            if (sender.IsMe && m_attackInProgress && args.Order == GameObjectOrder.MoveTo)
                 ResetAATimer();
         }
     }

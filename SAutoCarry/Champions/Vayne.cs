@@ -21,7 +21,7 @@ namespace SAutoCarry.Champions
             OnCombo += Combo;
             OnHarass += Harass;
 
-            TargetSelector.RegisterCustomMultipler((hero) => hero.GetBuffCount("vaynesilvereddebuff"));
+            TargetSelector.RegisterCustomMultipler((hero) => hero.GetBuffCount("vaynesilvereddebuff") * 10);
         }
 
         public override void CreateConfigMenu()
@@ -120,7 +120,7 @@ namespace SAutoCarry.Champions
             }
         }
 
-        protected override void Orbwalking_BeforeAttack(SCommon.Orbwalking.BeforeAttackArgs args)
+        protected override void OrbwalkingEvents_BeforeAttack(SCommon.Orbwalking.BeforeAttackArgs args)
         {
             if (DontAAStealth && ObjectManager.Player.HasBuff("vaynetumblefade"))
             {
@@ -134,7 +134,7 @@ namespace SAutoCarry.Champions
             }
         }
 
-        protected override void Orbwalking_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
+        protected override void OrbwalkingEvents_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
         {
             if (args.Target is Obj_AI_Hero)
             {

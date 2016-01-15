@@ -97,6 +97,8 @@ namespace SAutoCarry
                     Champion = new Cassiopeia();
                     break;
             }
+            if (!Game.Version.StartsWith("6.1"))
+                Game.PrintChat("Wrong game version");
         }
     }
 }

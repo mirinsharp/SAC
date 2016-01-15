@@ -83,8 +83,10 @@ namespace SCommon.Packet
 
             if (!s_debugReceivedOnlyWithMyNetId || search(args.PacketData, s_NetworkId) != -1)
             {
-                Console.WriteLine("[S->C][Opcode:0x{0:X4} ({0})][ProtocolFlag:{1}][MyNetId:{3:X8} ({2})]", BitConverter.ToInt16(args.PacketData, 0), args.ProtocolFlag, ObjectManager.Player.NetworkId, BitConverter.ToInt32(BitConverter.GetBytes(ObjectManager.Player.NetworkId).Reverse().ToArray(), 0));
+                Console.WriteLine("[{4}][Opcode:0x{0:X4} ({0})][ProtocolFlag:{1}][MyNetId:{3:X8} ({2})]", BitConverter.ToInt16(args.PacketData, 0), args.ProtocolFlag, ObjectManager.Player.NetworkId, BitConverter.ToInt32(BitConverter.GetBytes(ObjectManager.Player.NetworkId).Reverse().ToArray(), 0), args.Channel);
                 Console.WriteLine(HexDump(args.PacketData, 2, args.PacketData.Length - 2));
+
+                Console.WriteLine();
             }
         }
 

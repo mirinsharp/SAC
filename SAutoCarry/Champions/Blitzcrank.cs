@@ -160,7 +160,7 @@ namespace SAutoCarry.Champions
             return ConfigMenu.Item("SAutoCarry.Blitzcrank.Combo.Grabfilter.DontGrab" + hero.ChampionName).GetValue<bool>();
         }
 
-        protected override void Orbwalking_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
+        protected override void OrbwalkingEvents_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
         {
             if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Mixed)
             {

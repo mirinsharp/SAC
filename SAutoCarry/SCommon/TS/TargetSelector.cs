@@ -100,6 +100,8 @@ namespace SCommon.TS
                 {
                     if (s_SelectedTarget.IsValidTarget(range))
                         return s_SelectedTarget;
+                    else if (ConfigMenu.FocusExtraRange > 0 && s_SelectedTarget.IsValidTarget(range + ConfigMenu.FocusExtraRange))
+                        return null;
                 }
             }
             Vector3 from = _from.HasValue ? _from.Value : ObjectManager.Player.ServerPosition;

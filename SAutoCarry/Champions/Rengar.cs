@@ -133,7 +133,7 @@ namespace SAutoCarry.Champions
             }
         }
 
-        protected override void Orbwalking_BeforeAttack(SCommon.Orbwalking.BeforeAttackArgs args)
+        protected override void OrbwalkingEvents_BeforeAttack(SCommon.Orbwalking.BeforeAttackArgs args)
         {
             if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo && args.Target is Obj_AI_Hero && ComboUseQ)
             {
@@ -200,7 +200,7 @@ namespace SAutoCarry.Champions
             }
         }
 
-        protected override void Orbwalking_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
+        protected override void OrbwalkingEvents_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
         {
             if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
             {

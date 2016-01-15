@@ -45,7 +45,7 @@ namespace SCommon.PluginBase
                     Quality = FontQuality.ClearTypeNatural
                 });
 
-            ConfigMenu = new Menu(szMenuName, szChampName, true);
+            ConfigMenu = new Menu(szMenuName, String.Format("SAutoCarry.{0}.Root", szChampName), true);
 
             TargetSelector.Initialize(ConfigMenu);
             Orbwalker = new Orbwalking.Orbwalker(ConfigMenu);
@@ -55,17 +55,17 @@ namespace SCommon.PluginBase
             DrawingMenu = new Menu("Drawings", "drawings");
             if (enableRangeDrawings)
             {
-                if (this.Spells[0] != null && this.Spells[0].Range > 0)
-                    this.DrawingMenu.AddItem(new MenuItem("DDRAWQ", "Draw Q").SetValue(new Circle(true, Color.Red, this.Spells[0].Range)));
+                if (this.Spells[Q] != null && this.Spells[0].Range > 0 && this.Spells[Q].Range < 3000)
+                    this.DrawingMenu.AddItem(new MenuItem("DDRAWQ", "Draw Q").SetValue(new Circle(true, Color.Red, this.Spells[Q].Range)));
 
-                if (this.Spells[1] != null && this.Spells[1].Range > 0)
-                    this.DrawingMenu.AddItem(new MenuItem("DDRAWW", "Draw W").SetValue(new Circle(true, Color.Aqua, this.Spells[1].Range)));
+                if (this.Spells[W] != null && this.Spells[1].Range > 0 && this.Spells[W].Range < 3000)
+                    this.DrawingMenu.AddItem(new MenuItem("DDRAWW", "Draw W").SetValue(new Circle(true, Color.Aqua, this.Spells[W].Range)));
 
-                if (this.Spells[2] != null && this.Spells[2].Range > 0)
-                    this.DrawingMenu.AddItem(new MenuItem("DDRAWE", "Draw E").SetValue(new Circle(true, Color.Bisque, this.Spells[2].Range)));
+                if (this.Spells[E] != null && this.Spells[2].Range > 0 && this.Spells[E].Range < 3000)
+                    this.DrawingMenu.AddItem(new MenuItem("DDRAWE", "Draw E").SetValue(new Circle(true, Color.Bisque, this.Spells[E].Range)));
 
-                if (this.Spells[3] != null && this.Spells[3].Range > 0 && this.Spells[3].Range < 3000) //global ult ?
-                    this.DrawingMenu.AddItem(new MenuItem("DDRAWR", "Draw R").SetValue(new Circle(true, Color.Chartreuse, this.Spells[3].Range)));
+                if (this.Spells[R] != null && this.Spells[3].Range > 0 && this.Spells[R].Range < 3000) //global ult ?
+                    this.DrawingMenu.AddItem(new MenuItem("DDRAWR", "Draw R").SetValue(new Circle(true, Color.Chartreuse, this.Spells[R].Range)));
             }
             ConfigMenu.AddSubMenu(DrawingMenu);
 
@@ -117,34 +117,58 @@ namespace SCommon.PluginBase
 
             Menu credits = new Menu("Credits", "SAutoCarry.Credits.Root");
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Author", "SAutoCarry - Made By Synx"));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.SupportedTitle", "Supported Champions: "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported1", "     ->Azir      "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported15", "  ->Blitzcrank   "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported19", "  ->Cassiopeia   "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported16", "    ->Corki     "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported17", "    ->Darius     "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported18", "   ->Dr.Mundo    "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported12", "     ->Jax       "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported2", "    ->Lucian     "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported13", "  ->Master Yi    "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported20", " ->Miss Fortune  "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported14", "   ->Orianna     "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported3", "   ->Pantheon    "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported4", "    ->Rengar     "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported5", "    ->Riven      "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported6", "   ->Shyvana     "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported9", "  ->TwistedFate   "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported11", "    ->Twitch     "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported7", "    ->Vayne      "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported8", "    ->Veigar     "));
-            credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Supported10", "    ->Viktor     "));
             credits.AddItem(new MenuItem("SAutoCarry.Credits.Root.Upvote", "Dont Forget to upvote in DB!"));
-            
+
+            Menu supportedChamps = new Menu("Supported Champions", "SAutoCarry.Credits.Supported");
+
+            Menu adc = new Menu("ADC (5)", "SAutoCarry.Credits.ADC");
+            adc.AddItem(new MenuItem("SAutoCarry.Credits.ADC.Supported1", "  ->Corki        "));
+            adc.AddItem(new MenuItem("SAutoCarry.Credits.ADC.Supported2", "  ->Lucian       "));
+            adc.AddItem(new MenuItem("SAutoCarry.Credits.ADC.Supported3", "  ->Miss Fortune "));
+            adc.AddItem(new MenuItem("SAutoCarry.Credits.ADC.Supported4", "  ->Twitch       "));
+            adc.AddItem(new MenuItem("SAutoCarry.Credits.ADC.Supported5", "  ->Vayne        "));
+            //
+            supportedChamps.AddSubMenu(adc);
+            //
+            Menu mid = new Menu("Mid (6)", "SAutoCarry.Credits.Mid");
+            mid.AddItem(new MenuItem("SAutoCarry.Credits.Mid.Supported1", "  ->Azir         "));
+            mid.AddItem(new MenuItem("SAutoCarry.Credits.Mid.Supported2", "  ->Cassiopeia   "));
+            mid.AddItem(new MenuItem("SAutoCarry.Credits.Mid.Supported3", "  ->Orianna      "));
+            mid.AddItem(new MenuItem("SAutoCarry.Credits.Mid.Supported4", "  ->Twisted Fate "));
+            mid.AddItem(new MenuItem("SAutoCarry.Credits.Mid.Supported5", "  ->Veigar       "));
+            mid.AddItem(new MenuItem("SAutoCarry.Credits.Mid.Supported6", "  ->Viktor       "));
+            //
+            supportedChamps.AddSubMenu(mid);
+            //
+            Menu top = new Menu("Top (5)", "SAutoCarry.Credits.Top");
+            top.AddItem(new MenuItem("SAutoCarry.Credits.Top.Supported1", "  ->Darius      "));
+            top.AddItem(new MenuItem("SAutoCarry.Credits.Top.Supported2", "  ->Dr. Mundo   "));
+            top.AddItem(new MenuItem("SAutoCarry.Credits.Top.Supported3", "  ->Pantheon    "));
+            top.AddItem(new MenuItem("SAutoCarry.Credits.Top.Supported4", "  ->Rengar      "));
+            top.AddItem(new MenuItem("SAutoCarry.Credits.Top.Supported5", "  ->Riven       "));
+            //
+            supportedChamps.AddSubMenu(top);
+            //
+            Menu jungle = new Menu("Jungle (3)", "SAutoCarry.Credits.Jungle");
+            jungle.AddItem(new MenuItem("SAutoCarry.Credits.Jungle.Supported1", "  ->Jax          "));
+            jungle.AddItem(new MenuItem("SAutoCarry.Credits.Jungle.Supported2", "  ->Master Yi    "));
+            jungle.AddItem(new MenuItem("SAutoCarry.Credits.Jungle.Supported3", "  ->Shyvana      "));
+            //
+            supportedChamps.AddSubMenu(jungle);
+            //
+            Menu support = new Menu("Support (1)", "SAutoCarry.Credits.Support");
+            support.AddItem(new MenuItem("SAutoCarry.Credits.Support.Support1", "  ->Blitzcrank   "));
+            //
+            supportedChamps.AddSubMenu(support);
+            //
+
+            credits.AddSubMenu(supportedChamps);
+
             #region Events
             Game.OnUpdate += this.Game_OnUpdate;
             Drawing.OnDraw += this.Drawing_OnDraw;
-            Orbwalking.Events.BeforeAttack += this.Orbwalking_BeforeAttack;
-            Orbwalking.Events.AfterAttack += this.Orbwalking_AfterAttack;
+            Orbwalking.Events.BeforeAttack += this.OrbwalkingEvents_BeforeAttack;
+            Orbwalking.Events.AfterAttack += this.OrbwalkingEvents_AfterAttack;
             AntiGapcloser.OnEnemyGapcloser += this.AntiGapcloser_OnEnemyGapcloser;
             Interrupter2.OnInterruptableTarget += this.Interrupter_OnPossibleToInterrupt;
             Obj_AI_Base.OnBuffAdd += this.Obj_AI_Base_OnBuffAdd;
@@ -231,7 +255,7 @@ namespace SCommon.PluginBase
         /// The BeforeAttack event which called by orbwalker.
         /// </summary>
         /// <param name="args">The args.</param>
-        protected virtual void Orbwalking_BeforeAttack(BeforeAttackArgs args)
+        protected virtual void OrbwalkingEvents_BeforeAttack(BeforeAttackArgs args)
         {
             //
         }
@@ -240,7 +264,7 @@ namespace SCommon.PluginBase
         /// The AfterAttack event which called by orbwalker.
         /// </summary>
         /// <param name="args">The args.</param>
-        protected virtual void Orbwalking_AfterAttack(AfterAttackArgs args)
+        protected virtual void OrbwalkingEvents_AfterAttack(AfterAttackArgs args)
         {
             //
         }

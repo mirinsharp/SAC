@@ -153,7 +153,7 @@ namespace SAutoCarry.Champions
             }
         }
 
-        protected override void Orbwalking_AfterAttack(AfterAttackArgs args)
+        protected override void OrbwalkingEvents_AfterAttack(AfterAttackArgs args)
         {
             if (Spells[E].IsReady() && !args.Target.IsDead)
             {

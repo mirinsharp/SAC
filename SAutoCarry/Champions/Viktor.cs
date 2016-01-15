@@ -41,6 +41,7 @@ namespace SAutoCarry.Champions
             laneclear.AddItem(new MenuItem("SAutoCarry.Viktor.LaneClear.UseQ", "Use Q").SetValue(false));
             laneclear.AddItem(new MenuItem("SAutoCarry.Viktor.LaneClear.UseE", "Use E").SetValue(true)).ValueChanged += (s, ar) => ConfigMenu.Item("SAutoCarry.Viktor.LaneClear.UseEMin").Show(ar.GetNewValue<bool>());
             laneclear.AddItem(new MenuItem("SAutoCarry.Viktor.LaneClear.UseEMin", "Use E Min. Minions").SetValue(new Slider(3, 1, 6))).Show(laneclear.Item("SAutoCarry.Viktor.LaneClear.UseE").GetValue<bool>());
+            laneclear.AddItem(new MenuItem("SAutoCarry.Viktor.LaneClear.Toggle", "Enable Spellfarm").SetValue(new KeyBind('T', KeyBindType.Toggle, true)));
             laneclear.AddItem(new MenuItem("SAutoCarry.Viktor.LaneClear.MinMana", "Min. Mana %").SetValue(new Slider(40, 0, 100)));
 
             Menu misc = new Menu("Misc", "SAutoCarry.Viktor.Misc");
@@ -120,7 +121,7 @@ namespace SAutoCarry.Champions
 
         public void LaneClear()
         {
-            if (ObjectManager.Player.ManaPercent < LaneClearMinMana)
+            if (ObjectManager.Player.ManaPercent < LaneClearMinMana || !LaneClearToggle)
                 return;
 
             if (LaneClearUseQ)
@@ -230,7 +231,7 @@ namespace SAutoCarry.Champions
             return ObjectManager.Player.CalcDamage(target, LeagueSharp.Common.Damage.DamageType.Magical, 0.5f * ObjectManager.Player.AbilityPower() + new float[] { 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 110, 130, 150, 170, 190, 210 }[ObjectManager.Player.Level - 1]);
         }
 
-        protected override void Orbwalking_BeforeAttack(BeforeAttackArgs args)
+        protected override void OrbwalkingEvents_BeforeAttack(BeforeAttackArgs args)
         {
             if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo && args.Target.Type == GameObjectType.obj_AI_Hero)
             {
@@ -309,6 +310,11 @@ namespace SAutoCarry.Champions
         public int LaneClearUseEMin
         {
             get { return ConfigMenu.Item("SAutoCarry.Viktor.LaneClear.UseEMin").GetValue<Slider>().Value; }
+        }
+
+        public bool LaneClearToggle
+        {
+            get { return ConfigMenu.Item("SAutoCarry.Viktor.LaneClear.Toggle").GetValue<KeyBind>().Active; }
         }
 
         public int LaneClearMinMana

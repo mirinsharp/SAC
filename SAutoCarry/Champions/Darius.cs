@@ -165,7 +165,7 @@ namespace SAutoCarry.Champions
             }
         }
 
-        protected override void Orbwalking_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
+        protected override void OrbwalkingEvents_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
         {
             if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Mixed)
             {
@@ -200,7 +200,10 @@ namespace SAutoCarry.Champions
 
         public override double CalculateDamageR(Obj_AI_Hero target)
         {
-            return base.CalculateDamageR(target) * (1f + ObjectManager.Player.GetBuffCount("dariushemo") * 0.2f);
+            if (Spells[R].IsReady())
+                return ObjectManager.Player.GetSpellDamage(target, SpellSlot.R) * (1f + ObjectManager.Player.GetBuffCount("dariushemo") * 0.2f);
+
+            return 0.0d;
         }
 
         public bool ComboUseQ

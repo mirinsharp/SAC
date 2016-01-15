@@ -41,8 +41,8 @@ namespace SAutoCarry.Champions
             OnHarass += Harass;
             OnLaneClear += LaneClear;
 
-            //m_ultThread = new Thread(new ThreadStart(UltThread));
-            //m_ultThread.Start();
+            m_ultThread = new Thread(new ThreadStart(UltThread));
+            m_ultThread.Start();
         }
 
         public override void CreateConfigMenu()
