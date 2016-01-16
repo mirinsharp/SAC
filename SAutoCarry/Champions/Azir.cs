@@ -490,21 +490,18 @@ namespace SAutoCarry.Champions
                     }
                 }
             }
-            else
-            {
-                if (AntiGapCloserEnabled && AntiGapcloser.Spells.Any(p => p.SpellName == args.SData.Name.ToLower()))
-                {
-                    if(ConfigMenu.Item("SAutoCarry.Azir.Misc.AntiGapCloser." + args.SData.Name.ToLower()).GetValue<bool>())
-                    {
-                        if (args.End.Distance(ObjectManager.Player.ServerPosition) < 200)
-                            Spells[R].Cast(args.End.Extend(args.Start, 100));
-                    }
-                }
-            }
         }
 
         protected override void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
         {
+            if (AntiGapCloserEnabled)
+            {
+                if (ConfigMenu.Item("SAutoCarry.Azir.Misc.AntiGapCloser." + gapcloser.Sender.Spellbook.GetSpell(gapcloser.Slot).Name).GetValue<bool>())
+                {
+                    if (gapcloser.End.Distance(ObjectManager.Player.ServerPosition) < 200)
+                        Spells[R].Cast(gapcloser.End.Extend(gapcloser.Start, 100));
+                }
+            }
 
         }
 
