@@ -533,9 +533,9 @@ namespace SCommon.Orbwalking
 
                     if (HealthPrediction.GetHealthPrediction(minion, t, 30) > 2 * Damage.AutoAttack.GetDamage(minion, true) || Damage.Prediction.IsLastHitable(minion))
                     {
-                        //check if minion is about to be attacked
-                        if (Damage.Prediction.AggroCount(minion) == 0 && ObjectManager.Get<Obj_AI_Minion>().Any(p => p.IsEnemy && !p.IsMelee && MinionManager.IsMinion(p) && p.IsValidTarget(1500) && p.ServerPosition.Distance(minion.ServerPosition) - p.AttackRange < p.MoveSpeed * ObjectManager.Player.AttackDelay && p.Path.Length > 0))
-                            continue;
+                        ////check if minion is about to be attacked
+                        //if (Damage.Prediction.AggroCount(minion) == 0 && ObjectManager.Get<Obj_AI_Minion>().Any(p => p.IsEnemy && !p.IsMelee && MinionManager.IsMinion(p) && p.IsValidTarget(1500) && p.ServerPosition.Distance(minion.ServerPosition) - p.AttackRange < p.MoveSpeed * ObjectManager.Player.AttackDelay && p.Path.Length > 0))
+                        //    continue;
 
                         return minion;
                     }
