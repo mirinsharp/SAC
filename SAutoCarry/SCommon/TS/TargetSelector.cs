@@ -59,13 +59,13 @@ namespace SCommon.TS
         public static Obj_AI_Hero GetTarget(float range, LeagueSharp.Common.TargetSelector.DamageType dmgType = LeagueSharp.Common.TargetSelector.DamageType.Physical, Vector3? _from = null)
         {
             Vector3 from = _from.HasValue ? _from.Value : ObjectManager.Player.ServerPosition;
-            if (s_LastTarget == null || !s_LastTarget.IsValidTarget(range) || Utils.TickCount - s_LastTargetSent > 250)
-            {
-                var t = GetNewTarget(range, dmgType, from);
-                s_LastTarget = t;
-                s_LastTargetSent = Utils.TickCount;
-            }
-            return s_LastTarget;
+            //if (s_LastTarget == null || !s_LastTarget.IsValidTarget(range) || Utils.TickCount - s_LastTargetSent > 250)
+            //{
+            //    var t = GetNewTarget(range, dmgType, from);
+            //    s_LastTarget = t;
+            //    s_LastTargetSent = Utils.TickCount;
+            //}
+            return GetNewTarget(range, dmgType, from);
         }
 
         public static void RegisterCustomMultipler(Func<Obj_AI_Hero, float> fn)

@@ -60,7 +60,7 @@ namespace SAutoCarry.Champions
             foreach (Obj_AI_Hero enemy in HeroManager.Enemies)
                 autograb.AddItem(new MenuItem("SAutoCarry.Blitzcrank.Misc.AutoGrab.DontGrab" + enemy.ChampionName, string.Format("Dont Grab {0}", enemy.ChampionName)).SetValue(false));
             autograb.AddItem(new MenuItem("SAutoCarry.Blitzcrank.Misc.AutoGrab.Immobile", "Auto Grab Immobile Target").SetValue(true));
-            autograb.AddItem(new MenuItem("SAutoCarry.Blitzcrank.Misc.AutoGrab.Range", "Max. Grab Range").SetValue(new Slider(800, 1, 1000)));
+            autograb.AddItem(new MenuItem("SAutoCarry.Blitzcrank.Misc.AutoGrab.Range", "Max. Grab Range").SetValue(new Slider(800, 1, 925)));
             autograb.AddItem(new MenuItem("SAutoCarry.Blitzcrank.Misc.AutoGrab.MinHp", "Min. HP Percent").SetValue(new Slider(40, 1, 100)));
             autograb.AddItem(new MenuItem("SAutoCarry.Blitzcrank.Misc.AutoGrab.Enabled", "Enabled").SetValue(new KeyBind('T', KeyBindType.Toggle)));
             //
@@ -78,7 +78,7 @@ namespace SAutoCarry.Champions
 
         public override void SetSpells()
         {
-            Spells[Q] = new Spell(SpellSlot.Q, 1000f);
+            Spells[Q] = new Spell(SpellSlot.Q, 925f);
             Spells[Q].SetSkillshot(0.25f, 70f, 1800f, true, SkillshotType.SkillshotLine);
 
             Spells[W] = new Spell(SpellSlot.W, 0f);
@@ -160,13 +160,14 @@ namespace SAutoCarry.Champions
             return ConfigMenu.Item("SAutoCarry.Blitzcrank.Combo.Grabfilter.DontGrab" + hero.ChampionName).GetValue<bool>();
         }
 
-        protected override void OrbwalkingEvents_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
+        protected override void OrbwalkingEvents_BeforeAttack(SCommon.Orbwalking.BeforeAttackArgs args)
         {
             if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Mixed)
             {
                 if (Spells[E].IsReady() && HarassUseE)
                 {
                     Spells[E].Cast();
+                    args.Process = false;
                     return;
                 }
             }
@@ -176,6 +177,7 @@ namespace SAutoCarry.Champions
                 if (Spells[E].IsReady() && ComboUseE)
                 {
                     Spells[E].Cast();
+                    args.Process = false;
                     return;
                 }
             }
