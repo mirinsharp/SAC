@@ -42,7 +42,6 @@ namespace SAutoCarry.Champions
 
             Menu laneclear = new Menu("LaneClear/JungleClear", "SAutoCarry.Corki.LaneClear");
             laneclear.AddItem(new MenuItem("SAutoCarry.Corki.LaneClear.UseQ", "Use Q").SetValue(true));
-            laneclear.AddItem(new MenuItem("SAutoCarry.Corki.LaneClear.UseE", "Use E").SetValue(true));
             laneclear.AddItem(new MenuItem("SAutoCarry.Corki.LaneClear.UseR", "Use R").SetValue(true));
             laneclear.AddItem(new MenuItem("SAutoCarry.Corki.LaneClear.MinMana", "Min Mana Percent").SetValue(new Slider(50, 100, 0)));
 
@@ -59,23 +58,23 @@ namespace SAutoCarry.Champions
         public override void SetSpells()
         {
             Spells[Q] = new Spell(SpellSlot.Q, 825f);
-            Spells[Q].SetSkillshot(0.35f, 250f, 1000f, true, SkillshotType.SkillshotCircle);
+            Spells[Q].SetSkillshot(0.35f, 150f, 1000f, false, SkillshotType.SkillshotCircle);
 
             Spells[W] = new Spell(SpellSlot.W, 0f);
 
             Spells[E] = new Spell(SpellSlot.E, 125f);
 
             Spells[R] = new Spell(SpellSlot.R, 1225f);
-            Spells[R].SetSkillshot(0.20f, 75f, 2000f, true, SkillshotType.SkillshotLine);
+            Spells[R].SetSkillshot(0.25f, 50f, 2000f, true, SkillshotType.SkillshotLine);
 
         }
 
         public void BeforeOrbwalk()
         {
             if (ObjectManager.Player.HasBuff("corkimissilebarragecounterbig"))
-                Spells[R].Width = 150f;
+                Spells[R].Width = 75f;
             else
-                Spells[R].Range = 75f;
+                Spells[R].Width = 50f;
 
             if (KillStealR)
                 KillSteal();
@@ -88,18 +87,14 @@ namespace SAutoCarry.Champions
             {
                 var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
-                {
                     Spells[Q].SPredictionCast(t, HitChance.High);
-                }
             }
 
             if (Spells[R].IsReady() && ComboUseR && Spells[R].Instance.Ammo > 0)
             {
                 var t = TargetSelector.GetTarget(Spells[R].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
-                {
                     Spells[R].SPredictionCast(t, HitChance.High);
-                }
             }
 
             if (Spells[E].IsReady() && ComboUseE)
@@ -146,14 +141,16 @@ namespace SAutoCarry.Champions
 
                 if (Spells[Q].IsReady() && LaneClearQ)
                 {
-                    if (MinionManager.GetMinions(Spells[Q].Range + 100, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.MaxHealth).Count() > 4)
-                        Spells[Q].Cast();
+                    var farm = Spells[R].GetCircularFarmLocation(MinionManager.GetMinions(Spells[Q].Range, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.MaxHealth));
+                    if (farm.MinionsHit > 4)
+                        Spells[Q].Cast(farm.Position);
                 }
 
             if (Spells[R].IsReady() && LaneClearR)
             {
-                if (MinionManager.GetMinions(Spells[R].Range + 100, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.MaxHealth).Count() > 4)
-                    Spells[R].Cast();
+                var farm = Spells[R].GetCircularFarmLocation(MinionManager.GetMinions(Spells[R].Range, MinionTypes.All, MinionTeam.Enemy, MinionOrderTypes.MaxHealth));
+                if (farm.MinionsHit > 4)
+                    Spells[R].Cast(farm.Position);
             }
         }
 

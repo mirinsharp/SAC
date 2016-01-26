@@ -83,8 +83,8 @@ namespace SAutoCarry.Champions
                     foreach (var gapcloser in spells)
                         antigap.AddItem(new MenuItem("SAutoCarry.Azir.Misc.AntiGapCloser." + gapcloser.SpellName, String.Format("{0} ({1})", gapcloser.ChampionName, gapcloser.Slot)).SetValue(false));
                 }
-                antigap.AddItem(new MenuItem("SAutoCarry.Azir.Misc.AntiGapCloser.Enable", "Enabled").SetValue(true));
             }
+            antigap.AddItem(new MenuItem("SAutoCarry.Azir.Misc.AntiGapCloser.Enable", "Enabled").SetValue(true));
             misc.AddSubMenu(antigap);
 
             ConfigMenu.AddSubMenu(combo);
@@ -386,7 +386,7 @@ namespace SAutoCarry.Champions
 
                 case SpellSlot.E:
                     {
-                        if (CalculateDamageE(target) + SCommon.Damage.AutoAttack.GetDamage(target) >= target.Health)
+                        if (CalculateDamageE(target) + SCommon.Damage.AutoAttack.GetDamage(target) >= target.Health && HeroManager.Enemies.Count(p => p.IsValidTarget() && p.Distance(target.ServerPosition) < 600) < 2)
                             return true;
 
                         return false;
@@ -441,7 +441,7 @@ namespace SAutoCarry.Champions
             if (Helpers.SoldierMgr.SoldierAttacking)
                 return false;
 
-            return Utils.TickCount + Game.Ping / 2 - Orbwalker.LastAATick >= 1000 / (ObjectManager.Player.GetAttackSpeed() * Orbwalker.BaseAttackSpeed);
+            return Utils.TickCount + Game.Ping / 2 - Orbwalker.LastAATick >= 1000f / (ObjectManager.Player.GetAttackSpeed() * Orbwalker.BaseAttackSpeed);
         }
 
         private bool CanOrbwalkTarget(AttackableUnit target)

@@ -326,7 +326,7 @@ namespace SAutoCarry.Champions
         {
             if (!ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !ConfigMenu.Item("CDISABLER").GetValue<KeyBind>().Active && Spells[R].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < 500 && Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
             {
-                if (ObjectManager.Player.GetSpellDamage(t, SpellSlot.Q) * 2 + ObjectManager.Player.GetSpellDamage(t, SpellSlot.W) + CalculateAADamage(t, 2) >= t.Health)
+                if (ObjectManager.Player.GetSpellDamage(t, SpellSlot.Q) * 2 + ObjectManager.Player.GetSpellDamage(t, SpellSlot.W) + CalculateAADamage(t, 2) >= t.Health && ObjectManager.Player.CountEnemiesInRange(1000) == 1)
                     return false;
 
                 if (ObjectManager.Player.ServerPosition.CountEnemiesInRange(500) > 1)

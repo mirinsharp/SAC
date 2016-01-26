@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
@@ -573,12 +574,7 @@ namespace SCommon.Prediction
                             return HitChance.High;
                     }
                     else if (avgt - movt >= t)
-                    {
-                        if (anglediff < 60)
-                            return HitChance.High;
-                        else
-                            return HitChance.Medium;
-                    }
+                        return HitChance.Medium;
                     else
                         return HitChance.Low;
                 }
@@ -682,11 +678,11 @@ namespace SCommon.Prediction
                             result.HitChance = GetHitChance(t, avgt, movt, avgp, anglediff);
                             result.CastPosition = pCenter;
                             result.UnitPosition = pCenter; //+ (direction * (t - Math.Min(arriveTimeA, arriveTimeB)) * moveSpeed);
-                            if (currentPosition.IsBetween(ObjectManager.Player.ServerPosition.To2D(), result.CastPosition))
+                            /*if (currentPosition.IsBetween(ObjectManager.Player.ServerPosition.To2D(), result.CastPosition))
                             {
                                 result.CastPosition = currentPosition;
                                 Console.WriteLine("corrected");
-                            }
+                            }*/
                             result.CollisionResult = Collision.GetCollisions(from, result.CastPosition, width, delay, missileSpeed);
                             return result;
                         }
@@ -807,13 +803,25 @@ namespace SCommon.Prediction
                 LastSpells.RemoveAll(p => Environment.TickCount - p.tick > 2000);
                 if (sender.IsMe && !args.SData.IsAutoAttack() && predMenu.Item("SPREDHC").GetValue<KeyBind>().Active)
                 {
-                    if (args.Slot == SpellSlot.Q && !LastSpells.Exists(p => p.name == args.SData.Name))
+                    if (args.Target == null && !LastSpells.Exists(p => p.name == args.SData.Name))
                     {
                         LastSpells.Add(new _lastSpells(args.SData.Name, Environment.TickCount));
                         castCount++;
                     }
                 }
             }
+        }
+
+        private static void Game_OnGameEnd(EventArgs args)
+        {
+            var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, String.Format("sprediction_{0}_{1}_{2}.txt", ObjectManager.Player.ChampionName, DateTime.Now.ToString("dd-MM"), Environment.TickCount.ToString("x8")));
+            File.WriteAllText(file,
+                String.Format("Champion : {1}{0}Casted Spell Count: {2}{0}Hit Spell Count: {3}{0} Hitchance(%) : {4}{0}",
+                Environment.NewLine,
+                ObjectManager.Player.ChampionName,
+                castCount,
+                hitCount,
+                castCount > 0 ? (((float)hitCount / castCount) * 100).ToString("00.00") : "n/a"));
         }
         #endregion
 

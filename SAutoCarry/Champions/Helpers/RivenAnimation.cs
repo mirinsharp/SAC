@@ -121,7 +121,7 @@ namespace SAutoCarry.Champions.Helpers
                     if (t != null && !(Program.Champion as Riven).IsDoingFastQ && Program.Champion.Spells[0].IsReady())
                     {
                         Program.Champion.Orbwalker.ForcedTarget = t;
-                        Program.Champion.Spells[0].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 40, true);
+                        Program.Champion.Spells[0].Cast(t.ServerPosition, true);
                         (Program.Champion as Riven).FastQCombo(true);
                         return;
                     }
@@ -141,7 +141,7 @@ namespace SAutoCarry.Champions.Helpers
                         //    }
                         //}
                         //else
-                            Program.Champion.Spells[0].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 40, true);
+                            Program.Champion.Spells[0].Cast(t.ServerPosition, true);
                             return;
                         //Program.Champion.Orbwalker.ResetAATimer();
 

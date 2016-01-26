@@ -485,17 +485,11 @@ namespace SCommon.Damage
                     var value = 0;
 
                     if (Items.HasItem(3302, hero))
-                    {
                         value = 200; // Relic Shield
-                    }
                     else if (Items.HasItem(3097, hero))
-                    {
                         value = 240; // Targon's Brace
-                    }
                     else if (Items.HasItem(3401, hero))
-                    {
                         value = 400; // Face of the Mountain
-                    }
 
                     return value + hero.TotalAttackDamage;
                 }

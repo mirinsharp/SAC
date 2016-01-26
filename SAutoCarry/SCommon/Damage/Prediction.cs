@@ -28,14 +28,13 @@ namespace SCommon.Damage
         /// <returns>true if last hitable</returns>
         public static bool IsLastHitable(Obj_AI_Base unit, float extraWindup = 0)
         {
-            var t = (int)(ObjectManager.Player.AttackCastDelay * 1000) - 100 + Game.Ping / 2 +
-                                1000 * (int)Math.Max(0, ObjectManager.Player.Distance(unit.ServerPosition) - ObjectManager.Player.BoundingRadius) / (int)Orbwalking.Utility.GetProjectileSpeed();
-
-            float health = HealthPrediction.GetHealthPrediction(unit, t, 30);//GetPrediction(unit, (unit.ServerPosition.To2D().Distance(ObjectManager.Player.ServerPosition.To2D()) / Orbwalking.Utility.GetProjectileSpeed() + ObjectManager.Player.AttackCastDelay) * 1000f + Game.Ping);
+            float health = unit.Health - GetPrediction(unit, (Math.Max(0, unit.ServerPosition.To2D().Distance(ObjectManager.Player.ServerPosition.To2D()) - ObjectManager.Player.BoundingRadius) / Orbwalking.Utility.GetProjectileSpeed() + ObjectManager.Player.AttackCastDelay) * 1000f);
             //float health = unit.Health - dmg;
             return health < AutoAttack.GetDamage(unit, true);
+
         }
 
+        /*
         /// <summary>
         /// Gets damage prediction to given unit
         /// </summary>
@@ -116,6 +115,28 @@ namespace SCommon.Damage
                 dmg = 0;
             return dmg;
         }
+        */
+
+        public static float GetPrediction(Obj_AI_Base unit, float t, bool sequential = false)
+        {
+            if (sequential)
+                return -1 * (HealthPrediction.LaneClearHealthPrediction(unit, (int)t, 30) - unit.Health);
+            float dmg = 0.0f;
+            foreach (var attack in ActiveAttacks.Values)
+            {
+                if (attack.Source.IsValidTarget(float.MaxValue, false) && attack.Target.IsValidTarget(float.MaxValue, false))
+                {
+                    if (attack.Target.NetworkId == unit.NetworkId && !attack.Damaged)
+                    {
+                        float arrivalT = (attack.StartTick + attack.Delay + Math.Max(0, attack.Target.ServerPosition.To2D().Distance(attack.Source.ServerPosition.To2D()) - attack.Source.BoundingRadius) / attack.ProjectileSpeed * 1000f) - Utils.TickCount;
+
+                        if (arrivalT < t && arrivalT > 0)
+                            dmg += attack.Damage;
+                    }
+                }
+            }
+            return dmg;
+        }
 
         /// <summary>
         /// Gets aggro count to the unit.
@@ -139,7 +160,7 @@ namespace SCommon.Damage
             var attackData = new PredictedDamage(
                 sender,
                 target,
-                Utils.TickCount - Game.Ping / 2,
+                Utils.TickCount,
                 sender.AttackCastDelay * 1000f,
                 sender.AttackDelay * 1000f,
                 sender.IsMelee() ? float.MaxValue : args.SData.MissileSpeed,

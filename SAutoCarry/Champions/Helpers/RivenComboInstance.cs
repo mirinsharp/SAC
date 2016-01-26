@@ -143,7 +143,8 @@ namespace SAutoCarry.Champions.Helpers
                         if (Me.Spells[E].IsReady())
                             Me.Spells[E].Cast(t.ServerPosition);
                         Me.Spells[R].Cast();
-                        Me.Spells[W].Cast();
+                        if (t.IsValidTarget(Me.Spells[W].Range))
+                            Me.Spells[W].Cast();
                     }
 
                     if (Me.CheckR2(t))
@@ -151,7 +152,7 @@ namespace SAutoCarry.Champions.Helpers
                         Me.Spells[R].Cast(t.ServerPosition);
                         if (Me.Spells[Q].IsReady())
                         {
-                            Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
+                            Me.Spells[Q].Cast(t.ServerPosition, true);
                             if(!Me.IsDoingFastQ)
                                 Me.FastQCombo();
                         }
@@ -202,22 +203,19 @@ namespace SAutoCarry.Champions.Helpers
                                 return;
                             }
 
-                            var pos = ObjectManager.Player.ServerPosition.To2D();
-                            if (ObjectManager.Player.IsDashing())
-                                pos = ObjectManager.Player.GetDashInfo().EndPos;
-                            if (Me.Spells[W].IsReady() && t.Distance(pos) < Me.Spells[W].Range + t.BoundingRadius && !Me.IsDoingFastQ && Me.Spells[Q].IsReady())
+                            if (Me.Spells[W].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < Me.Spells[W].Range + t.BoundingRadius && !Me.IsDoingFastQ && Me.Spells[Q].IsReady())
                             {
                                 Me.Spells[W].Cast(true);
                                 return;
                             }
 
-                            if (Me.Spells[Q].IsReady() && !Me.IsDoingFastQ && !Me.CheckR1(t) && t.Distance(pos) < Me.Spells[Q].Range)
+                            if (Me.Spells[Q].IsReady() && !Me.IsDoingFastQ && !Me.CheckR1(t) && t.Distance(ObjectManager.Player.ServerPosition) < Me.Spells[Q].Range)
                             {
                                 if (ObjectManager.Player.IsDashing())
                                 {
                                     Utility.DelayAction.Add(Utils.TickCount - ObjectManager.Player.GetDashInfo().EndTick, () =>
                                         {
-                                            Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
+                                            Me.Spells[Q].Cast(t.ServerPosition, true);
                                             Me.FastQCombo();
                                         });
                                     return;
@@ -228,7 +226,7 @@ namespace SAutoCarry.Champions.Helpers
                         }
                         else if (animname == "Spell4a")
                         {
-                            if (Me.Spells[W].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < Me.Spells[W].Range + t.BoundingRadius + 10)
+                            if (Me.Spells[W].IsReady() && t.IsValidTarget(Me.Spells[W].Range - 10))
                             {
                                 Me.Spells[W].Cast();
                                 return;
@@ -242,7 +240,7 @@ namespace SAutoCarry.Champions.Helpers
                                     Me.CastCrescent();
                                 if (Me.Spells[Q].IsReady())
                                 {
-                                    Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
+                                    Me.Spells[Q].Cast(t.ServerPosition, true);
                                     if (!Me.IsDoingFastQ)
                                         Me.FastQCombo();
                                 }
@@ -252,7 +250,7 @@ namespace SAutoCarry.Champions.Helpers
                         {
                             if (Me.Spells[Q].IsReady() && !Me.IsDoingFastQ)
                             {
-                                Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
+                                Me.Spells[Q].Cast(t.ServerPosition, true);
                                 Me.FastQCombo();
                             }
                         }
@@ -267,6 +265,9 @@ namespace SAutoCarry.Champions.Helpers
                 t = Target.Get(1000);
                 if (t != null)
                 {
+                    if (t.Health - Me.CalculateDamageR2(t) < 0 && ObjectManager.Player.HasBuff("RivenFengShuiEngine") && !Me.ConfigMenu.Item("CDISABLER").GetValue<KeyBind>().Active && Me.Spells[R].IsReady() && t.Distance(ObjectManager.Player.ServerPosition) < 650)
+                        Me.Spells[R].Cast(t.ServerPosition);
+
                     if (Me.Spells[E].IsReady() && ObjectManager.Player.ServerPosition.Distance(t.ServerPosition) <= 700 && !ObjectManager.Player.HasBuff("RivenFengShuiEngine"))
                     {
                         Me.Spells[E].Cast(t.ServerPosition);
@@ -311,7 +312,7 @@ namespace SAutoCarry.Champions.Helpers
                                         Me.CastCrescent();
                                     if (Me.Spells[Q].IsReady())
                                     {
-                                        Me.Spells[Q].Cast(t.ServerPosition + (t.ServerPosition - ObjectManager.Player.ServerPosition).Normalized() * 400, true);
+                                        Me.Spells[Q].Cast(t.ServerPosition, true);
                                         if (!Me.IsDoingFastQ)
                                             Me.FastQCombo();
                                     }

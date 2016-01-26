@@ -159,7 +159,7 @@ namespace SAutoCarry.Champions
 
         protected override void OrbwalkingEvents_AfterAttack(SCommon.Orbwalking.AfterAttackArgs args)
         {
-            if (!args.Target.IsDead && args.Target.IsValidTarget(Spells[Q].Range) && Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo && ComboUseQ)
+            if (!args.Target.IsDead && args.Target.Type == GameObjectType.obj_AI_Hero && args.Target.IsValidTarget(Spells[Q].Range) && Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo && ComboUseQ)
                 Spells[Q].CastOnUnit(args.Target as Obj_AI_Hero);
         }
 

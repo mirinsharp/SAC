@@ -307,7 +307,7 @@ namespace SCommon.Orbwalking
                 if (target.Type == GameObjectType.obj_AI_Hero)
                 {
                     Obj_AI_Hero hero = target as Obj_AI_Hero;
-                    return ObjectManager.Player.Distance(hero.ServerPosition) - hero.BoundingRadius - hero.GetScalingRange() + 20 < Utility.GetAARange() || Utility.InAARange(hero);
+                    return ObjectManager.Player.Distance(hero.ServerPosition) - hero.BoundingRadius - hero.GetScalingRange() + 20 < Utility.GetAARange();
                 }
                 else
                     return (target.Type != GameObjectType.obj_AI_Turret || m_Configuration.AttackStructures) && ObjectManager.Player.Distance(target.Position) - target.BoundingRadius + 20 < Utility.GetAARange();
@@ -407,9 +407,7 @@ namespace SCommon.Orbwalking
                     }
                 }
                 else
-                {
                     Move(point);
-                }
             }
         }
        
@@ -528,15 +526,14 @@ namespace SCommon.Orbwalking
             {
                 if (CanOrbwalkTarget(minion))
                 {
-                    var t = (int)(ObjectManager.Player.AttackCastDelay * 1000) - 100 + Game.Ping / 2 +
-                         1000 * (int)Math.Max(0, ObjectManager.Player.Distance(minion.ServerPosition) - ObjectManager.Player.BoundingRadius) / (int)Orbwalking.Utility.GetProjectileSpeed();
-
-                    if (HealthPrediction.GetHealthPrediction(minion, t, 30) > 2 * Damage.AutoAttack.GetDamage(minion, true) || Damage.Prediction.IsLastHitable(minion))
+                    var pred = HealthPrediction.LaneClearHealthPrediction(minion, (int)(ObjectManager.Player.AttackDelay * 1000 * 2), 30);
+                    if (pred >= 2 * Damage.AutoAttack.GetDamage(minion, true) || Damage.Prediction.IsLastHitable(minion))
                     {
-                        ////check if minion is about to be attacked
-                        //if (Damage.Prediction.AggroCount(minion) == 0 && ObjectManager.Get<Obj_AI_Minion>().Any(p => p.IsEnemy && !p.IsMelee && MinionManager.IsMinion(p) && p.IsValidTarget(1500) && p.ServerPosition.Distance(minion.ServerPosition) - p.AttackRange < p.MoveSpeed * ObjectManager.Player.AttackDelay && p.Path.Length > 0))
-                        //    continue;
-
+                        /*
+                        //check if minion is about to be attacked
+                        if (Damage.Prediction.AggroCount(minion) == 0 && ObjectManager.Get<Obj_AI_Minion>().Any(p => p.IsEnemy && !p.IsMelee && MinionManager.IsMinion(p) && p.IsValidTarget(1500) && p.ServerPosition.Distance(minion.ServerPosition) - p.AttackRange < p.MoveSpeed * ObjectManager.Player.AttackDelay && p.Path.Length > 0))
+                            continue;
+                        */
                         return minion;
                     }
                 }
@@ -610,15 +607,15 @@ namespace SCommon.Orbwalking
             if (m_towerTarget != null && m_towerTarget.IsValidTarget() && CanOrbwalkTarget(m_towerTarget) && !m_towerTarget.IsSiegeMinion())
                 return true;
 
-            var underTurret = ObjectManager.Get<Obj_AI_Turret>().FirstOrDefault(p => p.IsValidTarget(950, false, ObjectManager.Player.ServerPosition) && p.IsAlly);
+            var underTurret = ObjectManager.Get<Obj_AI_Turret>().FirstOrDefault(p => p.IsValidTarget() && p.Distance(ObjectManager.Player.ServerPosition) < 950f && p.IsAlly);
 
             if (underTurret != null)
             {
                 return ObjectManager.Get<Obj_AI_Minion>()
                     .Any(
-                        minion => minion.IsValidTarget(950 * 2f) && minion.Team != GameObjectTeam.Neutral &&
+                        minion => minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
                                   MinionManager.IsMinion(minion, false) && !minion.IsSiegeMinion() &&
-                                  underTurret.IsValidTarget(950f, false, minion.ServerPosition));
+                                  underTurret.Distance(minion.ServerPosition) < 950f);
                 
             }
 
@@ -629,9 +626,11 @@ namespace SCommon.Orbwalking
                 ObjectManager.Get<Obj_AI_Minion>()
                     .Any(
                         minion =>
-                            (minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
-                            Utility.InAARange(minion) && MinionManager.IsMinion(minion, false) &&
-                            (minion.Health - Damage.Prediction.GetPrediction(minion, GetAnimationTime() * 1000f * 2f + GetWindupTime() * 1000f, true) <= Damage.AutoAttack.GetDamage(minion, true) * (int)(Math.Ceiling(Damage.Prediction.AggroCount(minion) / 2f)) || Damage.Prediction.AggroCount(minion) >= 6)));
+                            minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
+                            Utility.InAARange(minion) && MinionManager.IsMinion(minion) &&
+                           HealthPrediction.LaneClearHealthPrediction(
+                                    minion, (int)(ObjectManager.Player.AttackDelay * 1000f * 2f + ObjectManager.Player.AttackCastDelay * 1000f), 30) <=
+                                Damage.AutoAttack.GetDamage(minion));
 
         }
 
