@@ -29,8 +29,8 @@ namespace SCommon.Orbwalking
             misc.AddItem(new MenuItem("Orbwalking.Misc.blDontAttackChampWhileLaneClear", "Dont attack champions while Lane Clear").SetTooltip("if this option enabled, orbwalker wont attack champions while pressing laneclear key").SetValue(false));
             misc.AddItem(new MenuItem("Orbwalking.Misc.blDisableAA", "Disable AutoAttack").SetTooltip("if this option enabled, orbwalker wont do auto attack enemy champions").SetValue(false));
             misc.AddItem(new MenuItem("Orbwalking.Misc.blDontMoveMouseOver", "Mouse over hero to stop move").SetTooltip("if this option enabled, your hero wont move while your cursor on it").SetValue(false));
-            misc.AddItem(new MenuItem("Orbwalking.Misc.blMagnetMelee", "Magnet Target (Only Melee)").SetValue(false)).ValueChanged += (s, ar) => m_Menu.Item("Orbwalking.Misc.iStickRange").Show(ar.GetNewValue<bool>());
-            misc.AddItem(new MenuItem("Orbwalking.Misc.iStickRange", "Stick Range").SetValue(new Slider(300, 0, 500))).Show(misc.Item("Orbwalking.Misc.blMagnetMelee").GetValue<bool>());
+            misc.AddItem(new MenuItem("Orbwalking.Misc.blMagnetMelee", "Magnet Target (Only Melee)").SetValue(true)).ValueChanged += (s, ar) => m_Menu.Item("Orbwalking.Misc.iStickRange").Show(ar.GetNewValue<bool>());
+            misc.AddItem(new MenuItem("Orbwalking.Misc.iStickRange", "Stick Range").SetValue(new Slider(390, 0, 600))).Show(misc.Item("Orbwalking.Misc.blMagnetMelee").GetValue<bool>());
             misc.AddItem(new MenuItem("Orbwalking.Misc.blDontMoveInRange", "Dont move if enemy in AA range").SetTooltip("if this option enabled, your hero wont move while there are enemies in aa range").SetValue(false));
             misc.AddItem(new MenuItem("Orbwalking.Misc.blLegitMode", "Legit Mode").SetTooltip("this feature makes your orbwalk slower & human like").SetValue(false)).ValueChanged += (s, ar) => m_Menu.Item("Orbwalking.Misc.iLegitPercent").Show(ar.GetNewValue<bool>());
             misc.AddItem(new MenuItem("Orbwalking.Misc.iLegitPercent", "Make Me Legit %").SetValue(new Slider(20, 0, 100))).Show(misc.Item("Orbwalking.Misc.blLegitMode").GetValue<bool>());
@@ -38,7 +38,7 @@ namespace SCommon.Orbwalking
             Menu drawings = new Menu("Drawings", "Orbwalking.Drawings");
             drawings.AddItem(new MenuItem("Orbwalking.Drawings.SelfAACircle", "Self AA Circle").SetValue(new Circle(true, Color.FromArgb(155, 255, 255, 0))));
             drawings.AddItem(new MenuItem("Orbwalking.Drawings.EnemyAACircle", "Enemy AA Circle").SetValue(new Circle(false, Color.FromArgb(155, 255, 255, 0))));
-            drawings.AddItem(new MenuItem("Orbwalking.Drawings.LastHitMinion", "Last Hitable Minion").SetValue(new Circle(true, Color.FromArgb(155, 255, 255, 0))));
+            drawings.AddItem(new MenuItem("Orbwalking.Drawings.LastHitMinion", "Last Hitable Minion").SetValue(new Circle(false, Color.FromArgb(155, 255, 255, 0))));
             drawings.AddItem(new MenuItem("Orbwalking.Drawings.HoldZone", "Hold Zone").SetValue(new Circle(false, Color.FromArgb(155, 255, 255, 0))));
             drawings.AddItem(new MenuItem("Orbwalking.Drawings.iLineWidth", "Line Width").SetValue(new Slider(2, 1, 6)));
 

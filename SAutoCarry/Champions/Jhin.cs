@@ -83,7 +83,7 @@ namespace SAutoCarry.Champions
             if (Spells[W].IsReady() && ComboUseW)
             {
                 var t = TargetSelector.GetTarget(Spells[W].Range, TargetSelector.DamageType.Physical);
-                if (t != null && (!ComboUseWMarked || t.HasBuff("jhinmark")))
+                if (t != null && (!ComboUseWMarked || t.HasBuff("jhinespotteddebuff")))
                     Spells[W].SPredictionCast(t, HitChance.High);
             }
 
@@ -174,7 +174,7 @@ namespace SAutoCarry.Champions
 
         private bool IsRShootCastable
         {
-            get { return /*buff name ?*/ ObjectManager.Player.HasBuff("jhinr") && /*delay condition ?*/ true; }
+            get { return Spells[R].Instance.Name == "JhinRShot" && /*delay condition ?*/ true; }
         }
 
         private bool IsLastRShoot

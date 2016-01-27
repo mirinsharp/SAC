@@ -18,7 +18,7 @@ namespace SAutoCarry.Champions.Helpers
         {
             s_Champion = champ;
             Menu tumble = new Menu("Tumble Settings", "SAutoCarry.Helpers.Tumble.Root");
-            tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.Mode", "Mode").SetValue(new StringList(new[] { "Auto Pos", "Cursor Pos" })));
+            tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.Mode", "Mode").SetValue(new StringList(new[] { "Auto Pos", "Cursor Pos" }, 1)));
             tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.Wall", "Always Tumble to wall if possible").SetTooltip("Tumbles to wall when possible (fastest Q->AA burst)").SetValue(false));
             tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.Only2W", "Tumble only when enemy has 2 w stacks").SetValue(false));
             tumble.AddItem(new MenuItem("SAutoCarry.Helpers.Tumble.Root.Only2WHarass", "Tumble only when enemy has 2 w stacks in harass mode").SetValue(true));

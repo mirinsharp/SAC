@@ -24,11 +24,14 @@ namespace SAutoCarry.Champions.Helpers
                 (s, ar) =>
                 {
                     condemn.Item("SAutoCarry.Helpers.Condemn.Root.TumbleCondemnSafe").Show(ar.GetNewValue<bool>());
+                    condemn.Item("SAutoCarry.Helpers.Condemn.Root.TumbleCondemnCount").Show(ar.GetNewValue<bool>());
                 };
+            condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.TumbleCondemnCount", "Q->E Position Check Count").SetValue(new Slider(12, 2, 12)).SetTooltip("the bigger count is more fps drop")).Show(condemn.Item("SAutoCarry.Helpers.Condemn.Root.TumbleCondemn").GetValue<bool>());
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.TumbleCondemnSafe", "Only Q->E when tumble position is safe").SetValue(false)).Show(condemn.Item("SAutoCarry.Helpers.Condemn.Root.TumbleCondemn").GetValue<bool>());
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.FlashCondemn", "Condemn->Flash selected target").SetValue(new KeyBind('T', KeyBindType.Press)));
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.DontCondemnTurret", "Dont Condemn Under Turret").SetTooltip("if this option enabled, enemy wont condemned under his allied tower").SetValue(true));
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.PushDistance", "Push Distance").SetValue(new Slider(400, 300, 470)));
+            condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.Accuracy", "Accuracy").SetValue(new Slider(12, 2, 12))).SetTooltip("the bigger count is more fps drop");
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.Draw", "Draw").SetValue(true));
             Menu whitelist = new Menu("Whitelist", "SAutoCarry.Helpers.Condemn.WhiteList");
             foreach(var enemy in HeroManager.Enemies)
@@ -97,20 +100,20 @@ namespace SAutoCarry.Champions.Helpers
             {
                 if (target.Path.Length == 0)
                 {
-                    var outRadius = (0.3f * target.MoveSpeed) / (float)Math.Cos(2 * Math.PI / 12);
+                    var outRadius = (0.3f * target.MoveSpeed) / (float)Math.Cos(2 * Math.PI / Accuracy);
                     int count = 0;
-                    for (int i = 1; i <= 12; i++)
+                    for (int i = 1; i <= Accuracy; i++)
                     {
-                        if (count + (12 - i) < 4)
+                        if (count + (Accuracy - i) < Accuracy / 3)
                             return false;
 
-                        var angle = i * 2 * Math.PI / 12;
+                        var angle = i * 2 * Math.PI / Accuracy;
                         float x = target.Position.X + outRadius * (float)Math.Cos(angle);
                         float y = target.Position.Y + outRadius * (float)Math.Sin(angle);
                         if (IsCondemnable(ObjectManager.Player.ServerPosition.To2D(), new Vector2(x, y), target.BoundingRadius))
                             count++;
                     }
-                    return count >= 4;
+                    return count >= Accuracy / 3;
                 }
                 else
                     return true;
@@ -119,11 +122,11 @@ namespace SAutoCarry.Champions.Helpers
             {
                 if (TumbleCondemn && s_Champion.Spells[Champion.Q].IsReady())
                 {
-                    var outRadius = 300 / (float)Math.Cos(2 * Math.PI / 12);
+                    var outRadius = 300 / (float)Math.Cos(2 * Math.PI / TumbleCondemnCount);
 
-                    for (int i = 1; i <= 12; i++)
+                    for (int i = 1; i <= TumbleCondemnCount; i++)
                     {
-                        var angle = i * 2 * Math.PI / 12;
+                        var angle = i * 2 * Math.PI / TumbleCondemnCount;
                         float x = ObjectManager.Player.Position.X + outRadius * (float)Math.Cos(angle);
                         float y = ObjectManager.Player.Position.Y + outRadius * (float)Math.Sin(angle);
                         targetPosition = Geometry.PositionAfter(target.GetWaypoints(), 300, (int)target.MoveSpeed);
@@ -242,6 +245,11 @@ namespace SAutoCarry.Champions.Helpers
             get { return s_Champion.ConfigMenu.Item("SAutoCarry.Helpers.Condemn.Root.TumbleCondemnSafe").GetValue<bool>(); }
         }
 
+        public static int TumbleCondemnCount
+        {
+            get { return s_Champion.ConfigMenu.Item("SAutoCarry.Helpers.Condemn.Root.TumbleCondemnCount").GetValue<Slider>().Value; }
+        }
+
         public static bool FlashCondemn
         {
             get { return s_Champion.ConfigMenu.Item("SAutoCarry.Helpers.Condemn.Root.FlashCondemn").GetValue<KeyBind>().Active; }
@@ -255,6 +263,11 @@ namespace SAutoCarry.Champions.Helpers
         public static int PushDistance
         {
             get { return s_Champion.ConfigMenu.Item("SAutoCarry.Helpers.Condemn.Root.PushDistance").GetValue<Slider>().Value; }
+        }
+
+        public static int Accuracy
+        {
+            get { return s_Champion.ConfigMenu.Item("SAutoCarry.Helpers.Condemn.Root.Accuracy").GetValue<Slider>().Value; }
         }
     }
 }

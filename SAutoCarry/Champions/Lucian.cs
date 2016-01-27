@@ -56,7 +56,7 @@ namespace SAutoCarry.Champions
         public override void SetSpells()
         {
             Spells[Q] = new Spell(SpellSlot.Q, 675f);
-            Spells[Q].SetTargetted(0.5f, float.MaxValue);
+            Spells[Q].SetTargetted(0.35f, 0f);
 
             Spells[W] = new Spell(SpellSlot.W, 1000f);
             Spells[W].SetSkillshot(0.25f, 150f, 1600f, false, SkillshotType.SkillshotLine);
@@ -133,7 +133,7 @@ namespace SAutoCarry.Champions
             var t = TargetSelector.GetTarget(1200f, LeagueSharp.Common.TargetSelector.DamageType.Physical);
             if (t != null)
             {
-                var enemyHitBox = ClipperWrapper.DefineCircle(SCommon.Prediction.Prediction.GetFastUnitPosition(t, 0.3f), t.BoundingRadius);
+                var enemyHitBox = ClipperWrapper.DefineCircle(SCommon.Prediction.Prediction.GetFastUnitPosition(t, 0.35f), t.BoundingRadius);
                 var minions = MinionManager.GetMinions(Spells[Q].Range, MinionTypes.All, MinionTeam.NotAlly);
                 foreach (var minion in minions)
                 {

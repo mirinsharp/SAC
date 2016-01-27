@@ -333,7 +333,7 @@ namespace SAutoCarry.Champions
                             Jump(insecPos.To3D());
                         }
                     }
-                    else if (ObjectManager.Player.ServerPosition.Distance(TargetSelector.SelectedTarget.ServerPosition) < 200 && InsecLocation.IsValid())
+                    else if (ObjectManager.Player.ServerPosition.Distance(TargetSelector.SelectedTarget.ServerPosition) < 400 && InsecLocation.IsValid())
                     {
                         if (InsecTo.IsValid() && InsecTo.Distance(ObjectManager.Player.ServerPosition.To2D()) < 1500)
                             Spells[R].Cast(InsecTo);
@@ -434,7 +434,9 @@ namespace SAutoCarry.Champions
                         minion =>
                             (minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
                             (Helpers.SoldierMgr.InAARange(minion) || SCommon.Orbwalking.Utility.InAARange(minion)) && MinionManager.IsMinion(minion, false) &&
-                            (minion.Health - SCommon.Damage.Prediction.GetPrediction(minion, ObjectManager.Player.AttackDelay * 1000f * 2f + ObjectManager.Player.AttackCastDelay * 1000f, true) <= SCommon.Damage.AutoAttack.GetDamage(minion, true) * (int)(Math.Ceiling(SCommon.Damage.Prediction.AggroCount(minion) / 2f)))));
+                            HealthPrediction.LaneClearHealthPrediction(
+                                    minion, (int)(ObjectManager.Player.AttackDelay * 1000f * 2f + ObjectManager.Player.AttackCastDelay * 1000f), 30) <=
+                                SCommon.Damage.AutoAttack.GetDamage(minion, true)));
         }
         private bool CanAttack()
         {

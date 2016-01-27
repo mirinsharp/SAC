@@ -265,6 +265,9 @@ namespace SCommon.Orbwalking
             if (ObjectManager.Player.CharData.BaseSkinName == "Graves" && !ObjectManager.Player.HasBuff("GravesBasicAttackAmmo1") && !ObjectManager.Player.HasBuff("GravesBasicAttackAmmo2"))
                 return false;
 
+            if (ObjectManager.Player.CharData.BaseSkinName == "Jhin" && ObjectManager.Player.HasBuff("JhinPassiveReload"))
+                return false;
+
             return Utils.TickCount + t + Game.Ping - m_lastAATick - m_Configuration.ExtraWindup - (m_Configuration.LegitMode && !ObjectManager.Player.IsMelee ? Math.Max(100, ObjectManager.Player.AttackDelay * 1000) : 0) * m_Configuration.LegitPercent / 100f >= 1000 / (ObjectManager.Player.GetAttackSpeed() * m_baseAttackSpeed);
         }
 
@@ -628,7 +631,7 @@ namespace SCommon.Orbwalking
                         minion =>
                             minion.IsValidTarget() && minion.Team != GameObjectTeam.Neutral &&
                             Utility.InAARange(minion) && MinionManager.IsMinion(minion) &&
-                           HealthPrediction.LaneClearHealthPrediction(
+                            HealthPrediction.LaneClearHealthPrediction(
                                     minion, (int)(ObjectManager.Player.AttackDelay * 1000f * 2f + ObjectManager.Player.AttackCastDelay * 1000f), 30) <=
                                 Damage.AutoAttack.GetDamage(minion));
 
@@ -929,7 +932,7 @@ namespace SCommon.Orbwalking
         /// <param name="data"></param>
         private void PacketHandler_AfterAttack(byte[] data)
         {
-            if (BitConverter.ToInt32(data, 2) == ObjectManager.Player.NetworkId && m_IslastCastedAA)
+            if (BitConverter.ToInt32(data, 2) == ObjectManager.Player.NetworkId && m_IslastCastedAA && m_attackInProgress)
             {
                 m_lastAATick = Utils.TickCount - (int)Math.Ceiling(GetWindupTime()) - Game.Ping;
                 AfterAttack(m_lastTarget);
@@ -945,7 +948,7 @@ namespace SCommon.Orbwalking
         {
             if (sender.IsMe)
             {
-                if (Utility.IsAutoAttack(args.SData.Name) && !Utility.HasProjectile())
+                if (Utility.IsAutoAttack(args.SData.Name) && m_attackInProgress)
                     AfterAttack(args.Target as AttackableUnit);
             }
         }
