@@ -56,7 +56,7 @@ namespace SAutoCarry.Champions
         public override void SetSpells()
         {
             Spells[Q] = new Spell(SpellSlot.Q, 675f);
-            Spells[Q].SetTargetted(0.35f, 0f);
+            Spells[Q].SetTargetted(0.35f, float.MaxValue);
 
             Spells[W] = new Spell(SpellSlot.W, 1000f);
             Spells[W].SetSkillshot(0.25f, 150f, 1600f, false, SkillshotType.SkillshotLine);

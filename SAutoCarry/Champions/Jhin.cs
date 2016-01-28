@@ -41,7 +41,7 @@ namespace SAutoCarry.Champions
 
             Menu misc = new Menu("Misc", "SAutoCarry.Jhin.Misc");
             misc.AddItem(new MenuItem("SAutoCarry.Jhin.Misc.AdjustW", "Adjust W Range").SetValue(new Slider(1000, 0, 2500))).ValueChanged += (s, ar) => Spells[W].Range = ar.GetNewValue<Slider>().Value;
-            misc.AddItem(new MenuItem("SAutoCarry.Jhin.Misc.AdjustR", "Adjust R Range").SetValue(new Slider(1000, 0, 2000))).ValueChanged += (s, ar) => Spells[R].Range = ar.GetNewValue<Slider>().Value;
+            misc.AddItem(new MenuItem("SAutoCarry.Jhin.Misc.AdjustR", "Adjust R Range").SetValue(new Slider(1000, 0, 3500))).ValueChanged += (s, ar) => Spells[R].Range = ar.GetNewValue<Slider>().Value;
             misc.AddItem(new MenuItem("SAutoCarry.Jhin.Misc.KillStealRW", "KillSteal").SetValue(true));
 
             ConfigMenu.AddSubMenu(combo);
@@ -51,15 +51,15 @@ namespace SAutoCarry.Champions
 
         public override void SetSpells()
         {
-            Spells[Q] = new Spell(SpellSlot.Q);
+            Spells[Q] = new Spell(SpellSlot.Q, 550f);
 
             Spells[W] = new Spell(SpellSlot.W, 2500f);
             Spells[W].SetSkillshot(0.25f, 40f, 0f, false, SkillshotType.SkillshotLine);
 
             Spells[E] = new Spell(SpellSlot.E);
 
-            Spells[R] = new Spell(SpellSlot.R);
-            Spells[R].SetSkillshot(0f, 40f, 1200f, false, SkillshotType.SkillshotLine);
+            Spells[R] = new Spell(SpellSlot.R, 3500f);
+            Spells[R].SetSkillshot(0.25f, 40f, 5000f, false, SkillshotType.SkillshotLine);
         }
 
         public void BeforeOrbwalk()
@@ -98,7 +98,7 @@ namespace SAutoCarry.Champions
             {
                 var t = TargetSelector.GetTarget(Spells[R].Range, TargetSelector.DamageType.Physical);
                 if (t != null)
-                    Spells[R].SPredictionCast(t, HitChance.Low);
+                    Spells[R].SPredictionCast(t, HitChance.High);
             }
         }
 
@@ -140,7 +140,7 @@ namespace SAutoCarry.Champions
         {
             if (IsRShootCastable)
             {
-                foreach (Obj_AI_Hero target in HeroManager.Enemies.Where(x => x.IsValidTarget(2000 /* to do: real r range */) && !x.HasBuffOfType(BuffType.Invulnerability)))
+                foreach (Obj_AI_Hero target in HeroManager.Enemies.Where(x => x.IsValidTarget(3500f) && !x.HasBuffOfType(BuffType.Invulnerability)))
                 {
                     if (CalculateDamageR(target) > target.Health + 20)
                         Spells[R].SPredictionCast(target, HitChance.High);
@@ -148,7 +148,7 @@ namespace SAutoCarry.Champions
             }
             else if (Spells[W].IsReady())
             {
-                foreach (Obj_AI_Hero target in HeroManager.Enemies.Where(x => x.IsValidTarget(1200 /* to do: real w range */) && !x.HasBuffOfType(BuffType.Invulnerability)))
+                foreach (Obj_AI_Hero target in HeroManager.Enemies.Where(x => x.IsValidTarget(2500f) && !x.HasBuffOfType(BuffType.Invulnerability)))
                 {
                     if (CalculateDamageW(target) > target.Health + 20)
                         Spells[W].SPredictionCast(target, HitChance.High);
@@ -174,12 +174,12 @@ namespace SAutoCarry.Champions
 
         private bool IsRShootCastable
         {
-            get { return Spells[R].Instance.Name == "JhinRShot" && /*delay condition ?*/ true; }
+            get { return Spells[R].Instance.Name == "JhinRShot"; }
         }
 
         private bool IsLastRShoot
         {
-            get { return IsRShootCastable && /*buff name ?*/ ObjectManager.Player.HasBuff("jhinrlast"); }
+            get { return IsRShootCastable && ObjectManager.Player.HasBuff("jhinrlast"); }
         }
 
         public bool ComboUseQ

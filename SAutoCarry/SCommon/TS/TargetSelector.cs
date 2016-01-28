@@ -227,7 +227,7 @@ namespace SCommon.TS
 
         private static float GetTotalADAPMultipler(Obj_AI_Hero target)
         {
-            return HeroManager.Enemies.OrderByDescending(p => p.AbilityPower() + p.TotalAttackDamage).ToList().FindIndex(q => q.NetworkId == target.NetworkId) * 2;
+            return HeroManager.Enemies.OrderByDescending(p => p.TotalMagicalDamage + p.TotalAttackDamage).ToList().FindIndex(q => q.NetworkId == target.NetworkId) * 2;
         }
 
         private static float GetCustomMultipler(Obj_AI_Hero target)

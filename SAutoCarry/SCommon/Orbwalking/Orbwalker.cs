@@ -89,7 +89,7 @@ namespace SCommon.Orbwalking
             Obj_AI_Base.OnPlayAnimation += Obj_AI_Base_OnPlayAnimation;
             Spellbook.OnStopCast += Spellbook_OnStopCast;
             Obj_AI_Base.OnDamage += Obj_AI_Base_OnDamage;
-            PacketHandler.Register(0xA3, PacketHandler_AfterAttack);
+            PacketHandler.Register(0x43, PacketHandler_AfterAttack);
             new Drawings(this);
         }
 
@@ -948,7 +948,7 @@ namespace SCommon.Orbwalking
         {
             if (sender.IsMe)
             {
-                if (Utility.IsAutoAttack(args.SData.Name) && m_attackInProgress)
+                if (Utility.IsAutoAttack(args.SData.Name) && (m_attackInProgress || !Utility.HasProjectile()))
                     AfterAttack(args.Target as AttackableUnit);
             }
         }

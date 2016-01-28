@@ -378,6 +378,7 @@ namespace SCommon.Database
             s_ChampionData.Add(new ChampionData { ID = id++, Name = "Jax", Role = ChampionRole.Bruiser });
             s_ChampionData.Add(new ChampionData { ID = id++, Name = "Jayce", Role = ChampionRole.ADC });
             s_ChampionData.Add(new ChampionData { ID = id++, Name = "Jinx", Role = ChampionRole.ADC });
+            s_ChampionData.Add(new ChampionData { ID = id++, Name = "Jhin", Role = ChampionRole.ADC });
             s_ChampionData.Add(new ChampionData { ID = id++, Name = "Karma", Role = ChampionRole.Support });
             s_ChampionData.Add(new ChampionData { ID = id++, Name = "Kalista", Role = ChampionRole.ADC });
             s_ChampionData.Add(new ChampionData { ID = id++, Name = "Karthus", Role = ChampionRole.AP });
@@ -386,6 +387,7 @@ namespace SCommon.Database
             s_ChampionData.Add(new ChampionData { ID = id++, Name = "Kayle", Role = ChampionRole.AP });
             s_ChampionData.Add(new ChampionData { ID = id++, Name = "Kennen", Role = ChampionRole.AP });
             s_ChampionData.Add(new ChampionData { ID = id++, Name = "Khazix", Role = ChampionRole.Bruiser });
+            s_ChampionData.Add(new ChampionData { ID = id++, Name = "Kindred", Role = ChampionRole.ADC });
             s_ChampionData.Add(new ChampionData { ID = id++, Name = "KogMaw", Role = ChampionRole.ADC });
             s_ChampionData.Add(new ChampionData { ID = id++, Name = "Leblanc", Role = ChampionRole.AP });
             s_ChampionData.Add(new ChampionData { ID = id++, Name = "LeeSin", Role = ChampionRole.Bruiser });

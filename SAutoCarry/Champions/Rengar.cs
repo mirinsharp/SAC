@@ -176,16 +176,17 @@ namespace SAutoCarry.Champions
 
             if (sender.IsMe && Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo && leapTarget != null)
             {
+                if (leapTarget != null && leapTarget.IsValidTarget() && ComboUseE && Spells[E].IsReady() && (!HaveFullFerocity || !OneShotComboActive || ObjectManager.Player.HasBuff("rengarqbase") || ObjectManager.Player.HasBuff("rengarqemp")))
+                {
+                    var pred = Spells[E].GetSPrediction(leapTarget);
+                    if (pred.HitChance > HitChance.Impossible)
+                        Spells[E].Cast(pred.CastPosition);
+                    else
+                        Spells[E].Cast((leapTarget as Obj_AI_Hero).ServerPosition);
+                }
+
                 LeagueSharp.Common.Utility.DelayAction.Add(Math.Max(1, args.Duration - 200), () =>
                 {
-                    if (leapTarget != null && leapTarget.IsValidTarget() && ComboUseE && Spells[E].IsReady() && (!HaveFullFerocity || !OneShotComboActive || ObjectManager.Player.HasBuff("rengarqbase") || ObjectManager.Player.HasBuff("rengarqemp")))
-                    {
-                        var pred = Spells[E].GetSPrediction(leapTarget);
-                        if (pred.HitChance > HitChance.Impossible)
-                            Spells[E].Cast(pred.CastPosition);
-                        else
-                            Spells[E].Cast((leapTarget as Obj_AI_Hero).ServerPosition);
-                    }
 
                     if (Items.HasItem(3077) && Items.CanUseItem(3077))
                         Items.UseItem(3077);

@@ -240,6 +240,22 @@ namespace SCommon.Damage
 
                 });
 
+            //jhin passive
+            AAEnpowers[Data.GetID("Jhin")] = new List<AAEnpower>();
+            AAEnpowers[Data.GetID("Jhin")].Add(
+                new AAEnpower
+                {
+                    ChampionName = "Jhin",
+                    IsActive = (source, target) => (source.HasBuff("jhinpassiveattackbuff")),
+                    GetDamage =
+                             (source, target) =>
+                             ((float)
+                              source.CalcDamage(
+                                  target,
+                                  LeagueSharp.Common.Damage.DamageType.Physical,
+                                  source.TotalAttackDamage * 0.5f + (target.MaxHealth - target.Health) * new float[] { 0.15f, 0.20f, 0.25f }[Math.Min(2, (source.Level - 1) / 5)])),
+                });
+
             //katarina q
             AAEnpowers[Data.GetID("Katarina")] = new List<AAEnpower>();
             AAEnpowers[Data.GetID("Katarina")].Add(
@@ -323,7 +339,7 @@ namespace SCommon.Damage
                 {
                     ChampionName = "Rengar",
                     IsActive = (source, target) => source.HasBuff("rengarqemp"),
-                    GetDamage = (source, target) => (float)source.CalcDamage(target, LeagueSharp.Common.Damage.DamageType.Physical, new int[] { 30, 45, 60, 75, 90, 105, 120, 135, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240 }[source.Level - 1] + (source.BaseAttackDamage + source.FlatPhysicalDamageMod) * 0.5f)
+                    GetDamage = (source, target) => (float)source.CalcDamage(target, LeagueSharp.Common.Damage.DamageType.Physical, new int[] { 30, 45, 60, 75, 90, 105, 120, 135, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240 }[source.Level - 1] + (source.BaseAttackDamage + source.FlatPhysicalDamageMod) * 0.3f)
                 });
 
             
