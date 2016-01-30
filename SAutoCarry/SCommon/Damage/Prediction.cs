@@ -28,7 +28,11 @@ namespace SCommon.Damage
         /// <returns>true if last hitable</returns>
         public static bool IsLastHitable(Obj_AI_Base unit, float extraWindup = 0)
         {
-            float health = unit.Health - GetPrediction(unit, (Math.Max(0, unit.ServerPosition.To2D().Distance(ObjectManager.Player.ServerPosition.To2D()) - ObjectManager.Player.BoundingRadius) / Orbwalking.Utility.GetProjectileSpeed() + ObjectManager.Player.AttackCastDelay) * 1000f);
+            //float health = unit.Health - GetPrediction(unit, (Math.Max(0, unit.ServerPosition.To2D().Distance(ObjectManager.Player.ServerPosition.To2D()) - ObjectManager.Player.BoundingRadius) / Orbwalking.Utility.GetProjectileSpeed() + ObjectManager.Player.AttackCastDelay) * 1000f);
+            var t = (int)(ObjectManager.Player.AttackCastDelay * 1000) - 100 + Game.Ping / 2 +
+                               1000 * (int)Math.Max(0, ObjectManager.Player.Distance(unit.ServerPosition) - ObjectManager.Player.BoundingRadius) / (int)Orbwalking.Utility.GetProjectileSpeed();
+
+            float health = HealthPrediction.GetHealthPrediction(unit, t, 30);
             //float health = unit.Health - dmg;
             return health < AutoAttack.GetDamage(unit, true);
 
@@ -121,6 +125,9 @@ namespace SCommon.Damage
         {
             if (sequential)
                 return -1 * (HealthPrediction.LaneClearHealthPrediction(unit, (int)t, 30) - unit.Health);
+            else
+                return -1 * (HealthPrediction.GetHealthPrediction(unit, (int)t, 30) - unit.Health);
+
             float dmg = 0.0f;
             foreach (var attack in ActiveAttacks.Values)
             {
