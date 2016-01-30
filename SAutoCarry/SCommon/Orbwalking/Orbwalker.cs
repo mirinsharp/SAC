@@ -456,7 +456,7 @@ namespace SCommon.Orbwalking
                     pos = playerPos.Extend(pos, (m_rnd.NextFloat(0.6f, 1.01f) + 0.2f) * 400);
 
 
-                if (m_lastMoveTick + 150 + Math.Min(60, Game.Ping) < Utils.TickCount)
+                if (m_lastMoveTick + 50 + Math.Min(60, Game.Ping) < Utils.TickCount)
                 {
                     ObjectManager.Player.IssueOrder(GameObjectOrder.MoveTo, pos);
                     m_lastMoveTick = Utils.TickCount + m_rnd.Next(1, 20);
