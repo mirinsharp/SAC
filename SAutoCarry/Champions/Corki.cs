@@ -62,20 +62,15 @@ namespace SAutoCarry.Champions
 
             Spells[W] = new Spell(SpellSlot.W, 0f);
 
-            Spells[E] = new Spell(SpellSlot.E, 125f);
+            Spells[E] = new Spell(SpellSlot.E, 500f);
 
             Spells[R] = new Spell(SpellSlot.R, 1225f);
-            Spells[R].SetSkillshot(0.25f, 50f, 2000f, true, SkillshotType.SkillshotLine);
+            Spells[R].SetSkillshot(0.25f, 40f, 1950f, true, SkillshotType.SkillshotLine);
 
         }
 
         public void BeforeOrbwalk()
         {
-            if (ObjectManager.Player.HasBuff("corkimissilebarragecounterbig"))
-                Spells[R].Width = 75f;
-            else
-                Spells[R].Width = 50f;
-
             if (KillStealR)
                 KillSteal();
         }
@@ -99,7 +94,8 @@ namespace SAutoCarry.Champions
 
             if (Spells[E].IsReady() && ComboUseE)
             {
-                if(TargetSelector.GetTarget(Spells[E].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical) != null)
+                var t = TargetSelector.GetTarget(Spells[E].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
+                if(t != null && ObjectManager.Player.IsFacing(t))
                     Spells[E].Cast();
             }
         }
@@ -118,8 +114,8 @@ namespace SAutoCarry.Champions
 
             if (Spells[E].IsReady() && HarassUseE)
             {
-                var t = TargetSelector.GetTarget(Spells[E].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
-                if (t != null)
+                var t = TargetSelector.GetTarget(Spells[E].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
+                if (t != null && ObjectManager.Player.IsFacing(t))
                     Spells[E].Cast();
             }
 
@@ -127,7 +123,20 @@ namespace SAutoCarry.Champions
             {
                 var t = TargetSelector.GetTarget(Spells[R].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
-                    Spells[R].SPredictionCast(t, HitChance.High);
+                {
+                    var pred = Spells[R].GetSPrediction(t);
+                    if (pred.HitChance == HitChance.Collision)
+                    {
+                        var col = pred.CollisionResult.Units.FirstOrDefault();
+                        if (col != null && col.Distance(ObjectManager.Player.ServerPosition) < Spells[R].Range)
+                        {
+                            if (col.Distance(pred.UnitPosition) < (ObjectManager.Player.HasBuff("corkimissilebarragecounterbig") ? 150f : 75f))
+                                Spells[R].Cast(pred.CastPosition);
+                        }
+                    }
+                    else if (pred.HitChance >= HitChance.High)
+                        Spells[R].Cast(pred.CastPosition);
+                }
             }
         }
 

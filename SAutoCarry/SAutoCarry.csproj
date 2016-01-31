@@ -126,6 +126,7 @@
     <Compile Include="SCommon\Evade\TargetedSpellEvader.cs" />
     <Compile Include="SCommon\Maths\ClipperWrapper.cs" />
     <Compile Include="SCommon\Maths\Geometry.cs" />
+    <Compile Include="SCommon\MenuUtils\MenuLanguage.cs" />
     <Compile Include="SCommon\Orbwalking\ConfigMenu.cs" />
     <Compile Include="SCommon\Orbwalking\Drawings.cs" />
     <Compile Include="SCommon\Orbwalking\Events.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="SCommon\Prediction\VectorPrediction.cs" />
     <Compile Include="SCommon\TS\ConfigMenu.cs" />
     <Compile Include="SCommon\TS\TargetSelector.cs" />
+    <Compile Include="SCommon\MenuUtils\MenuExtension.cs" />
     <Compile Include="SUtility\Drawings\DamageIndicator.cs" />
   </ItemGroup>
   <ItemGroup>

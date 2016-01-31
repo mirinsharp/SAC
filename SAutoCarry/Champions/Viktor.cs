@@ -25,6 +25,7 @@ namespace SAutoCarry.Champions
         {
             OnUpdate += BeforeOrbwalk;
             OnCombo += Combo;
+            OnHarass += Harass;
             OnLaneClear += LaneClear;
         }
 
@@ -36,6 +37,12 @@ namespace SAutoCarry.Champions
             combo.AddItem(new MenuItem("SAutoCarry.Viktor.Combo.UseE", "Use E").SetValue(true));
             combo.AddItem(new MenuItem("SAutoCarry.Viktor.Combo.UseR", "Use R").SetValue(true)).ValueChanged += (s, ar) => ConfigMenu.Item("SAutoCarry.Viktor.Combo.UseRMin").Show(ar.GetNewValue<bool>());
             combo.AddItem(new MenuItem("SAutoCarry.Viktor.Combo.UseRMin", "Use R Min. Hit").SetValue(new Slider(1, 1, 5))).Show(combo.Item("SAutoCarry.Viktor.Combo.UseR").GetValue<bool>());
+
+            Menu harass = new Menu("Harass", "SAutoCarry.Viktor.Harass");
+            harass.AddItem(new MenuItem("SAutoCarry.Viktor.Harass.UseQ", "Use Q").SetValue(true));
+            harass.AddItem(new MenuItem("SAutoCarry.Viktor.Harass.UseE", "Use E").SetValue(true));
+            harass.AddItem(new MenuItem("SAutoCarry.Viktor.Harass.MinMana", "Min. Mana").SetValue(new Slider(60, 0, 100)));
+            harass.AddItem(new MenuItem("SAutoCarry.Viktor.Harass.Toggle", "Toggle Harass").SetValue(new KeyBind('Z', KeyBindType.Toggle)));
 
             Menu laneclear = new Menu("LaneClear", "SAutoCarry.Viktor.LaneClear");
             laneclear.AddItem(new MenuItem("SAutoCarry.Viktor.LaneClear.UseQ", "Use Q").SetValue(false));
@@ -54,6 +61,7 @@ namespace SAutoCarry.Champions
             DamageIndicator.Initialize((t) => (float)CalculateComboDamage(t), misc);
 
             ConfigMenu.AddSubMenu(combo);
+            ConfigMenu.AddSubMenu(harass);
             ConfigMenu.AddSubMenu(laneclear);
             ConfigMenu.AddSubMenu(misc);
             ConfigMenu.AddToMainMenu();
@@ -79,6 +87,9 @@ namespace SAutoCarry.Champions
 
             if (ImmobileW)
                 AutoImmobileW();
+
+            if (HarassToggle)
+                Harass();
         }
 
         public void Combo()
@@ -116,6 +127,24 @@ namespace SAutoCarry.Champions
                 var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (t != null)
                     Spells[Q].CastOnUnit(t);
+            }
+        }
+
+        public void Harass()
+        {
+            if (ObjectManager.Player.ManaPercent < HarassMinMana)
+                return;
+
+            if (Spells[E].IsReady() && HarassUseE)
+            {
+                var t = TargetSelector.GetTarget(Spells[E].Range + m_laserLenght, LeagueSharp.Common.TargetSelector.DamageType.Magical);
+                if (t != null)
+                {
+                    if (SCommon.Orbwalking.Utility.InAARange(t) && ObjectManager.Player.HasBuff("viktorpowertransferreturn") && Orbwalker.CanAttack(250))
+                        return;
+
+                    Spells[E].SPredictionCastVector(t, m_laserLenght, HitChance.High);
+                }
             }
         }
 
@@ -205,7 +234,6 @@ namespace SAutoCarry.Champions
         }
 
 
-
         private void FollowR()
         {
             var t = TargetSelector.GetTarget(1100f, LeagueSharp.Common.TargetSelector.DamageType.Magical);
@@ -233,12 +261,23 @@ namespace SAutoCarry.Champions
 
         protected override void OrbwalkingEvents_BeforeAttack(BeforeAttackArgs args)
         {
-            if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo && args.Target.Type == GameObjectType.obj_AI_Hero)
+            if (args.Target.Type == GameObjectType.obj_AI_Hero)
             {
-                if (Spells[Q].IsReady() && ComboUseQ)
+                if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo)
                 {
-                    Spells[Q].CastOnUnit(args.Target as Obj_AI_Hero);
-                    args.Process = false;
+                    if (Spells[Q].IsReady() && ComboUseQ)
+                    {
+                        Spells[Q].CastOnUnit(args.Target as Obj_AI_Hero);
+                        args.Process = false;
+                    }
+                }
+                else if (Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Mixed)
+                {
+                    if (Spells[Q].IsReady() && HarassUseQ)
+                    {
+                        Spells[Q].CastOnUnit(args.Target as Obj_AI_Hero);
+                        args.Process = false;
+                    }
                 }
             }
         }
@@ -295,6 +334,26 @@ namespace SAutoCarry.Champions
         public int ComboUseRMin
         {
             get { return ConfigMenu.Item("SAutoCarry.Viktor.Combo.UseRMin").GetValue<Slider>().Value; }
+        }
+
+        public bool HarassUseQ
+        {
+            get { return ConfigMenu.Item("SAutoCarry.Viktor.Harass.UseQ").GetValue<bool>(); }
+        }
+
+        public bool HarassUseE
+        {
+            get { return ConfigMenu.Item("SAutoCarry.Viktor.Harass.UseE").GetValue<bool>(); }
+        }
+
+        public int HarassMinMana
+        {
+            get { return ConfigMenu.Item("SAutoCarry.Viktor.Harass.MinMana").GetValue<Slider>().Value; }
+        }
+
+        public bool HarassToggle
+        {
+            get { return ConfigMenu.Item("SAutoCarry.Viktor.Harass.Toggle").GetValue<KeyBind>().Active; }
         }
 
         public bool LaneClearUseQ
