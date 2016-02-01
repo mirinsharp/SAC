@@ -96,6 +96,10 @@ namespace SAutoCarry
                 case "Cassiopeia":
                     Champion = new Cassiopeia();
                     break;
+
+                case "Jhin":
+                    Champion = new Jhin();
+                    break;
             }
             if (!Game.Version.StartsWith("6.2"))
                 Game.PrintChat("Wrong game version");
