@@ -31,13 +31,14 @@ namespace SAutoCarry.Champions
             Menu combo = new Menu("Combo", "SAutoCarry.Jhin.Combo");
             combo.AddItem(new MenuItem("SAutoCarry.Jhin.Combo.UseQ", "UseQ").SetValue(true));
             combo.AddItem(new MenuItem("SAutoCarry.Jhin.Combo.UseW", "Use W").SetValue(true)).ValueChanged += (s, ar) => ConfigMenu.Item("SAutoCarry.Jhin.Combo.UseWMarked").Show(ar.GetNewValue<bool>());
-            combo.AddItem(new MenuItem("SAutoCarry.Jhin.Combo.UseWMarked", "Use W Only If Target Is Marked").SetValue(false)).Show(combo.Item("SAutoCarry.Jhin.Combo.UseW").GetValue<bool>());
+            combo.AddItem(new MenuItem("SAutoCarry.Jhin.Combo.UseWMarked", "Use W Only If Target Is Marked").SetValue(true)).Show(combo.Item("SAutoCarry.Jhin.Combo.UseW").GetValue<bool>());
             combo.AddItem(new MenuItem("SAutoCarry.Jhin.Combo.UseEImmobile", "Use E Immobile Targets").SetValue(true));
             combo.AddItem(new MenuItem("SAutoCarry.Jhin.Combo.UseEDashing", "Use E Dashing Targets").SetValue(true));
             combo.AddItem(new MenuItem("SAutoCarry.Jhin.Combo.UseR", "Use R Shoots If Ult Activated").SetValue(true));
 
             Menu harass = new Menu("Harass", "SAutoCarry.Jhin.Harass");
             harass.AddItem(new MenuItem("SAutoCarry.Jhin.Harass.UseQ", "Use Q").SetValue(true));
+            harass.AddItem(new MenuItem("SAutoCarry.Jhin.Harass.UseW", "Use W").SetValue(true));
             harass.AddItem(new MenuItem("SAutoCarry.Jhin.Harass.Toggle", "Toggle Harass").SetValue(new KeyBind('T', KeyBindType.Toggle)));
 
             Menu misc = new Menu("Misc", "SAutoCarry.Jhin.Misc");
@@ -148,6 +149,14 @@ namespace SAutoCarry.Champions
                     }
                 }
             }
+
+
+            if (Spells[W].IsReady() && HarassUseW)
+            {
+                t = TargetSelector.GetTarget(Spells[W].Range, TargetSelector.DamageType.Physical);
+                if (t != null)
+                    Spells[W].SPredictionCast(t, HitChance.High);
+            }
         }
 
         public void KillSteal()
@@ -229,6 +238,11 @@ namespace SAutoCarry.Champions
         public bool HarassUseQ
         {
             get { return ConfigMenu.Item("SAutoCarry.Jhin.Harass.UseQ").GetValue<bool>(); }
+        }
+
+        public bool HarassUseW
+        {
+            get { return ConfigMenu.Item("SAutoCarry.Jhin.Harass.UseW").GetValue<bool>(); }
         }
 
         public bool HarassToggle
