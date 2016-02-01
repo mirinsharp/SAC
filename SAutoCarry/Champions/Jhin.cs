@@ -43,7 +43,7 @@ namespace SAutoCarry.Champions
             Menu misc = new Menu("Misc", "SAutoCarry.Jhin.Misc");
             misc.AddItem(new MenuItem("SAutoCarry.Jhin.Misc.AdjustW", "Adjust W Range").SetValue(new Slider(1000, 0, 2500))).ValueChanged += (s, ar) => Spells[W].Range = ar.GetNewValue<Slider>().Value;
             misc.AddItem(new MenuItem("SAutoCarry.Jhin.Misc.AdjustR", "Adjust R Range").SetValue(new Slider(1000, 0, 3500))).ValueChanged += (s, ar) => Spells[R].Range = ar.GetNewValue<Slider>().Value;
-            misc.AddItem(new MenuItem("SAutoCarry.Jhin.Misc.KillStealRW", "KillSteal").SetValue(true));
+            misc.AddItem(new MenuItem("SAutoCarry.Jhin.Misc.KillStealRW", "KillSteal").SetValue(false));
 
             ConfigMenu.AddSubMenu(combo);
             ConfigMenu.AddSubMenu(harass);
