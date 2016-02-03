@@ -79,7 +79,7 @@ namespace SAutoCarry.Champions
         public override void SetSpells()
         {
             Spells[Q] = new Spell(SpellSlot.Q, 925f);
-            Spells[Q].SetSkillshot(0.25f, 70f, 1750f, true, SkillshotType.SkillshotLine);
+            Spells[Q].SetSkillshot(0.25f, 70f, 1800f, true, SkillshotType.SkillshotLine);
 
             Spells[W] = new Spell(SpellSlot.W, 0f);
 
@@ -96,6 +96,7 @@ namespace SAutoCarry.Champions
 
         public void BeforeOrbwalk()
         {
+            Spells[Q].From = (ObjectManager.Player.ServerPosition.To2D() + ((ObjectManager.Player.Direction.To2D() + ObjectManager.Player.Direction.To2D().Normalized().Perpendicular()) * ObjectManager.Player.BoundingRadius)).To3D();
             if (Spells[Q].IsReady() && AutoGrabEnabled && AutoGrabMinHealth <= ObjectManager.Player.HealthPercent && !ObjectManager.Player.UnderTurret(true))
             {
                 var t = TargetSelector.GetTarget(AutoGrabRange, LeagueSharp.Common.TargetSelector.DamageType.Magical);
