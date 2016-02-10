@@ -68,6 +68,7 @@ namespace SAutoCarry.Champions
             laneclear.AddItem(new MenuItem("LUSEQ", "Use Q").SetValue(true));
             laneclear.AddItem(new MenuItem("LUSEW", "Use W").SetValue(true));
             laneclear.AddItem(new MenuItem("LMINW", "Min. Minions To W In Range").SetValue(new Slider(3, 1, 12)));
+            laneclear.AddItem(new MenuItem("LUSEE", "Use E While Jungle Clear").SetValue(true));
             laneclear.AddItem(new MenuItem("TOGGLESPELL", "Enabled Spell Farm").SetValue(new KeyBind('G', KeyBindType.Toggle, true)));
             laneclear.AddItem(new MenuItem("LMANA", "Min. Mana Percent").SetValue(new Slider(50, 0, 100)));
 
@@ -386,6 +387,12 @@ namespace SAutoCarry.Champions
             {
                 if (ObjectManager.Get<Obj_AI_Minion>().Count(p => (p.IsEnemy || p.IsJungleMinion()) && p.ServerPosition.Distance(Helpers.BallMgr.Position) <= Spells[W].Range) >= ConfigMenu.Item("LMINW").GetValue<Slider>().Value)
                     Spells[W].Cast(ObjectManager.Player.ServerPosition, true);
+            }
+
+            if (Spells[E].IsReady() && ConfigMenu.Item("LUSEE").GetValue<bool>())
+            {
+                if (MinionManager.GetMinions(ObjectManager.Player.AttackRange, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).Any(p => p.GetJunglePriority() == 1))
+                    Spells[E].CastOnUnit(ObjectManager.Player);
             }
         }
 
