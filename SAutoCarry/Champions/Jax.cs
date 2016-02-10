@@ -174,7 +174,7 @@ namespace SAutoCarry.Champions
             {
                 var poly = ClipperWrapper.DefineCircle(ObjectManager.Player.ServerPosition.Extend(Game.CursorPos, Spells[Q].Range - 300).To2D(), 300);
                 var unit = ObjectManager.Get<Obj_AI_Base>()
-                    .Where(p => p.IsAlly && !p.IsMe && !p.Name.Contains("turret")
+                    .Where(p => p.IsAlly && !p.IsMe && p.IsTargetable && !p.Name.Contains("turret")
                         && p.ServerPosition.Distance(ObjectManager.Player.ServerPosition) < Spells[Q].Range 
                         && !poly.IsOutside(p.ServerPosition.To2D()))
                     .OrderByDescending(q => q.Distance(ObjectManager.Player.ServerPosition))
