@@ -7,6 +7,7 @@ using SCommon;
 using SCommon.PluginBase;
 using SCommon.Prediction;
 using SCommon.Orbwalking;
+using SCommon.Database;
 using SUtility.Drawings;
 using SharpDX;
 //typedefs
@@ -106,7 +107,7 @@ namespace SAutoCarry.Champions
 
                 if (Spells[E].IsReady() && LaneClearE)
                 {
-                    if ((minion.CharData.BaseSkinName.Contains("Dragon") || minion.CharData.BaseSkinName.Contains("Baron") || minion.CharData.BaseSkinName.Contains("Siege")) && Spells[E].IsKillable(minion))
+                    if ((minion.CharData.BaseSkinName.Contains("Dragon") || minion.CharData.BaseSkinName.Contains("Baron") || minion.CharData.BaseSkinName.Contains("Siege") || minion.IsJungleMinion()) && Spells[E].IsKillable(minion))
                         Spells[E].Cast();
                 }
             }
