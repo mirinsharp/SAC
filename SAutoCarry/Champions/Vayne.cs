@@ -5,6 +5,7 @@ using LeagueSharp.Common;
 using SCommon;
 using SCommon.PluginBase;
 using SCommon.Prediction;
+using SCommon.Database;
 using SharpDX;
 //typedefs
 using TargetSelector = SCommon.TS.TargetSelector;
@@ -20,6 +21,7 @@ namespace SAutoCarry.Champions
             OnDraw += BeforeDraw;
             OnCombo += Combo;
             OnHarass += Harass;
+            OnLaneClear += LaneClear;
 
             TargetSelector.RegisterCustomMultipler((hero) => hero.GetBuffCount("vaynesilvereddebuff") * 10);
         }
@@ -82,6 +84,23 @@ namespace SAutoCarry.Champions
 
                     if (Helpers.Condemn.IsValidTarget(t))
                         Spells[E].CastOnUnit(t);
+                }
+            }
+        }
+
+        public void LaneClear()
+        {
+            if (Helpers.Condemn.CondemnJungleMinions && Spells[E].IsReady())
+            {
+                var mob = MinionManager.GetMinions(Spells[E].Range, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).FirstOrDefault(p => p.GetJunglePriority() == 1);
+                if (mob != null)
+                {
+                    var direction = (mob.ServerPosition - ObjectManager.Player.ServerPosition).Normalized();
+                    for (int i = 0; i < 400; i += 10)
+                    {
+                        if ((mob.ServerPosition + direction * i).IsWall())
+                            Spells[E].CastOnUnit(mob);
+                    }
                 }
             }
         }

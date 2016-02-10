@@ -20,6 +20,7 @@ namespace SAutoCarry.Champions.Helpers
             Menu condemn = new Menu("Condemn Settings", "SAutoCarry.Helpers.Condemn.Root");
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.AntiGapCloser", "Use Condemn to Gapclosers").SetValue(false));
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.Interrupter", "Use Condemn to Interrupt spells").SetValue(false));
+            condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.Jungle", "Condemn Jungle Minions").SetValue(true));
             condemn.AddItem(new MenuItem("SAutoCarry.Helpers.Condemn.Root.TumbleCondemn", "Q->E when possible").SetTooltip("if this option enabled, assembly will try to do tumble and condemn (this option may drop fps while E is up)").SetValue(true)).ValueChanged += 
                 (s, ar) =>
                 {
@@ -233,6 +234,11 @@ namespace SAutoCarry.Champions.Helpers
         public static bool Interrupter
         {
             get { return s_Champion.ConfigMenu.Item("SAutoCarry.Helpers.Condemn.Root.Interrupter").GetValue<bool>(); }
+        }
+
+        public static bool CondemnJungleMinions
+        {
+            get { return s_Champion.ConfigMenu.Item("SAutoCarry.Helpers.Condemn.Root.Jungle").GetValue<bool>(); }
         }
 
         public static bool TumbleCondemn
