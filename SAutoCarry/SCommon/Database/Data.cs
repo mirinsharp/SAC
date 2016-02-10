@@ -42,7 +42,7 @@ namespace SCommon.Database
         /// </summary>
         /// <param name="mob">The mob</param>
         /// <returns>Jungle priority of the mob</returns>
-        public static int GetJunglePriority(this Obj_AI_Base mob)
+        public static int GetJunglePriority(this GameObject mob)
         {
             if (!s_JunglePrio.ContainsKey(mob.Name))
                 return 0;
@@ -54,7 +54,7 @@ namespace SCommon.Database
         /// </summary>
         /// <param name="unit">The unit</param>
         /// <returns><c>true</c> if the unit is ward</returns>
-        public static bool IsWard(this Obj_AI_Base unit)
+        public static bool IsWard(this GameObject unit)
         {
             return s_WardData.Exists(p => p.Name == unit.Name);
         }
@@ -133,7 +133,7 @@ namespace SCommon.Database
         /// </summary>
         /// <param name="unit">The unit</param>
         /// <returns><c>true</c> if the unit is jungle minion</returns>
-        public static bool IsJungleMinion(this Obj_AI_Base unit)
+        public static bool IsJungleMinion(this GameObject unit)
         {
             return s_JunglePrio.ContainsKey(unit.Name);
         }
