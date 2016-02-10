@@ -33,11 +33,16 @@ namespace SAutoCarry.Champions
             combo.AddItem(new MenuItem("SAutoCarry.MasterYi.Combo.UseE", "Use E").SetValue(true));
             combo.AddItem(new MenuItem("SAutoCarry.MasterYi.Combo.Tiamat", "Use Tiamat/Hydra").SetValue(true));
 
+            Menu jungleclear = new Menu("JungleClear", "SAutoCarry.MasterYi.JungleClear");
+            jungleclear.AddItem(new MenuItem("SAutoCarry.MasterYi.JungleClear.UseQ", "Use Q").SetValue(true));
+            jungleclear.AddItem(new MenuItem("SAutoCarry.MasterYi.JungleClear.UseE", "Use E").SetValue(true));
+
             Menu misc = new Menu("Misc", "SAutoCarry.MasterYi.Misc");
             m_targetedEvader = new TargetedSpellEvader(TargetedSpell_Evade, misc);
             DamageIndicator.Initialize((t) => (float)CalculateComboDamage(t, 4), misc);
 
             ConfigMenu.AddSubMenu(combo);
+            ConfigMenu.AddSubMenu(jungleclear);
             ConfigMenu.AddSubMenu(misc);
             ConfigMenu.AddToMainMenu();
         }
@@ -68,10 +73,10 @@ namespace SAutoCarry.Champions
             var mob = MinionManager.GetMinions(500, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).FirstOrDefault();
             if(mob != null)
             {
-                if (Spells[Q].IsReady())
+                if (Spells[Q].IsReady() && JungleClearUseQ)
                     Spells[Q].CastOnUnit(mob);
 
-                if (Spells[E].IsReady())
+                if (Spells[E].IsReady() && JungleClearUseE)
                     Spells[E].Cast();
             }
         }
@@ -167,6 +172,16 @@ namespace SAutoCarry.Champions
         public bool ComboUseTiamat
         {
             get { return ConfigMenu.Item("SAutoCarry.MasterYi.Combo.Tiamat").GetValue<bool>(); }
+        }
+
+        public bool JungleClearUseQ
+        {
+            get { return ConfigMenu.Item("SAutoCarry.MasterYi.JungleClear.UseQ").GetValue<bool>(); }
+        }
+
+        public bool JungleClearUseE
+        {
+            get { return ConfigMenu.Item("SAutoCarry.MasterYi.JungleClear.UseE").GetValue<bool>(); }
         }
     }
 }
