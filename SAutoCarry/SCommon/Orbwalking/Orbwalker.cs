@@ -89,7 +89,8 @@ namespace SCommon.Orbwalking
             Obj_AI_Base.OnPlayAnimation += Obj_AI_Base_OnPlayAnimation;
             Spellbook.OnStopCast += Spellbook_OnStopCast;
             Obj_AI_Base.OnDamage += Obj_AI_Base_OnDamage;
-            PacketHandler.Register(0x43, PacketHandler_AfterAttack);
+            PacketHandler.Register(0x31, PacketHandler_AfterAttack);
+            PacketHandler.Register(0x155, PacketHandler_CancelWindup);
             new Drawings(this);
         }
 
@@ -937,6 +938,12 @@ namespace SCommon.Orbwalking
                 m_lastAATick = Utils.TickCount - (int)Math.Ceiling(GetWindupTime()) - Game.Ping;
                 AfterAttack(m_lastTarget);
             }
+        }
+
+        private void PacketHandler_CancelWindup(byte[] data)
+        {
+            if (BitConverter.ToInt32(data, 2) == ObjectManager.Player.NetworkId)
+                ResetAATimer();
         }
 
         /// <summary>

@@ -25,8 +25,8 @@ namespace SCommon.Packet
         /// </summary>
         static PacketHandler()
         {
-            s_opcodeMap = new FunctionList[256];
-            for (int i = 0; i < 256; i++)
+            s_opcodeMap = new FunctionList[256 * 256];
+            for (int i = 0; i < 256 * 256; i++)
                 s_opcodeMap[i] = new FunctionList();
 
             Game.OnProcessPacket += Game_OnProcessPacket;
@@ -37,7 +37,7 @@ namespace SCommon.Packet
         /// </summary>
         /// <param name="opcode">The opcode.</param>
         /// <param name="fn">The function.</param>
-        public static void Register(byte opcode, Action<byte[]> fn)
+        public static void Register(ushort opcode, Action<byte[]> fn)
         {
             s_opcodeMap[opcode].Add(fn);
         }
@@ -47,7 +47,7 @@ namespace SCommon.Packet
         /// </summary>
         /// <param name="opcode">The opcode.</param>
         /// <param name="fn">The unction.</param>
-        public static void Unregister(byte opcode, Action<byte[]> fn)
+        public static void Unregister(ushort opcode, Action<byte[]> fn)
         {
             s_opcodeMap[opcode].Remove(fn);
         }
@@ -56,7 +56,7 @@ namespace SCommon.Packet
         /// Unregisters all functions of the opcode.
         /// </summary>
         /// <param name="opcode">The opcode.</param>
-        public static void Clear(byte opcode)
+        public static void Clear(ushort opcode)
         {
             s_opcodeMap[opcode].Clear();
         }
@@ -67,7 +67,7 @@ namespace SCommon.Packet
         /// <param name="args">The args./param>
         private static void Game_OnProcessPacket(GamePacketEventArgs args)
         {
-            foreach (var fn in s_opcodeMap[args.PacketData[0]])
+            foreach (var fn in s_opcodeMap[BitConverter.ToUInt16(args.PacketData, 0)])
             {
                 if (fn != null)
                     fn(args.PacketData);
