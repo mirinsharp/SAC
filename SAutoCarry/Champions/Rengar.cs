@@ -72,7 +72,7 @@ namespace SAutoCarry.Champions
             Spells[W] = new Spell(SpellSlot.W, 450f);
 
             Spells[E] = new Spell(SpellSlot.E, 900f);
-            Spells[E].SetSkillshot(0.25f, 70, 1500f, true, SkillshotType.SkillshotLine);
+            Spells[E].SetSkillshot(0.125f, 70, 1500f, true, SkillshotType.SkillshotLine);
 
             Spells[R] = new Spell(SpellSlot.R);
         }
