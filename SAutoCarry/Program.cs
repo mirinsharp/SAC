@@ -101,7 +101,7 @@ namespace SAutoCarry
                     Champion = new Jhin();
                     break;
             }
-            if (!Game.Version.StartsWith("6.2"))
+            if (!Game.Version.StartsWith("6.3"))
                 Game.PrintChat("Wrong game version");
         }
     }
