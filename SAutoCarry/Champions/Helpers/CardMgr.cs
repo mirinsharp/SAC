@@ -60,11 +60,11 @@ namespace SAutoCarry.Champions.Helpers
         {
             switch(name)
             {
-                case "goldcardlock":
+                case "GoldCardLock":
                     return Card.Gold;
-                case "bluecardlock":
+                case "BlueCardLock":
                     return Card.Blue;
-                case "redcardlock":
+                case "RedCardLock":
                     return Card.Red;
                 default:
                     return Card.Normal;
@@ -76,11 +76,11 @@ namespace SAutoCarry.Champions.Helpers
             switch(card)
             {
                 case Card.Gold:
-                    return "goldcardlock";
+                    return "GoldCardLock";
                 case Card.Blue:
-                    return "bluecardlock";
+                    return "BlueCardLock";
                 case Card.Red:
-                    return "redcardlock";
+                    return "RedCardLock";
                 default:
                     return "PickACard";
             }
@@ -112,7 +112,7 @@ namespace SAutoCarry.Champions.Helpers
             {
                 if (args.SData.Name == "PickACard")
                     s_isSelecting = true;
-                else if(args.SData.Name == "goldcardlock" || args.SData.Name == "bluecardlock" || args.SData.Name == "redcardlock")
+                else if (args.SData.Name == "GoldCardLock" || args.SData.Name == "BlueCardLock" || args.SData.Name == "RedCardLock")
                 {
                     s_isSelecting = false;
                     s_CardToSelect = Card.Normal;
