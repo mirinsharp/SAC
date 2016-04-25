@@ -41,6 +41,7 @@ namespace SAutoCarry.Champions
 
             Menu misc = new Menu("Misc", "SAutoCarry.Pantheon.Misc");
             misc.AddItem(new MenuItem("SAutoCarry.Pantheon.Misc.LaneClearQ", "Use Q On LaneClear").SetValue(true));
+            misc.AddItem(new MenuItem("SAutoCarry.Pantheon.Misc.LaneClear.MinMana", "Min Mana Percent").SetValue(new Slider(50, 100, 0)));
             misc.AddItem(new MenuItem("SAutoCarry.Pantheon.Misc.InterruptW", "Interrupt Spells With W").SetValue(true));
             DamageIndicator.Initialize((t) => (float)CalculateComboDamage(t), misc);
 
@@ -99,6 +100,9 @@ namespace SAutoCarry.Champions
 
         public void LaneClear()
         {
+            if (ObjectManager.Player.ManaPercent < LaneClearMinMana)
+                return;
+
             var minion = MinionManager.GetMinions(600f, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).FirstOrDefault();
             if(minion != null)
             {
@@ -188,6 +192,11 @@ namespace SAutoCarry.Champions
         public bool LaneClearQ
         {
             get { return ConfigMenu.Item("SAutoCarry.Pantheon.Misc.LaneClearQ").GetValue<bool>(); }
+        }
+
+        public int LaneClearMinMana
+        {
+            get { return ConfigMenu.Item("SAutoCarry.Pantheon.LaneClear.MinMana").GetValue<Slider>().Value; }
         }
 
         public bool InterruptW
