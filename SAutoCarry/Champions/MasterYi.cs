@@ -36,6 +36,8 @@ namespace SAutoCarry.Champions
             Menu jungleclear = new Menu("JungleClear", "SAutoCarry.MasterYi.JungleClear");
             jungleclear.AddItem(new MenuItem("SAutoCarry.MasterYi.JungleClear.UseQ", "Use Q").SetValue(true));
             jungleclear.AddItem(new MenuItem("SAutoCarry.MasterYi.JungleClear.UseE", "Use E").SetValue(true));
+            jungleclear.AddItem(new MenuItem("SAutoCarry.MasterYi.JungleClear.MinMana", "Min Mana Percent").SetValue(new Slider(50, 100, 0)));
+
 
             Menu misc = new Menu("Misc", "SAutoCarry.MasterYi.Misc");
             m_targetedEvader = new TargetedSpellEvader(TargetedSpell_Evade, misc);
@@ -70,6 +72,9 @@ namespace SAutoCarry.Champions
 
         public void LaneClear()
         {
+            if (ObjectManager.Player.ManaPercent < JungleClearMinMana)
+                return;
+
             var mob = MinionManager.GetMinions(500, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth).FirstOrDefault();
             if(mob != null)
             {
@@ -182,6 +187,11 @@ namespace SAutoCarry.Champions
         public bool JungleClearUseE
         {
             get { return ConfigMenu.Item("SAutoCarry.MasterYi.JungleClear.UseE").GetValue<bool>(); }
+        }
+
+        public int JungleClearMinMana
+        {
+            get { return ConfigMenu.Item("SAutoCarry.MasterYi.JungleClear.MinMana").GetValue<Slider>().Value; }
         }
     }
 }
