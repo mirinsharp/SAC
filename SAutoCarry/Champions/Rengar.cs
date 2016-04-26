@@ -72,7 +72,7 @@ namespace SAutoCarry.Champions
             Spells[W] = new Spell(SpellSlot.W, 450f);
 
             Spells[E] = new Spell(SpellSlot.E, 900f);
-            Spells[E].SetSkillshot(0.125f, 70, 1500f, true, SkillshotType.SkillshotLine);
+            Spells[E].SetSkillshot(0.25f, 70, 1500f, true, SkillshotType.SkillshotLine);
 
             Spells[R] = new Spell(SpellSlot.R);
         }
@@ -176,28 +176,28 @@ namespace SAutoCarry.Champions
 
             if (sender.IsMe && Orbwalker.ActiveMode == SCommon.Orbwalking.Orbwalker.Mode.Combo && leapTarget != null)
             {
+
+                if (Items.HasItem(3077) && Items.CanUseItem(3077))
+                    Items.UseItem(3077);
+                else if (Items.HasItem(3074) && Items.CanUseItem(3074))
+                    Items.UseItem(3074);
+                else if (Items.HasItem(3748) && Items.CanUseItem(3748)) //titanic
+                    Items.UseItem(3748);
+
                 if (leapTarget != null && leapTarget.IsValidTarget() && ComboUseE && Spells[E].IsReady() && (!HaveFullFerocity || !OneShotComboActive || ObjectManager.Player.HasBuff("rengarqbase") || ObjectManager.Player.HasBuff("rengarqemp")))
                 {
-                    var pred = Spells[E].GetSPrediction(leapTarget);
-                    if (pred.HitChance > HitChance.Impossible)
-                        Spells[E].Cast(pred.CastPosition);
-                    else
-                        Spells[E].Cast((leapTarget as Obj_AI_Hero).ServerPosition);
+                    LeagueSharp.Common.Utility.DelayAction.Add(Math.Max(1, args.Duration - 200), () =>
+                    {
+                        var pred = Spells[E].GetSPrediction(leapTarget);
+                        if (pred.HitChance > HitChance.Impossible)
+                            Spells[E].Cast(pred.CastPosition);
+                        else
+                            Spells[E].Cast((leapTarget as Obj_AI_Hero).ServerPosition);
+
+                        if (ComboUseW)
+                            Spells[W].Cast();
+                    });
                 }
-
-                LeagueSharp.Common.Utility.DelayAction.Add(Math.Max(1, args.Duration - 200), () =>
-                {
-
-                    if (Items.HasItem(3077) && Items.CanUseItem(3077))
-                        Items.UseItem(3077);
-                    else if (Items.HasItem(3074) && Items.CanUseItem(3074))
-                        Items.UseItem(3074);
-                    else if (Items.HasItem(3748) && Items.CanUseItem(3748)) //titanic
-                        Items.UseItem(3748);
-
-                    if(ComboUseW)
-                        Spells[W].Cast();
-                });
             }
         }
 
@@ -267,12 +267,12 @@ namespace SAutoCarry.Champions
 
         public bool HaveFullFerocity
         {
-            get { return ObjectManager.Player.Mana == 5; }
+            get { return (int)ObjectManager.Player.Mana == 5; }
         }
 
         public bool WillLeap
         {
-            get { return ObjectManager.Player.HasBuff("rengarpassivebuff") || ObjectManager.Player.IsDashing(); }
+            get { return ObjectManager.Player.Buffs.Any(p => p.Name.ToLower().Contains("rengarpassivebuff")) || ObjectManager.Player.IsDashing(); }
         }
     }
 }
