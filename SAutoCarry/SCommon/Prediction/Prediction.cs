@@ -459,6 +459,7 @@ namespace SCommon.Prediction
                 if (dashInfo.IsBlink)
                 {
                     result.HitChance = HitChance.Impossible;
+                    result.CastPosition = dashInfo.EndPos;
                     return result;
                 }
 
@@ -681,12 +682,7 @@ namespace SCommon.Prediction
                         {
                             result.HitChance = GetHitChance(t, avgt, movt, avgp, anglediff);
                             result.CastPosition = pCenter;
-                            result.UnitPosition = pCenter; //+ (direction * (t - Math.Min(arriveTimeA, arriveTimeB)) * moveSpeed);
-                            /*if (currentPosition.IsBetween(ObjectManager.Player.ServerPosition.To2D(), result.CastPosition))
-                            {
-                                result.CastPosition = currentPosition;
-                                Console.WriteLine("corrected");
-                            }*/
+                            result.UnitPosition = pCenter;
                             result.CollisionResult = Collision.GetCollisions(from, result.CastPosition, width, delay, missileSpeed);
                             return result;
                         }
