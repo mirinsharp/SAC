@@ -474,7 +474,7 @@ namespace SCommon.Orbwalking
             if (m_lastAttackTick < Utils.TickCount && !m_attackInProgress)
             {
                 m_lastWindUpEndTick = 0;
-                m_lastAttackTick = Utils.TickCount + m_rnd.Next(1, 20);
+                m_lastAttackTick = Utils.TickCount + (int)Math.Floor(ObjectManager.Player.AttackDelay * 1000);
                 m_lastAATick = Utils.TickCount + Game.Ping;
                 m_attackInProgress = true;
                 ObjectManager.Player.IssueOrder(GameObjectOrder.AttackUnit, target);
