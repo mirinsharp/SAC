@@ -256,7 +256,7 @@ namespace SAutoCarry.Champions
 
         private double CalculateViktorPassiveAADamage(Obj_AI_Hero target)
         {
-            return ObjectManager.Player.CalcDamage(target, LeagueSharp.Common.Damage.DamageType.Magical, 0.5f * ObjectManager.Player.AbilityPower() + new float[] { 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 110, 130, 150, 170, 190, 210 }[ObjectManager.Player.Level - 1]);
+            return ObjectManager.Player.CalcDamage(target, LeagueSharp.Common.Damage.DamageType.Magical, 0.5f * ObjectManager.Player.TotalMagicalDamage + new float[] { 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 110, 130, 150, 170, 190, 210 }[ObjectManager.Player.Level - 1]);
         }
 
         protected override void OrbwalkingEvents_BeforeAttack(BeforeAttackArgs args)
