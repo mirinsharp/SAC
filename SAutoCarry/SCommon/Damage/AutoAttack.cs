@@ -67,7 +67,7 @@ namespace SCommon.Damage
                 new ItemPassive
                 {
                     ItemID = 3115,
-                    GetDamage = (s, t) => (float)s.CalcDamage(t, LeagueSharp.Common.Damage.DamageType.Magical, 15 + ObjectManager.Player.AbilityPower() * 15 / 100)
+                    GetDamage = (s, t) => (float)s.CalcDamage(t, LeagueSharp.Common.Damage.DamageType.Magical, 15 + ObjectManager.Player.TotalMagicalDamage * 15 / 100)
                 });
 
             ////Devourer
@@ -194,7 +194,7 @@ namespace SCommon.Damage
                     ChampionName = "Ekko",
                     IsActive = (source, target) => (target.GetBuffCount("EkkoStacks") == 2),
                     GetDamage = (source, target) =>
-                     (float)source.CalcDamage(target, LeagueSharp.Common.Damage.DamageType.Magical, 10 + (source.Level * 10) + (source.AbilityPower() * 0.8))
+                     (float)source.CalcDamage(target, LeagueSharp.Common.Damage.DamageType.Magical, 10 + (source.Level * 10) + (source.TotalMagicalDamage * 0.8))
                 });
 
             //ekko w
@@ -205,7 +205,7 @@ namespace SCommon.Damage
                     IsActive = (source, target) => (target.HealthPercent < 30),
                     GetDamage = (source, target) =>
                         {
-                            float dmg = (float)source.CalcDamage(target, LeagueSharp.Common.Damage.DamageType.Magical, (target.MaxHealth - target.Health) * (5 + Math.Floor(source.AbilityPower() / 100) * 2.2f) / 100);
+                            float dmg = (float)source.CalcDamage(target, LeagueSharp.Common.Damage.DamageType.Magical, (target.MaxHealth - target.Health) * (5 + Math.Floor(source.TotalMagicalDamage / 100) * 2.2f) / 100);
                             if (!(target is Obj_AI_Hero) && dmg > 150f)
                                 dmg = 150f;
 
@@ -318,7 +318,7 @@ namespace SCommon.Damage
                         source.CalcDamage(
                             target,
                             LeagueSharp.Common.Damage.DamageType.Magical,
-                            (float)0.15 * source.AbilityPower()
+                            (float)0.15 * source.TotalMagicalDamage
                             + new float[] { 10, 10, 10, 18, 18, 18, 26, 26, 26, 34, 34, 34, 42, 42, 42, 50, 50, 50 }[
                                 source.Level - 1]),
                 });
@@ -379,7 +379,7 @@ namespace SCommon.Damage
                          source.CalcDamage(
                              target,
                              LeagueSharp.Common.Damage.DamageType.Magical,
-                             source.Spellbook.GetSpell(SpellSlot.E).Level * 10 + source.AbilityPower() * 0.3)),
+                             source.Spellbook.GetSpell(SpellSlot.E).Level * 10 + source.TotalMagicalDamage * 0.3)),
 
                 });
 
@@ -390,7 +390,7 @@ namespace SCommon.Damage
                 {
                         ChampionName = "TwistedFate",
                         IsActive = (source, target) => (source.HasBuff("cardmasterstackparticle")),
-                        GetDamage = (source, target) => (float)Math.Floor(source.CalcDamage(target, LeagueSharp.Common.Damage.DamageType.Magical, new int[] { 55, 80, 105, 130, 155 }[source.Spellbook.GetSpell(SpellSlot.E).Level - 1] + source.AbilityPower() * 0.5f)),
+                        GetDamage = (source, target) => (float)Math.Floor(source.CalcDamage(target, LeagueSharp.Common.Damage.DamageType.Magical, new int[] { 55, 80, 105, 130, 155 }[source.Spellbook.GetSpell(SpellSlot.E).Level - 1] + source.TotalMagicalDamage * 0.5f)),
                 });
 
             //varus w
@@ -448,7 +448,7 @@ namespace SCommon.Damage
                         source.CalcDamage(
                             target,
                             LeagueSharp.Common.Damage.DamageType.Magical,
-                            (float)0.5d * source.AbilityPower()
+                            (float)0.5d * source.TotalMagicalDamage
                             + new float[] { 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 110, 130, 150, 170, 190, 210 }[
                                       source.Level - 1]),
                 });
@@ -466,7 +466,7 @@ namespace SCommon.Damage
                         source.CalcDamage(
                             target,
                             LeagueSharp.Common.Damage.DamageType.Magical,
-                            (float)0.25d * source.AbilityPower()
+                            (float)0.25d * source.TotalMagicalDamage
                             + new float[] { 20, 24, 28, 32, 36, 40, 48, 56, 64, 72, 80, 88, 100, 112, 124, 136, 148, 160 }[
                                       source.Level - 1]),
                 });
@@ -542,7 +542,7 @@ namespace SCommon.Damage
                 int cnt = ObjectManager.Get<GameObject>().Count(p => p.IsAlly && p.Name == "AzirSoldier" && p.Position.Distance(target.Position) < 315);
                 if (cnt > 0)
                 {
-                    dmg = (float)hero.CalcDamage(target, LeagueSharp.Common.Damage.DamageType.Magical, new[] { 50, 55, 60, 65, 70, 75, 80, 85, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180 }[ObjectManager.Player.Level - 1] + 0.6f * hero.AbilityPower());
+                    dmg = (float)hero.CalcDamage(target, LeagueSharp.Common.Damage.DamageType.Magical, new[] { 50, 55, 60, 65, 70, 75, 80, 85, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180 }[ObjectManager.Player.Level - 1] + 0.6f * hero.TotalMagicalDamage);
                     return dmg + dmg * 0.25f * (cnt - 1) - 1;
                 }
             }
