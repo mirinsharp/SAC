@@ -40,12 +40,15 @@ namespace SAutoCarry.Champions
             //
             Menu harass = new Menu("Harass", "SAutoCarry.Twitch.Harass");
             harass.AddItem(new MenuItem("SAutoCarry.Twitch.Harass.UseW", "Use W").SetValue(true));
+            harass.AddItem(new MenuItem("SAutoCarry.Twitch.Harass.UseE", "Use E").SetValue(true));
+
 
             Menu laneclear = new Menu("LaneClear/JungleClear", "SAutoCarry.Twitch.LaneClear");
             laneclear.AddItem(new MenuItem("SAutoCarry.Twitch.LaneClear.UseW", "Use W").SetValue(true));
             laneclear.AddItem(new MenuItem("SAutoCarry.Twitch.LaneClear.UseE", "Use E").SetValue(true));
 
             Menu misc = new Menu("Misc", "SAutoCarry.Twitch.Misc");
+            misc.AddItem(new MenuItem("SAutoCarry.Twitch.Misc.SaveManaE", "Save Mana for E").SetValue(true));
             misc.AddItem(new MenuItem("SAutoCarry.Twitch.Misc.RecallQ", "Use Q When Recalling").SetValue(new KeyBind('G', KeyBindType.Press)));
 
             DamageIndicator.Initialize((t) => (float)CalculateDamageE(t), misc);
@@ -95,6 +98,12 @@ namespace SAutoCarry.Champions
                 if (t != null)
                     Spells[W].SPredictionCast(t, HitChance.High);
             }
+
+            if (Spells[E].IsReady() && HarassUseE)
+            {
+                 if (HeroManager.Enemies.Any(x => x.IsValidTarget(Spells[E].Range) && !x.IsInvulnerable && (x.GetBuffCount("twitchdeadlyvenom") >= 6 || Spells[E].IsKillable(x)) && IsWhitelisted(x)))
+                        Spells[E].Cast();
+            }
         }
 
         public void LaneClear()
@@ -126,6 +135,15 @@ namespace SAutoCarry.Champions
         {
             if (RecallQ)
                 RecallStealthQ();
+        }
+
+        public void SaveManaExpunge()
+        {
+            if (SaveManaE)
+            {
+                if (ObjectManager.Player.Mana <= Spells[E].ManaCost + Spells[W].ManaCost)
+                    return;
+            }
         }
 
         public bool IsWhitelisted(Obj_AI_Hero enemy)
@@ -162,6 +180,11 @@ namespace SAutoCarry.Champions
             get { return ConfigMenu.Item("SAutoCarry.Twitch.Harass.UseW").GetValue<bool>(); }
         }
 
+        public bool HarassUseE
+        {
+            get { return ConfigMenu.Item("SAutoCarry.Twitch.Harass.UseE").GetValue<bool>(); }
+        }
+
         public bool LaneClearW
         {
             get { return ConfigMenu.Item("SAutoCarry.Twitch.LaneClear.UseW").GetValue<bool>(); }
@@ -175,6 +198,11 @@ namespace SAutoCarry.Champions
         public bool RecallQ
         {
             get { return ConfigMenu.Item("SAutoCarry.Twitch.Misc.RecallQ").GetValue<KeyBind>().Active; }
+        }
+
+        public bool SaveManaE
+        {
+            get { return ConfigMenu.Item("SAutoCarry.Twitch.Misc.SaveManaE").GetValue<bool>(); }
         }
     }
 }
