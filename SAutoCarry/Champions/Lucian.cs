@@ -58,7 +58,7 @@ namespace SAutoCarry.Champions
             Spells[Q] = new Spell(SpellSlot.Q, 675f);
             Spells[Q].SetTargetted(0.35f, float.MaxValue);
 
-            Spells[W] = new Spell(SpellSlot.W, 1000f);
+            Spells[W] = new Spell(SpellSlot.W, 1100f);
             Spells[W].SetSkillshot(0.25f, 150f, 1600f, false, SkillshotType.SkillshotLine);
 
             Spells[E] = new Spell(SpellSlot.E, 425f);
