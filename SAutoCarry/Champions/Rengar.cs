@@ -83,7 +83,11 @@ namespace SAutoCarry.Champions
             {
                 var t = TargetSelector.GetTarget(Spells[E].Range, LeagueSharp.Common.TargetSelector.DamageType.Physical);
                 if (t != null && t.IsValidTarget(Spells[E].Range) && Spells[E].IsReady() && (!HaveFullFerocity || !t.IsValidTarget(SCommon.Orbwalking.Utility.GetRealAARange(t))) && ComboUseE)
+                {
+                    if (HaveFullFerocity && OneShotComboActive)
+                        return;
                     Spells[E].SPredictionCast(t, HitChance.High);
+                }
 
                 t = TargetSelector.GetTarget(Spells[W].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
                 if (Spells[W].IsReady() && ComboUseW && t != null && t.IsValidTarget(Spells[W].Range) && !HaveFullFerocity)
