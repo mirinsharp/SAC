@@ -111,7 +111,7 @@ namespace SAutoCarry.Champions
 
         public void Combo()
         {
-            var t = TargetSelector.GetTarget(Spells[Q].Range, LeagueSharp.Common.TargetSelector.DamageType.Magical);
+            var t = TargetSelector.GetTarget(Spells[Q].Range + Helpers.SoldierMgr.SoldierAttackRange - 25, LeagueSharp.Common.TargetSelector.DamageType.Magical);
             var extendedTarget = TargetSelector.GetTarget(Spells[Q].Range + 400, LeagueSharp.Common.TargetSelector.DamageType.Magical);
 
             if (t != null)
@@ -190,26 +190,22 @@ namespace SAutoCarry.Champions
             if (ObjectManager.Player.ManaPercent < LaneClearMinMana || !LaneClearToggle)
                 return;
 
-            if (Utils.TickCount - lastLaneClearTick > 250 && !Orbwalker.ShouldWait())
+            if (LaneClearUseW && Spells[W].IsReady() && Spells[W].Instance.Ammo != 0)
             {
-                if (LaneClearUseW && Spells[W].IsReady() && Spells[W].Instance.Ammo != 0)
+                var minions = MinionManager.GetMinions(Spells[W].Range + Helpers.SoldierMgr.SoldierAttackRange / 2f);
+                if (minions.Count > 1)
                 {
-                    var minions = MinionManager.GetMinions(Spells[W].Range + Helpers.SoldierMgr.SoldierAttackRange / 2f);
-                    if (minions.Count > 1)
-                    {
-                        var loc = MinionManager.GetBestCircularFarmLocation(minions.Select(p => p.ServerPosition.To2D()).ToList(), Helpers.SoldierMgr.SoldierAttackRange, Spells[W].Range);
-                        if (loc.MinionsHit > 2)
-                            Spells[W].Cast(loc.Position);
-                    }
+                    var loc = MinionManager.GetBestCircularFarmLocation(minions.Select(p => p.ServerPosition.To2D()).ToList(), Helpers.SoldierMgr.SoldierAttackRange, Spells[W].Range);
+                    if (loc.MinionsHit > 2)
+                        Spells[W].Cast(loc.Position);
                 }
+            }
 
-                if (LaneClearUseQ && Spells[Q].IsReady())
-                {
-                    MinionManager.FarmLocation bestfarm = MinionManager.GetBestCircularFarmLocation(MinionManager.GetMinions(Spells[Q].Range + 100).Select(p => p.ServerPosition.To2D()).ToList(), Helpers.SoldierMgr.SoldierAttackRange, Spells[Q].Range + 100);
-                    if (bestfarm.MinionsHit >= LaneClearQMinMinion)
-                        Spells[Q].Cast(bestfarm.Position);
-                }
-                lastLaneClearTick = Utils.TickCount;
+            if (LaneClearUseQ && Spells[Q].IsReady())
+            {
+                MinionManager.FarmLocation bestfarm = MinionManager.GetBestCircularFarmLocation(MinionManager.GetMinions(Spells[Q].Range + 100).Select(p => p.ServerPosition.To2D()).ToList(), Helpers.SoldierMgr.SoldierAttackRange, Spells[Q].Range + 100);
+                if (bestfarm.MinionsHit >= LaneClearQMinMinion)
+                    Spells[Q].Cast(bestfarm.Position);
             }
         }
 
@@ -450,14 +446,11 @@ namespace SAutoCarry.Champions
         {
             if (target.IsValidTarget())
             {
-                if (target is Obj_AI_Base)
-                {
-                    foreach (var soldier in Helpers.SoldierMgr.ActiveSoldiers)
-                    {
-                        if (ObjectManager.Player.Distance(soldier.Position) < 950 && target.Position.Distance(soldier.Position) < Helpers.SoldierMgr.SoldierAttackRange)
-                            return true;
-                    }
-                }
+                float scalingRange = 0f;
+                if (target.Type == GameObjectType.obj_AI_Hero)
+                    scalingRange = (target as Obj_AI_Hero).GetScalingRange();
+                if (Helpers.SoldierMgr.ActiveSoldiers.Any(p => p.Position.Distance(ObjectManager.Player.ServerPosition) - ObjectManager.Player.BoundingRadius < 900 && p.Position.Distance(target.Position) - target.BoundingRadius - scalingRange + 10 < Helpers.SoldierMgr.SoldierAttackRange + p.BoundingRadius))
+                    return true;
 
                 if (target.Type == GameObjectType.obj_AI_Hero)
                 {
@@ -515,9 +508,9 @@ namespace SAutoCarry.Champions
 
         private void Game_OnWndProc(WndEventArgs args)
         {
-            if (args.Msg == (uint)WindowsMessages.WM_LBUTTONDBLCLK)
+            if (args.Msg == (uint)WindowsMessages.WM_LBUTTONDOWN)
             {
-                var clickedObject = ObjectManager.Get<GameObject>().Where(p => p.Position.Distance(Game.CursorPos, true) < 40000).OrderBy(q => q.Position.Distance(Game.CursorPos, true)).FirstOrDefault();
+                var clickedObject = ObjectManager.Get<Obj_AI_Base>().Where(p => p.Position.Distance(Game.CursorPos, true) < 40000 && p.IsAlly).OrderBy(q => q.Position.Distance(Game.CursorPos, true)).FirstOrDefault();
 
                 if (clickedObject != null)
                 {
